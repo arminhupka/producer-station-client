@@ -37,7 +37,13 @@ const ResetPasswordForm = (): ReactElement => {
         <form onSubmit={handleSubmit(handleResetPassword)}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField label='E-mail' fullWidth disabled={isLoading} {...register("email", { required: true })} />
+              <TextField
+                label='E-mail'
+                fullWidth
+                disabled={isLoading}
+                required
+                {...register("email", { required: true })}
+              />
             </Grid>
             <Grid item xs={12}>
               <Button type='submit' variant='contained' fullWidth disabled={isLoading}>

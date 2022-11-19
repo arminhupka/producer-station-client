@@ -1,4 +1,15 @@
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Grid, Paper, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -10,7 +21,11 @@ import { ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 
 const LoginForm = (): ReactElement => {
-  const { isLoading, mutate } = useMutation<AxiosResponse<{ ok: true }>, AxiosError<ApiError>, UserLoginDto>(
+  const { isLoading, mutate, isError, error } = useMutation<
+    AxiosResponse<{ ok: true }>,
+    AxiosError<ApiError>,
+    UserLoginDto
+  >(
     async ({ login, password, save }) =>
       await api.post<{ ok: true }>("/auth/login", { login, password, save }, { withCredentials: true }),
   );
@@ -30,10 +45,23 @@ const LoginForm = (): ReactElement => {
         <form onSubmit={handleSubmit(handleLogin)}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <TextField label='Login or E-mail' fullWidth disabled={isLoading} {...register("login")} />
+              <TextField
+                label='Login or E-mail'
+                fullWidth
+                disabled={isLoading}
+                required
+                {...register("login", { required: true })}
+              />
             </Grid>
             <Grid item xs={12}>
-              <TextField label='Password' type='password' fullWidth disabled={isLoading} {...register("password")} />
+              <TextField
+                label='Password'
+                type='password'
+                fullWidth
+                disabled={isLoading}
+                required
+                {...register("password", { required: true })}
+              />
             </Grid>
             <Grid item xs={12}>
               <Box display='flex' alignItems='center' justifyContent='space-between'>
@@ -56,7 +84,7 @@ const LoginForm = (): ReactElement => {
                 </Grid>
                 <Grid item xs={12}>
                   <Link to='/register'>
-                    <Button component='span' variant='text' fullWidth disabled={isLoading}>
+                    <Button component='span' variant='outlined' fullWidth disabled={isLoading}>
                       Register
                     </Button>
                   </Link>
@@ -65,6 +93,11 @@ const LoginForm = (): ReactElement => {
             </Grid>
           </Grid>
         </form>
+        {isError && error.response != null && (
+          <Box mt={2}>
+            <Alert severity='error'>{error.response.data.message}</Alert>
+          </Box>
+        )}
       </Box>
     </Paper>
   );
