@@ -36,9 +36,11 @@ const LoginForm = (): ReactElement => (
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <Button variant='text' fullWidth>
-                  Register
-                </Button>
+                <Link to='/register'>
+                  <Button component='a' variant='text' fullWidth>
+                    Register
+                  </Button>
+                </Link>
               </Grid>
             </Grid>
           </Grid>
