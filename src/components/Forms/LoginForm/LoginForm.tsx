@@ -11,16 +11,22 @@ import {
   Typography,
 } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement } from "react";
+import { ReactElement, useEffect } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { UserLoginDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
+import { getProfile } from "../../../features/userSlice";
+import { useAppDispatch, useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
 
 const LoginForm = (): ReactElement => {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const userState = useAppSelector((state) => state.userReducer);
+
   const { isLoading, mutate, isError, error } = useMutation<
     AxiosResponse<{ ok: true }>,
     AxiosError<ApiError>,
@@ -28,6 +34,11 @@ const LoginForm = (): ReactElement => {
   >(
     async ({ login, password, save }) =>
       await api.post<{ ok: true }>("/auth/login", { login, password, save }, { withCredentials: true }),
+    {
+      onSuccess: async () => {
+        await dispatch(getProfile());
+      },
+    },
   );
 
   const { register, handleSubmit } = useForm<UserLoginDto>();
@@ -35,6 +46,12 @@ const LoginForm = (): ReactElement => {
   const handleLogin: SubmitHandler<UserLoginDto> = (form) => {
     mutate({ login: form.login, password: form.password, save: form.save });
   };
+
+  useEffect(() => {
+    if (userState.user != null) {
+      navigate("/panel");
+    }
+  }, [userState]);
 
   return (
     <Paper sx={{ width: "100%" }}>
