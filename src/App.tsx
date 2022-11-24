@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import AuthRoute from "./routes/AuthRoute";
 import DashboardView from "./views/DashboardView";
+import LabelsView from "./views/LabelsView";
 import LoginView from "./views/LoginView";
 import NotFoundView from "./views/NotFoundView";
 import ProductsView from "./views/ProductsView";
@@ -25,6 +26,14 @@ const App = (): ReactElement => (
         element={
           <AuthRoute>
             <ProductsView />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path='/panel/labels'
+        element={
+          <AuthRoute>
+            <LabelsView />
           </AuthRoute>
         }
       />

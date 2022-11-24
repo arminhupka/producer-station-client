@@ -45,7 +45,7 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
             </Grid>
             <Grid item xs={12}>
               <Button type='submit' variant='contained' fullWidth disabled={isLoading}>
-                Add New
+                Add New Product
               </Button>
             </Grid>
           </Grid>
