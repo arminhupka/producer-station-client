@@ -1,7 +1,11 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { ReactElement } from "react";
 
-const CheckInvitationForm = (): ReactElement => (
+interface IProps {
+  onVerify: () => void;
+}
+
+const CheckInvitationForm = ({ onVerify }: IProps): ReactElement => (
   <Paper sx={{ width: "100%" }}>
     <Box p={4}>
       <Typography mb={2} variant='h5'>
@@ -13,7 +17,7 @@ const CheckInvitationForm = (): ReactElement => (
             <TextField label='Invitaion Code' fullWidth />
           </Grid>
           <Grid item xs={12}>
-            <Button variant='contained' fullWidth>
+            <Button variant='contained' fullWidth onClick={onVerify}>
               Verify
             </Button>
           </Grid>
