@@ -1,4 +1,3 @@
-import { MenuOpen } from "@mui/icons-material";
 import { Box, Button, ListItem } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactElement } from "react";
@@ -30,9 +29,10 @@ const StyledBox = styled(Button)<IStyledButtonProps>(({ theme, active }) => ({
 interface IProps {
   title: string;
   href: string;
+  icon: ReactElement;
 }
 
-const NavItem = ({ title, href }: IProps): ReactElement => {
+const NavItem = ({ title, href, icon }: IProps): ReactElement => {
   const location = useLocation();
   const active = href !== "" ? location.pathname === href : false;
 
@@ -45,7 +45,7 @@ const NavItem = ({ title, href }: IProps): ReactElement => {
         px: 2,
       }}>
       <Link to={href} style={{ width: "100%", textDecoration: "none" }}>
-        <StyledBox active={active} startIcon={<MenuOpen />}>
+        <StyledBox active={active} startIcon={icon}>
           <Box>{title}</Box>
         </StyledBox>
       </Link>

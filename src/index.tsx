@@ -13,7 +13,7 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { persistor, store } from "./store";
+import { persistor as persist, store } from "./store";
 import theme from "./theme/theme";
 import { injectStore } from "./utils/api";
 
@@ -24,7 +24,7 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate persistor={persistor}>
+      <PersistGate persistor={persist}>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={theme}>
             <CssBaseline />

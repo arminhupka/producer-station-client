@@ -1,4 +1,4 @@
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress, Grid } from "@mui/material";
 import { AxiosResponse } from "axios";
 import { ReactElement, useEffect } from "react";
 import { useQuery } from "react-query";
@@ -25,7 +25,20 @@ const ProductsView = (): ReactElement => {
 
   return (
     <MainLayout>
-      <PageHeading title='Products' />
+      <PageHeading title='Products'>
+        <Grid container spacing={1}>
+          <Grid item>
+            <Button variant='contained' size='small'>
+              Add New Product
+            </Button>
+          </Grid>
+          <Grid item>
+            <Button variant='contained' size='small'>
+              Add New Product
+            </Button>
+          </Grid>
+        </Grid>
+      </PageHeading>
       {isLoading && <CircularProgress />}
       {productsData?.data != null && (
         <Tabel
