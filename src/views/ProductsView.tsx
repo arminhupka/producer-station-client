@@ -4,6 +4,7 @@ import { ReactElement, useEffect } from "react";
 import { useQuery } from "react-query";
 
 import { VendorProductListResponseDto } from "../api/api";
+import BaseModal from "../components/Modals/BaseModal";
 import PageHeading from "../components/PageHeading/PageHeading";
 import Tabel from "../components/Tabel/Tabel";
 import MainLayout from "../layouts/MainLayout";
@@ -25,6 +26,9 @@ const ProductsView = (): ReactElement => {
 
   return (
     <MainLayout>
+      <BaseModal open title='Base modal' onClose={() => null}>
+        <h1>HELLO</h1>
+      </BaseModal>
       <PageHeading title='Products'>
         <Grid container spacing={1}>
           <Grid item>
