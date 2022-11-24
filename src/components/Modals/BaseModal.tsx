@@ -28,24 +28,24 @@ const StyledHeading = styled(Box)(({ theme }) => ({
   alignItems: "center",
   justifyContent: "space-between",
   borderBottom: "1px solid",
-  borderBottomColor: theme.palette.grey[400],
+  borderBottomColor: theme.palette.grey[300],
 }));
 
 const StyledBody = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
 }));
 
-interface IBaseModalProps extends ModalProps {
+export interface IBaseModalProps extends ModalProps {
   title: string;
   onClose: () => void;
 }
 
 const BaseModal = ({ open, title, children, onClose }: IBaseModalProps): ReactElement => (
-  <Modal open={open}>
+  <Modal open={open} onClose={onClose}>
     <Box position='relative' height='100%'>
       <StyledModalWrapper>
         <StyledHeading>
-          <Typography fontSize='larger' fontWeight={700}>
+          <Typography component='h2' fontSize='larger' fontWeight={600}>
             {title}
           </Typography>
           <IconButton onClick={onClose}>

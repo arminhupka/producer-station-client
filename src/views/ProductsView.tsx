@@ -4,13 +4,15 @@ import { ReactElement, useEffect } from "react";
 import { useQuery } from "react-query";
 
 import { VendorProductListResponseDto } from "../api/api";
-import BaseModal from "../components/Modals/BaseModal";
+import NewProductModal from "../components/Modals/NewProductModal/NewProductModal";
 import PageHeading from "../components/PageHeading/PageHeading";
 import Tabel from "../components/Tabel/Tabel";
+import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 
 const ProductsView = (): ReactElement => {
+  const { onOpen, onClose, isOpen } = useModalState();
   const {
     isLoading,
     data: productsData,
@@ -26,13 +28,11 @@ const ProductsView = (): ReactElement => {
 
   return (
     <MainLayout>
-      <BaseModal open title='Base modal' onClose={() => null}>
-        <h1>HELLO</h1>
-      </BaseModal>
+      <NewProductModal onClose={onClose} open={isOpen} />
       <PageHeading title='Products'>
         <Grid container spacing={1}>
           <Grid item>
-            <Button variant='contained' size='small'>
+            <Button variant='contained' size='small' onClick={onOpen}>
               Add New Product
             </Button>
           </Grid>
