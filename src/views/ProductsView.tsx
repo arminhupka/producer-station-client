@@ -1,26 +1,28 @@
-import { Button, CircularProgress } from "@mui/material";
-import { AxiosResponse } from "axios";
+import { Button } from "@mui/material";
+import { AxiosError, AxiosResponse } from "axios";
 import { ReactElement, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 
-import { VendorProductListResponseDto } from "../api/api";
+import { VendorProductsListResponseDto } from "../api/api";
+import { ApiError } from "../api/apiError";
 import NewProductModal from "../components/Modals/NewProductModal/NewProductModal";
 import PageHeading from "../components/PageHeading/PageHeading";
-import Tabel from "../components/Tabel/Tabel";
+import ProductsTable from "../components/Tabels/ProductsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 
 const ProductsView = (): ReactElement => {
   const { onOpen, onClose, isOpen } = useModalState();
+
   const {
     isLoading,
-    data: productsData,
+    data: products,
     remove,
-  } = useQuery<AxiosResponse<VendorProductListResponseDto>>(
-    "products",
-    async () => await api.get<VendorProductListResponseDto>("/vendor/products", { withCredentials: true }),
+  } = useQuery<AxiosResponse<VendorProductsListResponseDto>, AxiosError<ApiError>>(
+    "vendor-products",
+    async () => await api.get<VendorProductsListResponseDto>("/vendor/products", { withCredentials: true }),
   );
 
   useEffect(() => {
@@ -39,16 +41,7 @@ const ProductsView = (): ReactElement => {
             Add New Product
           </Button>
         </PageHeading>
-        {isLoading && <CircularProgress />}
-        {productsData?.data != null && (
-          <Tabel
-            headings={["Name"]}
-            data={productsData.data.docs.map((prop) => ({
-              id: prop._id,
-              values: [prop._id],
-            }))}
-          />
-        )}
+        <ProductsTable isLoading={isLoading} data={products != null ? products.data.docs : []} />
       </MainLayout>
     </>
   );

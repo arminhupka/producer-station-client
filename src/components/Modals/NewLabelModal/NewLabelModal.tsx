@@ -5,7 +5,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { Label, NewLabelDto } from "../../../api/api";
+import { NewLabelDto, NewLabelResponseDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 import BaseModal, { IBaseModalProps } from "../BaseModal";
@@ -16,8 +16,8 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm<NewLabelDto>();
 
-  const { mutate, isLoading } = useMutation<AxiosResponse<Label>, AxiosError<ApiError>, NewLabelDto>(
-    async ({ name }) => await api.post<Label>("/labels", { name }, { withCredentials: true }),
+  const { mutate, isLoading } = useMutation<AxiosResponse<NewLabelResponseDto>, AxiosError<ApiError>, NewLabelDto>(
+    async ({ name }) => await api.post<NewLabelResponseDto>("/labels", { name }, { withCredentials: true }),
     {
       onSuccess: ({ data }) => {
         navigate(`/labels/${data._id}`);
@@ -38,7 +38,7 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
           </Grid>
           <Grid item xs={12}>
             <Button type='submit' variant='contained' fullWidth disabled={isLoading}>
-              Add New Label
+              Add New Labelw
             </Button>
           </Grid>
         </Grid>

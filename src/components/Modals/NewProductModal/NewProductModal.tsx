@@ -5,7 +5,7 @@ import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { CreateProductDto, Product } from "../../../api/api";
+import { CreateProductDto, NewProductResponseDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 import BaseModal, { IBaseModalProps } from "../BaseModal";
@@ -15,11 +15,16 @@ type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
   const navigate = useNavigate();
   const methods = useForm<CreateProductDto>();
-  const { mutate, isLoading } = useMutation<AxiosResponse<Product>, AxiosError<ApiError>, CreateProductDto>(
-    async ({ name, label }) => await api.post("/product", { name, label }, { withCredentials: true }),
+  const { mutate, isLoading } = useMutation<
+    AxiosResponse<NewProductResponseDto>,
+    AxiosError<ApiError>,
+    CreateProductDto
+  >(
+    async ({ name, label }) =>
+      await api.post<NewProductResponseDto>("/product", { name, label }, { withCredentials: true }),
     {
       onSuccess: (data) => {
-        navigate(`/products/${data.data._id}`);
+        navigate(`/panel/product/${data.data._id}`);
       },
     },
   );

@@ -6,6 +6,7 @@ import DashboardView from "./views/DashboardView";
 import LabelsView from "./views/LabelsView";
 import LoginView from "./views/LoginView";
 import NotFoundView from "./views/NotFoundView";
+import ProductDetailsView from "./views/ProductDetailsView";
 import ProductsView from "./views/ProductsView";
 import RegisterView from "./views/RegisterView";
 import ResetPasswordView from "./views/ResetPasswordView";
@@ -26,6 +27,14 @@ const App = (): ReactElement => (
         element={
           <AuthRoute>
             <ProductsView />
+          </AuthRoute>
+        }
+      />
+      <Route
+        path='/panel/product/:id'
+        element={
+          <AuthRoute>
+            <ProductDetailsView />
           </AuthRoute>
         }
       />
