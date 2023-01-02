@@ -20,9 +20,11 @@ import { UserLoginDto, UserLoginResponseDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { getProfile } from "../../../features/userSlice";
 import {
-  persistedLocalReducer,
-  persistedSessionReducer,
+  persistedCookieRememberReducer,
   store,
+  // persistedLocalReducer,
+  // persistedSessionReducer,
+  // store,
   useAppDispatch,
   useAppSelector,
 } from "../../../store";
@@ -56,11 +58,16 @@ const LoginForm = (): ReactElement => {
   const { register, handleSubmit } = useForm<UserLoginDto>();
 
   const handleLogin: SubmitHandler<UserLoginDto> = (form) => {
+    // if (form.rememberMe) {
+    // store.replaceReducer(persistedLocalReducer);
+    // window.localStorage.setItem("rememberMe", "true");
+    // } else {
+    //   store.replaceReducer(persistedSessionReducer);
+    // }
+
     if (form.rememberMe) {
-      store.replaceReducer(persistedLocalReducer);
-      window.localStorage.setItem("rememberMe", "true");
-    } else {
-      store.replaceReducer(persistedSessionReducer);
+      window.localStorage.setItem("rememberMe", JSON.stringify(true));
+      store.replaceReducer(persistedCookieRememberReducer);
     }
 
     mutate({

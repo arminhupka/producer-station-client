@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import Cookies from "cookies-js";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
 import {
@@ -9,39 +10,67 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist/es/constants";
-import storage from "redux-persist/lib/storage";
-import storageSession from "redux-persist/lib/storage/session";
+// import storage from "redux-persist/lib/storage";
+// import storageSession from "redux-persist/lib/storage/session";
+// @ts-expect-error
+import { CookieStorage } from "redux-persist-cookie-storage";
 
 import userReducer from "../src/features/userSlice";
 
 const rootReducer = combineReducers({ userReducer });
 
-const persistLocalConfig = {
+// const persistLocalConfig = {
+//   key: "root",
+//   version: 1,
+//   storage,
+// };
+//
+// const persistSessionConfig = {
+//   key: "root",
+//   version: 1,
+//   storage: storageSession,
+// };
+
+const persistCookieConfig = {
   key: "root",
-  version: 1,
-  storage,
+  storage: new CookieStorage(Cookies /*, options */),
 };
 
-const persistSessionConfig = {
+const persistCookieRememberConfig = {
   key: "root",
-  version: 1,
-  storage: storageSession,
+  storage: new CookieStorage(Cookies, {
+    expiration: {
+      default: 365 * 86400, // Cookies expire after one year
+    },
+  }),
 };
 
-export const persistedLocalReducer = persistReducer(
-  persistLocalConfig,
+export const persistedCookieReducer = persistReducer(
+  persistCookieConfig,
+  rootReducer,
+);
+export const persistedCookieRememberReducer = persistReducer(
+  persistCookieRememberConfig,
   rootReducer,
 );
 
-export const persistedSessionReducer = persistReducer(
-  persistSessionConfig,
-  rootReducer,
-);
+// export const persistedLocalReducer = persistReducer(
+//   persistLocalConfig,
+//   rootReducer,
+// );
+//
+// export const persistedSessionReducer = persistReducer(
+//   persistSessionConfig,
+//   rootReducer,
+// );
 
 export const store = configureStore({
+  // reducer: window.localStorage.getItem("rememberMe")
+  //   ? persistedLocalReducer
+  //   : persistedSessionReducer,
   reducer: window.localStorage.getItem("rememberMe")
-    ? persistedLocalReducer
-    : persistedSessionReducer,
+    ? persistedCookieRememberReducer
+    : persistedCookieReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
