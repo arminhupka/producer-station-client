@@ -17,10 +17,22 @@ import { persistor as persist, store } from "./store";
 import theme from "./theme/theme";
 import { injectStore } from "./utils/api";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // keepPreviousData: false,
+      // retry: false,
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      // cacheTime: 0,
+    },
+  },
+});
 
 injectStore(store);
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
 root.render(
   <React.StrictMode>
     <Provider store={store}>

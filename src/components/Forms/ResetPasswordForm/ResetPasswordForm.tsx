@@ -4,7 +4,7 @@ import { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 
-import { ResetPasswordDto } from "../../../api/api";
+import { ResetPasswordRequestDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 
@@ -12,7 +12,7 @@ const ResetPasswordForm = (): ReactElement => {
   const { isLoading, mutate, isSuccess, isError, error } = useMutation<
     AxiosResponse<{ ok: true }>,
     AxiosError<ApiError>,
-    ResetPasswordDto
+    ResetPasswordRequestDto
   >(async ({ email }) => await api.post<{ ok: true }>("/users/reset-password", { email }), {
     onSuccess: () => {
       reset();
@@ -22,9 +22,9 @@ const ResetPasswordForm = (): ReactElement => {
     },
   });
 
-  const { register, handleSubmit, reset } = useForm<ResetPasswordDto>();
+  const { register, handleSubmit, reset } = useForm<ResetPasswordRequestDto>();
 
-  const handleResetPassword: SubmitHandler<ResetPasswordDto> = (form) => {
+  const handleResetPassword: SubmitHandler<ResetPasswordRequestDto> = (form) => {
     mutate({ email: form.email });
   };
 

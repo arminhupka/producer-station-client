@@ -1,8 +1,10 @@
 import { Menu } from "@mui/icons-material";
-import { AppBar, IconButton, Toolbar } from "@mui/material";
+import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
+import { resetUser } from "../../features/userSlice";
 import useModalState from "../../hooks/useModalState";
+import { useAppDispatch } from "../../store";
 import Sidebar from "../Sidebar/Sidebar";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
@@ -12,6 +14,16 @@ const StyledAppBar = styled(AppBar)(({ theme }) => ({
 
 const Header = () => {
   const { isOpen, onOpen, onClose } = useModalState();
+
+  const dispatch = useAppDispatch();
+
+  const handleUserLogout = () => {
+    window.localStorage.removeItem("persist:root");
+    window.sessionStorage.removeItem("persist:root");
+    window.localStorage.removeItem("token");
+    window.localStorage.removeItem("rememberMe");
+    dispatch(resetUser());
+  };
 
   return (
     <StyledAppBar
@@ -39,6 +51,13 @@ const Header = () => {
           }}>
           <Menu />
         </IconButton>
+        <Button
+          variant='contained'
+          size='small'
+          sx={{ marginLeft: "auto" }}
+          onClick={handleUserLogout}>
+          Logout
+        </Button>
       </Toolbar>
     </StyledAppBar>
   );

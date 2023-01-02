@@ -1,10 +1,10 @@
-import { Box, Button, ListItem } from "@mui/material";
+import { Box, Button, ButtonProps, ListItem } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ReactElement } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-interface IStyledButtonProps {
-  active: boolean;
+interface IStyledButtonProps extends ButtonProps {
+  active?: boolean | string;
 }
 
 const StyledBox = styled(Button)<IStyledButtonProps>(({ theme, active }) => ({

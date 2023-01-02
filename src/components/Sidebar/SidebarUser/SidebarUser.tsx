@@ -1,14 +1,10 @@
 import { Avatar, Box, Typography } from "@mui/material";
-import { ReactElement, useEffect } from "react";
+import { ReactElement } from "react";
 
 import { useAppSelector } from "../../../store";
 
 const SidebarUser = (): ReactElement => {
   const userState = useAppSelector((state) => state.userReducer.user);
-
-  useEffect(() => {
-    console.log(userState);
-  }, []);
 
   return (
     <Box px={2} py={3} display='flex' alignItems='center'>
@@ -25,7 +21,7 @@ const SidebarUser = (): ReactElement => {
           {userState?.username}
         </Typography>
         <Typography color='secondary.light' fontSize='small'>
-          {userState != null && Array.isArray(userState.role) && userState.role.join(" / ")}
+          {userState?.role}
         </Typography>
       </Box>
     </Box>

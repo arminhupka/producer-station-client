@@ -16,11 +16,18 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 
-import { UserLoginDto } from "../../../api/api";
+import { UserLoginDto, UserLoginResponseDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { getProfile } from "../../../features/userSlice";
-import { useAppDispatch, useAppSelector } from "../../../store";
+import {
+  persistedLocalReducer,
+  persistedSessionReducer,
+  store,
+  useAppDispatch,
+  useAppSelector,
+} from "../../../store";
 import { api } from "../../../utils/api";
+import setAuthToken from "../../../utils/setAuthToken";
 
 const LoginForm = (): ReactElement => {
   const navigate = useNavigate();
@@ -28,14 +35,19 @@ const LoginForm = (): ReactElement => {
   const userState = useAppSelector((state) => state.userReducer);
 
   const { isLoading, mutate, isError, error } = useMutation<
-    AxiosResponse<{ ok: true }>,
+    AxiosResponse<UserLoginResponseDto>,
     AxiosError<ApiError>,
     UserLoginDto
   >(
-    async ({ login, password, save }) =>
-      await api.post<{ ok: true }>("/auth/login", { login, password, save }, { withCredentials: true }),
+    async ({ email, password, rememberMe }) =>
+      await api.post<UserLoginResponseDto>(
+        "/auth/login",
+        { email, password, rememberMe },
+        { withCredentials: true },
+      ),
     {
-      onSuccess: async () => {
+      onSuccess: async (data) => {
+        setAuthToken(data.data.token);
         await dispatch(getProfile());
       },
     },
@@ -44,7 +56,18 @@ const LoginForm = (): ReactElement => {
   const { register, handleSubmit } = useForm<UserLoginDto>();
 
   const handleLogin: SubmitHandler<UserLoginDto> = (form) => {
-    mutate({ login: form.login, password: form.password, save: form.save });
+    if (form.rememberMe) {
+      store.replaceReducer(persistedLocalReducer);
+      window.localStorage.setItem("rememberMe", "true");
+    } else {
+      store.replaceReducer(persistedSessionReducer);
+    }
+
+    mutate({
+      email: form.email,
+      password: form.password,
+      rememberMe: form.rememberMe,
+    });
   };
 
   useEffect(() => {
@@ -67,7 +90,7 @@ const LoginForm = (): ReactElement => {
                 fullWidth
                 disabled={isLoading}
                 required
-                {...register("login", { required: true })}
+                {...register("email", { required: true })}
               />
             </Grid>
             <Grid item xs={12}>
@@ -81,9 +104,15 @@ const LoginForm = (): ReactElement => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Box display='flex' alignItems='center' justifyContent='space-between'>
+              <Box
+                display='flex'
+                alignItems='center'
+                justifyContent='space-between'>
                 <FormGroup>
-                  <FormControlLabel control={<Checkbox {...register("save")} />} label='Remember Me' />
+                  <FormControlLabel
+                    control={<Checkbox {...register("rememberMe")} />}
+                    label='Remember Me'
+                  />
                 </FormGroup>
                 <Link to='/reset-password'>
                   <Typography component='span' fontWeight='500'>
@@ -95,13 +124,21 @@ const LoginForm = (): ReactElement => {
             <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
-                  <Button type='submit' variant='contained' fullWidth disabled={isLoading}>
+                  <Button
+                    type='submit'
+                    variant='contained'
+                    fullWidth
+                    disabled={isLoading}>
                     Login
                   </Button>
                 </Grid>
                 <Grid item xs={12}>
                   <Link to='/register'>
-                    <Button component='span' variant='outlined' fullWidth disabled={isLoading}>
+                    <Button
+                      component='span'
+                      variant='outlined'
+                      fullWidth
+                      disabled={isLoading}>
                       Register
                     </Button>
                   </Link>

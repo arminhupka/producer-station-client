@@ -18,15 +18,17 @@ interface IProps {
   children: ReactNode;
 }
 
-const MainLayout = ({ children }: IProps): ReactElement => (
-  <Box height='100%'>
-    <Header />
-    <StyledRoot>
-      <Box py={8} width='100%'>
-        <Container>{children}</Container>
-      </Box>
-    </StyledRoot>
-  </Box>
-);
+const MainLayout = ({ children }: IProps): ReactElement => {
+  return (
+    <Box height='100%'>
+      <Header />
+      <StyledRoot>
+        <Box py={8} width='100%'>
+          <Container>{children}</Container>
+        </Box>
+      </StyledRoot>
+    </Box>
+  );
+};
 
 export default MainLayout;

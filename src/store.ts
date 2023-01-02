@@ -1,23 +1,47 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
-import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE } from "redux-persist/es/constants";
-import storage from "reduxjs-toolkit-persist/lib/storage";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+} from "redux-persist/es/constants";
+import storage from "redux-persist/lib/storage";
+import storageSession from "redux-persist/lib/storage/session";
 
 import userReducer from "../src/features/userSlice";
 
 const rootReducer = combineReducers({ userReducer });
 
-const persistConfig = {
+const persistLocalConfig = {
   key: "root",
   version: 1,
   storage,
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistSessionConfig = {
+  key: "root",
+  version: 1,
+  storage: storageSession,
+};
+
+export const persistedLocalReducer = persistReducer(
+  persistLocalConfig,
+  rootReducer,
+);
+
+export const persistedSessionReducer = persistReducer(
+  persistSessionConfig,
+  rootReducer,
+);
 
 export const store = configureStore({
-  reducer: persistedReducer,
+  reducer: window.localStorage.getItem("rememberMe")
+    ? persistedLocalReducer
+    : persistedSessionReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

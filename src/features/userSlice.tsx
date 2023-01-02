@@ -1,12 +1,12 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
-import { GetProfileResponseDto } from "../api/api";
+import { UserProfileResponseDto } from "../api/api";
 import { ApiError } from "../api/apiError";
 import { api } from "../utils/api";
 
 interface InitialStateType {
-  user: null | GetProfileResponseDto;
+  user: null | UserProfileResponseDto;
   isLoading: boolean;
 }
 
@@ -15,20 +15,19 @@ const initialState: InitialStateType = {
   isLoading: false,
 };
 
-export const getProfile = createAsyncThunk<GetProfileResponseDto, undefined, { rejectValue: AxiosError<ApiError> }>(
-  "auth/profile",
-  async () => {
-    try {
-      const { data } = await api.get("/auth/profile", {
-        withCredentials: true,
-      });
+export const getProfile = createAsyncThunk<
+  UserProfileResponseDto,
+  undefined,
+  { rejectValue: AxiosError<ApiError> }
+>("auth/profile", async () => {
+  try {
+    const { data } = await api.get("/auth/me");
 
-      return data;
-    } catch (err) {
-      console.log(err);
-    }
-  },
-);
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 const userSlice = createSlice({
   name: "user",

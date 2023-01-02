@@ -1,6 +1,9 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
 import { ReactElement, useState } from "react";
 
+const loremIpsum =
+  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis egestas elit et mauris euismod vehicula. Phasellus tempus turpis lacus, non pulvinar elit molestie et. Quisque tempus sapien diam, vel imperdiet risus fringilla eu. Phasellus egestas ultrices ligula, vel auctor lorem euismod vel. Donec vitae ipsum enim. Phasellus viverra mollis turpis, et porta libero efficitur eget. Praesent in nulla convallis, volutpat metus a, venenatis ligula.";
+
 const RegisterForm = (): ReactElement => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
@@ -11,9 +14,7 @@ const RegisterForm = (): ReactElement => {
     <Box maxHeight={500}>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <TextField multiline fullWidth>
-            handlePrevStep
-          </TextField>
+          <TextField multiline rows={10} value={loremIpsum} fullWidth />
         </Grid>
       </Grid>
     </Box>
@@ -65,6 +66,44 @@ const RegisterForm = (): ReactElement => {
     }
   };
 
+  const generateFormButtons = () => {
+    switch (currentStep) {
+      case 0: {
+        return (
+          <>
+            <Button variant='contained' fullWidth onClick={handleNextStep}>
+              Next
+            </Button>
+          </>
+        );
+      }
+      case 1: {
+        return (
+          <>
+            <Button variant='outlined' fullWidth onClick={handlePrevStep}>
+              Previous
+            </Button>
+            <Button fullWidth variant='contained' onClick={handleNextStep}>
+              Next
+            </Button>
+          </>
+        );
+      }
+      case 2: {
+        return (
+          <>
+            <Button variant='outlined' fullWidth onClick={handlePrevStep}>
+              Previous
+            </Button>
+            <Button fullWidth variant='contained' onClick={handleNextStep}>
+              Next
+            </Button>
+          </>
+        );
+      }
+    }
+  };
+
   return (
     <Paper sx={{ width: "100%" }}>
       <Box p={4}>
@@ -73,21 +112,7 @@ const RegisterForm = (): ReactElement => {
         </Typography>
         <form>{generateForm()}</form>
         <Box mt={2} display='flex' gap={2}>
-          <Button fullWidth variant='outlined' onClick={handlePrevStep}>
-            Previous
-          </Button>
-          <Button
-            fullWidth
-            variant='contained'
-            onClick={() => {
-              if (currentStep < 3) {
-                handleNextStep();
-              } else {
-                console.log("submit");
-              }
-            }}>
-            {currentStep === 3 ? "Register" : "Next"}
-          </Button>
+          {generateFormButtons()}
         </Box>
       </Box>
     </Paper>
