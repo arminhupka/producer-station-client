@@ -1,14 +1,10 @@
 import { Box, CircularProgress } from "@mui/material";
-import { ReactElement, ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+import { ReactElement } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 
 import { useAppSelector } from "../store";
 
-interface IProps {
-  children: ReactNode;
-}
-
-const AuthRoute = ({ children }: IProps): ReactElement => {
+const AuthRoute = (): ReactElement => {
   const userState = useAppSelector((state) => state.userReducer);
 
   if (userState.isLoading) {
@@ -23,7 +19,7 @@ const AuthRoute = ({ children }: IProps): ReactElement => {
     return <Navigate to='/login' replace />;
   }
 
-  return <>{children}</>;
+  return <Outlet />;
 };
 
 export default AuthRoute;

@@ -13,32 +13,14 @@ import ResetPasswordView from "./views/ResetPasswordView";
 const App = (): ReactElement => (
   <BrowserRouter>
     <Routes>
-      <Route
-        path='/panel'
-        element={
-          <AuthRoute>
-            <DashboardView />
-          </AuthRoute>
-        }
-      />
-      <Route
-        path='/panel/labels'
-        element={
-          <AuthRoute>
-            <LabelsView />
-          </AuthRoute>
-        }
-      />
-      <Route
-        path='/panel/labels/:id'
-        element={
-          <AuthRoute>
-            <LabelDetails />
-          </AuthRoute>
-        }
-      />
+      <Route element={<AuthRoute />}>
+        <Route path='/panel' element={<DashboardView />} />
+        <Route path='/panel/labels' element={<LabelsView />} />
+        <Route path='/panel/labels/:id' element={<LabelDetails />} />
+      </Route>
       <Route path='/register' element={<RegisterView />} />
       <Route path='/login' element={<LoginView />} />
+      <Route path='/' element={<LoginView />} />
       <Route path='/reset-password' element={<ResetPasswordView />} />
       <Route path='/*' element={<NotFoundView />} />
     </Routes>

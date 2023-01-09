@@ -175,7 +175,7 @@ export const LabelDetails = (): ReactElement => {
                 <Grid item xs={12} lg={3}>
                   <DashboardCard
                     title='Commission'
-                    value={50}
+                    value={`${data.data.commissionRate}%`}
                     icon={<FiDollarSign />}
                     color='red'
                   />
