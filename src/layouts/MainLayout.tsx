@@ -24,7 +24,7 @@ const MainLayout = ({ children }: IProps): ReactElement => {
       <Header />
       <StyledRoot>
         <Box py={8} width='100%'>
-          <Container>{children}</Container>
+          <Container maxWidth='xl'>{children}</Container>
         </Box>
       </StyledRoot>
     </Box>

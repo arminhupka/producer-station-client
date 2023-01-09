@@ -32,12 +32,12 @@ const rootReducer = combineReducers({ userReducer });
 // };
 
 const persistCookieConfig = {
-  key: "root",
+  key: "user",
   storage: new CookieStorage(Cookies /*, options */),
 };
 
 const persistCookieRememberConfig = {
-  key: "root",
+  key: "user",
   storage: new CookieStorage(Cookies, {
     expiration: {
       default: 365 * 86400, // Cookies expire after one year

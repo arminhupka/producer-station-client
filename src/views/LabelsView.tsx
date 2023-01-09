@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 
 import { VendorLabelResponseDto } from "../api/api";
+import NewLabelModal from "../components/Modals/NewLabelModal/NewLabelModal";
 import PageHeading from "../components/PageHeading/PageHeading";
 import LabelsTable from "../components/Tabels/LabelsTable/LabelsTable";
 import useModalState from "../hooks/useModalState";
@@ -12,7 +13,7 @@ import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 
 const LabelsView = (): ReactElement => {
-  const { onOpen } = useModalState();
+  const { onOpen, isOpen, onClose } = useModalState();
 
   const { isLoading, data, remove } = useQuery<
     AxiosResponse<VendorLabelResponseDto[]>
@@ -31,7 +32,7 @@ const LabelsView = (): ReactElement => {
         <title>Labels | ProducerStation</title>
       </Helmet>
       <MainLayout>
-        {/* <NewLabelModal onClose={onClose} open={isOpen} /> */}
+        <NewLabelModal onClose={onClose} open={isOpen} />
         <PageHeading title='Labels'>
           <Button variant='contained' onClick={onOpen}>
             Add Labels

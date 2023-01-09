@@ -4,11 +4,13 @@ import {
   Chip,
   Paper,
   Skeleton,
+  SxProps,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  Theme,
   Typography,
 } from "@mui/material";
 import { ReactElement } from "react";
@@ -23,19 +25,24 @@ interface IProps {
   isLoading: boolean;
 }
 
+const ChipStyle: SxProps<Theme> = {
+  fontSize: 11,
+  fontWeight: 700,
+};
+
 const generateStatus = (status: string): ReactElement => {
   switch (status) {
     case LabelStatusEnum.Draft: {
-      return <Chip label={status} color='info' />;
+      return <Chip label={status} color='info' sx={ChipStyle} />;
     }
     case LabelStatusEnum.Submitted: {
-      return <Chip label={status} color='warning' />;
+      return <Chip label={status} color='warning' sx={ChipStyle} />;
     }
     case LabelStatusEnum.Active: {
-      return <Chip label={status} color='success' />;
+      return <Chip label={status} color='success' sx={ChipStyle} />;
     }
     case LabelStatusEnum.Suspended: {
-      return <Chip label={status} color='error' />;
+      return <Chip label={status} color='error' sx={ChipStyle} />;
     }
     default: {
       return <Chip label={status} />;
@@ -77,6 +84,7 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
           <TableCell>Products</TableCell>
           <TableCell>Commission rate</TableCell>
           <TableCell>Status</TableCell>
+          <TableCell>Created At</TableCell>
           <TableCell>Actions</TableCell>
         </TableRow>
       </TableHead>
@@ -96,7 +104,14 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
           data.map((label) => (
             <TableRow key={label._id}>
               <TableCell width={64}>
-                <Box width={64} height={64} overflow='hidden'>
+                <Box
+                  width={64}
+                  height={64}
+                  overflow='hidden'
+                  sx={{
+                    borderRadius: 0.5,
+                    overflow: "hidden",
+                  }}>
                   <img
                     src={label.avatar ?? NoImagePlaceholder}
                     alt=''
@@ -106,15 +121,20 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
                 </Box>
               </TableCell>
               <TableCell>
-                <Typography>{label.name}</Typography>
+                <Typography fontWeight={600}>{label.name}</Typography>
               </TableCell>
-              <TableCell>0</TableCell>
-              <TableCell>{label.commissionRate}%</TableCell>
+              <TableCell>
+                <Chip label={20} sx={ChipStyle} />
+              </TableCell>
+              <TableCell>
+                <Chip label={`${label.commissionRate}%`} sx={ChipStyle} />
+              </TableCell>
               <TableCell>{generateStatus(label.status)}</TableCell>
+              <TableCell>{new Date(Date.now()).toLocaleString()}</TableCell>
               <TableCell>
                 <Link to={`/panel/labels/${label._id}`}>
                   <Button component='div' variant='contained' size='small'>
-                    Details
+                    {label.status !== "Draft" ? "Edit" : "Details"}
                   </Button>
                 </Link>
               </TableCell>

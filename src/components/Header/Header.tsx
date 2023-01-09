@@ -18,8 +18,6 @@ const Header = () => {
   const dispatch = useAppDispatch();
 
   const handleUserLogout = () => {
-    window.localStorage.removeItem("persist:root");
-    window.sessionStorage.removeItem("persist:root");
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("rememberMe");
     dispatch(resetUser());

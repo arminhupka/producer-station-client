@@ -20,6 +20,7 @@ import { UserLoginDto, UserLoginResponseDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { getProfile } from "../../../features/userSlice";
 import {
+  persistedCookieReducer,
   persistedCookieRememberReducer,
   store,
   // persistedLocalReducer,
@@ -68,6 +69,8 @@ const LoginForm = (): ReactElement => {
     if (form.rememberMe) {
       window.localStorage.setItem("rememberMe", JSON.stringify(true));
       store.replaceReducer(persistedCookieRememberReducer);
+    } else {
+      store.replaceReducer(persistedCookieReducer);
     }
 
     mutate({

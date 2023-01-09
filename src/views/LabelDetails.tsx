@@ -7,14 +7,16 @@ import {
   Grid,
 } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FiDollarSign } from "react-icons/fi";
 import { useMutation, useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 
 import { UpdateLabelDto, VendorLabelDetailsResponseDto } from "../api/api";
 import { ApiError } from "../api/apiError";
+import DashboardCard from "../components/DashboardCard/DashboardCard";
 import LabelForm from "../components/Forms/LabelForm/LabelForm";
 import PageHeading from "../components/PageHeading/PageHeading";
 import { LabelStatusEnum } from "../enum/LabelStatusEnum";
@@ -22,6 +24,9 @@ import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 
 export const LabelDetails = (): ReactElement => {
+  const [updated, setUpdated] = useState<boolean>(false);
+  const [error, setError] = useState<AxiosError<ApiError> | null>(null);
+
   const { id } = useParams();
   const { isLoading, data, remove, refetch } = useQuery<
     AxiosResponse<VendorLabelDetailsResponseDto>,
@@ -32,11 +37,7 @@ export const LabelDetails = (): ReactElement => {
       await api.get<VendorLabelDetailsResponseDto>(`/vendor/labels/${id}`),
   );
 
-  const {
-    mutateAsync,
-    isLoading: isUpdating,
-    error,
-  } = useMutation<
+  const { mutateAsync, isLoading: isUpdating } = useMutation<
     AxiosResponse<VendorLabelDetailsResponseDto>,
     AxiosError<ApiError>,
     UpdateLabelDto
@@ -63,6 +64,18 @@ export const LabelDetails = (): ReactElement => {
         instagram,
         youtube,
       }),
+    {
+      onMutate: () => {
+        setError(null);
+        setUpdated(false);
+      },
+      onSuccess: () => {
+        setUpdated(true);
+      },
+      onError: (error) => {
+        setError(error);
+      },
+    },
   );
 
   const methods = useForm<UpdateLabelDto>();
@@ -94,6 +107,14 @@ export const LabelDetails = (): ReactElement => {
   useEffect(() => {
     return () => remove();
   }, []);
+
+  useEffect(() => {
+    if (updated) {
+      setTimeout(() => {
+        setUpdated(false);
+      }, 5000);
+    }
+  }, [updated]);
 
   return (
     <>
@@ -137,11 +158,54 @@ export const LabelDetails = (): ReactElement => {
           <>
             {error?.response && (
               <Box mb={2}>
-                <Alert variant='filled' severity='error'>
+                <Alert variant='standard' severity='error'>
                   {error.response.data.message}
                 </Alert>
               </Box>
             )}
+            {updated && (
+              <Box mb={2}>
+                <Alert variant='standard' severity='success'>
+                  Label updated
+                </Alert>
+              </Box>
+            )}
+            <Box mb={2}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={3}>
+                  <DashboardCard
+                    title='Commission'
+                    value={50}
+                    icon={<FiDollarSign />}
+                    color='red'
+                  />
+                </Grid>
+                <Grid item xs={12} lg={3}>
+                  <DashboardCard
+                    title='Commission'
+                    value={50}
+                    icon={<FiDollarSign />}
+                    color='red'
+                  />
+                </Grid>{" "}
+                <Grid item xs={12} lg={3}>
+                  <DashboardCard
+                    title='Commission'
+                    value={50}
+                    icon={<FiDollarSign />}
+                    color='red'
+                  />
+                </Grid>
+                <Grid item xs={12} lg={3}>
+                  <DashboardCard
+                    title='Commission'
+                    value={50}
+                    icon={<FiDollarSign />}
+                    color='red'
+                  />
+                </Grid>
+              </Grid>
+            </Box>
             <FormProvider {...methods}>
               <LabelForm data={data.data} refetch={handleRefetch} />
             </FormProvider>

@@ -162,6 +162,37 @@ export interface VendorLabelDetailsResponseDto {
   updatedAt: string;
 }
 
+export interface Labels {
+  totalLabels: number;
+  activated: number;
+  submitted: number;
+  suspended: number;
+}
+
+export interface Orders {
+  totalOrders: number;
+}
+
+export interface Earnings {
+  thisMonth: number;
+  lastMonth: number;
+  overall: number;
+}
+
+export interface Products {
+  totalProducts: number;
+  activeProducts: number;
+  submittedProducts: number;
+  suspendedProducts: number;
+}
+
+export interface VendorOverviewResponseDto {
+  labels: Labels;
+  orders: Orders;
+  earnings: Earnings;
+  products: Products;
+}
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -553,6 +584,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthControllerGetAuth
+     * @request GET:/auth
+     */
+    authControllerGetAuth: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth`,
+        method: "GET",
+        ...params,
+      }),
   };
   labels = {
     /**
@@ -570,6 +615,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Labels
+     * @name LabelsControllerGetLabels
+     * @summary Get labels
+     * @request GET:/labels
+     */
+    labelsControllerGetLabels: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/labels`,
+        method: "GET",
         ...params,
       }),
 
@@ -790,6 +850,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           }
       >({
         path: `/vendor/labels/${id}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerOverview
+     * @summary Get current vendor details
+     * @request GET:/vendor/overview
+     */
+    vendorControllerOverview: (params: RequestParams = {}) =>
+      this.request<
+        VendorOverviewResponseDto,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/vendor/overview`,
         method: "GET",
         format: "json",
         ...params,

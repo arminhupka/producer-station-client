@@ -20,8 +20,12 @@ const SidebarUser = (): ReactElement => {
         <Typography color='white' fontWeight='bold'>
           {userState?.username}
         </Typography>
-        <Typography color='secondary.light' fontSize='small'>
-          {userState?.role}
+        <Typography
+          color='secondary.light'
+          fontSize='small'
+          fontWeight={500}
+          textTransform='capitalize'>
+          {userState?.role.toLowerCase()}
         </Typography>
       </Box>
     </Box>
