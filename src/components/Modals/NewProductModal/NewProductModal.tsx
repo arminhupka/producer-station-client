@@ -1,6 +1,3 @@
-const NewProductModal = () => <h1>New Product Modal</h1>
-export default NewProductModal
-
 // import { Button, Grid, TextField } from "@mui/material";
 // import { AxiosError, AxiosResponse } from "axios";
 // import { ReactElement } from "react";
@@ -24,7 +21,11 @@ export default NewProductModal
 //     CreateProductDto
 //   >(
 //     async ({ name, label }) =>
-//       await api.post<NewProductResponseDto>("/product", { name, label }, { withCredentials: true }),
+//       await api.post<NewProductResponseDto>(
+//         "/product",
+//         { name, label },
+//         { withCredentials: true },
+//       ),
 //     {
 //       onSuccess: (data) => {
 //         navigate(`/panel/product/${data.data._id}`);
@@ -46,13 +47,27 @@ export default NewProductModal
 //         <form onSubmit={methods.handleSubmit(handleAddProduct)}>
 //           <Grid container gap={2}>
 //             <Grid item xs={12}>
-//               <TextField label='Label' fullWidth disabled={isLoading} {...methods.register("label")} />
+//               <TextField
+//                 label='Label'
+//                 fullWidth
+//                 disabled={isLoading}
+//                 {...methods.register("label")}
+//               />
 //             </Grid>
 //             <Grid item xs={12}>
-//               <TextField label='Product Name' fullWidth disabled={isLoading} {...methods.register("name")} />
+//               <TextField
+//                 label='Product Name'
+//                 fullWidth
+//                 disabled={isLoading}
+//                 {...methods.register("name")}
+//               />
 //             </Grid>
 //             <Grid item xs={12}>
-//               <Button type='submit' variant='contained' fullWidth disabled={isLoading}>
+//               <Button
+//                 type='submit'
+//                 variant='contained'
+//                 fullWidth
+//                 disabled={isLoading}>
 //                 Add New Product
 //               </Button>
 //             </Grid>
@@ -64,3 +79,34 @@ export default NewProductModal
 // };
 //
 // export default NewProductModal;
+
+import { Button, Grid, TextField } from "@mui/material";
+import { ReactElement } from "react";
+
+import BaseModal, { IBaseModalProps } from "../BaseModal";
+
+type TProps = Pick<IBaseModalProps, "open" | "onClose">;
+
+const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
+  return (
+    <BaseModal title='New Product' onClose={onClose} open={open}>
+      <form>
+        <Grid container gap={2}>
+          <Grid item xs={12}>
+            <TextField label='Label' fullWidth />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField label='Product Name' fullWidth />
+          </Grid>
+          <Grid item xs={12}>
+            <Button type='submit' variant='contained' fullWidth>
+              Add New Product
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </BaseModal>
+  );
+};
+
+export default NewProductModal;

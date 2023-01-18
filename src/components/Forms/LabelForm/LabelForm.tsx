@@ -19,7 +19,11 @@ interface IProps {
 }
 
 const LabelForm = ({ data, refetch }: IProps): ReactElement => {
-  const { register, setValue } = useFormContext<UpdateLabelDto>();
+  const {
+    register,
+    setValue,
+    formState: { errors },
+  } = useFormContext<UpdateLabelDto>();
 
   const { mutateAsync } = useMutation<
     AxiosResponse<VendorLabelDetailsResponseDto>,
@@ -71,6 +75,8 @@ const LabelForm = ({ data, refetch }: IProps): ReactElement => {
                   label='Name'
                   fullWidth
                   {...register("name")}
+                  helperText={errors.name?.message}
+                  error={!!errors.name}
                   required
                 />
               </Grid>
@@ -79,6 +85,8 @@ const LabelForm = ({ data, refetch }: IProps): ReactElement => {
                   label='E-Mail'
                   fullWidth
                   {...register("email")}
+                  helperText={errors.email?.message}
+                  error={!!errors.email}
                   required
                 />
               </Grid>
@@ -90,6 +98,8 @@ const LabelForm = ({ data, refetch }: IProps): ReactElement => {
                   fullWidth
                   required
                   {...register("description")}
+                  helperText={errors.description?.message}
+                  error={!!errors.description}
                 />
               </Grid>
             </Grid>

@@ -35,7 +35,7 @@ const LabelsView = (): ReactElement => {
         <NewLabelModal onClose={onClose} open={isOpen} />
         <PageHeading title='Labels'>
           <Button variant='contained' onClick={onOpen}>
-            Add Labels
+            Add Label
           </Button>
         </PageHeading>
 

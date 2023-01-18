@@ -1,3 +1,4 @@
+import { yupResolver } from "@hookform/resolvers/yup";
 import {
   Alert,
   Backdrop,
@@ -22,6 +23,7 @@ import PageHeading from "../components/PageHeading/PageHeading";
 import { LabelStatusEnum } from "../enum/LabelStatusEnum";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
+import { UpdateLabelValidator } from "../validators/LabelUpdateValidation";
 
 export const LabelDetails = (): ReactElement => {
   const [updated, setUpdated] = useState<boolean>(false);
@@ -78,7 +80,10 @@ export const LabelDetails = (): ReactElement => {
     },
   );
 
-  const methods = useForm<UpdateLabelDto>();
+  const methods = useForm<UpdateLabelDto>({
+    resolver: yupResolver(UpdateLabelValidator),
+    mode: "onChange",
+  });
 
   const handleLabelUpdate: SubmitHandler<UpdateLabelDto> = async (form) => {
     await mutateAsync({

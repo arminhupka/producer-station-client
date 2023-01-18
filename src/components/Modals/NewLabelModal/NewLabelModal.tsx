@@ -1,22 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Grid, TextField } from "@mui/material";
+import { Alert, Button, Grid, TextField } from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
-import * as yup from "yup";
-import { string } from "yup";
 
 import { CreateLabelResponseDto, NewLabelDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
+import { NewLabelFormValidator } from "../../../validators/NewLabelValidator";
 import BaseModal, { IBaseModalProps } from "../BaseModal";
-
-const FormSchema = yup.object({
-  name: string().min(6, "Label name must be at least 6 characters").required(),
-});
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -27,11 +22,13 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
     register,
     handleSubmit,
     formState: { errors },
+    reset: formReset,
   } = useForm<NewLabelDto>({
-    resolver: yupResolver(FormSchema),
+    resolver: yupResolver(NewLabelFormValidator),
+    mode: "onChange",
   });
 
-  const { mutate, isLoading } = useMutation<
+  const { mutate, isLoading, error, reset } = useMutation<
     AxiosResponse<CreateLabelResponseDto>,
     AxiosError<ApiError>,
     NewLabelDto
@@ -54,8 +51,14 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
     mutate({ name: form.name, user: userId });
   };
 
+  const handleClose = () => {
+    onClose();
+    reset();
+    formReset();
+  };
+
   return (
-    <BaseModal title='New Label' onClose={onClose} open={open}>
+    <BaseModal title='New Label' onClose={handleClose} open={open}>
       <form onSubmit={handleSubmit(handleAddNewLabel)}>
         <Grid container gap={2}>
           <Grid item xs={12}>
@@ -65,8 +68,7 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
               disabled={isLoading}
               helperText={errors.name?.message}
               error={!!errors.name}
-              required
-              {...register("name", { required: true })}
+              {...register("name")}
             />
           </Grid>
           <Grid item xs={12}>
@@ -78,6 +80,11 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
               Add New Label
             </Button>
           </Grid>
+          {error?.response?.data && (
+            <Grid item xs={12}>
+              <Alert severity='error'>{error.response.data.message}</Alert>
+            </Grid>
+          )}
         </Grid>
       </form>
     </BaseModal>
