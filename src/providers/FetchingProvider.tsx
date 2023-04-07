@@ -10,6 +10,7 @@ import { setAllLabels } from "../features/labelsSlice";
 import { resetUser, setUser } from "../features/userSlice";
 import { useAppDispatch } from "../store";
 import { api } from "../utils/api";
+import FullyLoader from "../components/atoms/FullLoader/FullLoader";
 
 interface IProps {
   children: ReactNode;
@@ -48,7 +49,7 @@ const FetchingProvider = ({ children }: IProps): ReactElement => {
   );
 
   if (vendorLabels.isLoading || user.isLoading) {
-    return <h1>Loading</h1>;
+    return <FullyLoader />;
   }
 
   return <>{children}</>;

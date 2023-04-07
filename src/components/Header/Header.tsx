@@ -7,6 +7,7 @@ import useModalState from "../../hooks/useModalState";
 import { useAppDispatch } from "../../store";
 import Sidebar from "../Sidebar/Sidebar";
 import { type ReactElement } from "react";
+import Container from "@mui/material/Container";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   background: theme.palette.background.paper,
@@ -25,39 +26,32 @@ const Header = (): ReactElement => {
   };
 
   return (
-    <StyledAppBar
-      sx={{
-        left: {
-          lg: 280,
-        },
-        width: {
-          lg: "calc(100% - 280px)",
-        },
-      }}>
+    <StyledAppBar>
       <Sidebar isOpen={isOpen} onClose={onClose} />
-      <Toolbar
-        disableGutters
-        sx={{
-          px: 2,
-        }}>
-        <IconButton
-          onClick={onOpen}
+      <Container maxWidth='xl' disableGutters>
+        <Toolbar
           sx={{
-            display: {
-              sm: "block",
-              lg: "none",
-            },
+            px: 2,
           }}>
-          <Menu />
-        </IconButton>
-        <Button
-          variant='contained'
-          size='small'
-          sx={{ marginLeft: "auto" }}
-          onClick={handleUserLogout}>
-          Logout
-        </Button>
-      </Toolbar>
+          <IconButton
+            onClick={onOpen}
+            sx={{
+              display: {
+                sm: "block",
+                lg: "none",
+              },
+            }}>
+            <Menu />
+          </IconButton>
+          <Button
+            variant='contained'
+            size='small'
+            sx={{ marginLeft: "auto" }}
+            onClick={handleUserLogout}>
+            Logout
+          </Button>
+        </Toolbar>
+      </Container>
     </StyledAppBar>
   );
 };

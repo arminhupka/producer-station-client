@@ -1,18 +1,33 @@
 import {
   Dashboard,
+  KeyboardArrowLeft,
+  KeyboardArrowRight,
   LibraryMusic,
   Payments,
   Person,
   Star,
 } from "@mui/icons-material";
-import { Divider, Drawer, List, useMediaQuery, useTheme } from "@mui/material";
-import { styled } from "@mui/system";
-import { type ReactElement } from "react";
+import {
+  Box,
+  Divider,
+  Drawer,
+  type DrawerProps,
+  IconButton,
+  List,
+  styled,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
+import { type ReactElement, useState } from "react";
 
 import NavItem from "./NavItem/NavItem";
 import SidebarUser from "./SidebarUser/SidebarUser";
 
-const StyledDrawer = styled(Drawer)(({ theme }) => ({
+interface IStyledDrawer extends DrawerProps {
+  small?: boolean;
+}
+
+const StyledDrawer = styled(Drawer)<IStyledDrawer>(({ theme, small }) => ({
   width: 280,
   flexShrink: 0,
   [`& .MuiDrawer-paper`]: {
@@ -20,6 +35,21 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
     boxSizing: "border-box",
     background: "#111827",
   },
+  ...(small && {
+    width: "auto",
+    [`& .MuiDrawer-paper`]: {
+      width: "auto",
+
+      boxSizing: "border-box",
+      background: "#111827",
+    },
+  }),
+}));
+
+const StyledWrapper = styled(Box)(() => ({
+  height: "100%",
+  display: "flex",
+  flexDirection: "column",
 }));
 
 const UserMenus: Array<{
@@ -68,29 +98,56 @@ interface IProps {
 const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const [hideTitles, setHideTitles] = useState<boolean>(false);
+
+  const handleToggleTitlesDisplay = (): void => {
+    setHideTitles(!hideTitles);
+  };
 
   return (
     <StyledDrawer
       variant={isMobile ? "temporary" : "permanent"}
       open={isOpen}
-      onClose={onClose}>
-      <SidebarUser />
-      <Divider
-        sx={(theme) => ({
-          mb: 2,
-          borderColor: theme.palette.neutral[700],
-        })}
-      />
-      <List>
-        {UserMenus.map((item) => (
-          <NavItem
-            key={item.id}
-            title={item.title}
-            href={item.href}
-            icon={item.icon}
-          />
-        ))}
-      </List>
+      onClose={onClose}
+      small={!hideTitles}>
+      <StyledWrapper>
+        {hideTitles && <SidebarUser />}
+        <Divider
+          sx={(theme) => ({
+            mb: 2,
+            borderColor: theme.palette.neutral[700],
+          })}
+        />
+        <List sx={{ flex: 1 }}>
+          {UserMenus.map((item) => (
+            <NavItem
+              key={item.id}
+              title={item.title}
+              href={item.href}
+              icon={item.icon}
+              hideTitles={hideTitles}
+            />
+          ))}
+        </List>
+        <Box display='flex' justifyContent='center'>
+          <IconButton
+            focusRipple={false}
+            onClick={handleToggleTitlesDisplay}
+            sx={{
+              paddingY: "20px",
+              "&:hover": {
+                background: "transparent",
+              },
+            }}>
+            {!hideTitles && (
+              <KeyboardArrowRight color='secondary' fontSize='large' />
+            )}
+            {hideTitles && (
+              <KeyboardArrowLeft color='secondary' fontSize='large' />
+            )}
+          </IconButton>
+        </Box>
+      </StyledWrapper>
     </StyledDrawer>
   );
 };
