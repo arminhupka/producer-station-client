@@ -1,13 +1,12 @@
 import { api } from "./api";
 
-const setAuthToken = (token: string) => {
-  if (token) {
-    api.defaults.headers.Authorization = `Bearer ${token}`;
-    localStorage.setItem("token", token);
-  } else {
-    api.defaults.headers.Authorization = null;
-    localStorage.removeItem("token");
-  }
+export const setAuthToken = (token: string): void => {
+  api.defaults.headers.Authorization = `Bearer ${token}`;
+  localStorage.setItem("token", token);
+};
+
+export const setRefreshToken = (token: string): void => {
+  localStorage.setItem("refreshToken", token);
 };
 
 export default setAuthToken;

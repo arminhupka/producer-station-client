@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Helmet } from "react-helmet";
 
 import LoginForm from "../components/Forms/LoginForm/LoginForm";

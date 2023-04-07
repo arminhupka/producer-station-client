@@ -1,4 +1,4 @@
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { Helmet } from "react-helmet";
 
 import CheckInvitationForm from "../components/Forms/CheckInvitationForm/CheckInvitationForm";
@@ -8,7 +8,7 @@ import NoAuthLayout from "../layouts/NoAuthLayout";
 const RegisterView = (): ReactElement => {
   const [canRegister, setCanRegister] = useState<boolean>(false);
 
-  const handleVerification = () => {
+  const handleVerification = (): void => {
     setCanRegister(true);
   };
 

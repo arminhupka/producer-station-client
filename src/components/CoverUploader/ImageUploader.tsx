@@ -7,14 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import {
-  MouseEvent,
-  MutableRefObject,
-  ReactElement,
-  useEffect,
-  useRef,
-} from "react";
-
+import type { MouseEvent, MutableRefObject, ReactElement } from "react";
+import { useEffect, useRef } from "react";
 import PlaceholderImage from "../../assets/images/no-image.jpg";
 import useChunkUploader from "../../hooks/useChunkUploader";
 
@@ -52,12 +46,12 @@ const ImageUploader = ({
 
   const inputBtnRef = useRef() as MutableRefObject<HTMLInputElement>;
 
-  const handleMuiButton = (e: MouseEvent<HTMLButtonElement>) => {
+  const handleMuiButton = (e: MouseEvent<HTMLButtonElement>): void => {
     inputBtnRef.current.click();
   };
 
   useEffect(() => {
-    if (details) {
+    if (details != null) {
       onUpload(details._id);
     }
   }, [details]);
@@ -65,7 +59,7 @@ const ImageUploader = ({
   return (
     <Card>
       <Box p={2}>
-        {title && (
+        {title != null && (
           <Typography mb={2} variant='h6' fontWeight={600}>
             {title}
           </Typography>

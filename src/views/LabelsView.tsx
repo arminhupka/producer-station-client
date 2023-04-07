@@ -1,10 +1,10 @@
 import { Button } from "@mui/material";
-import { AxiosResponse } from "axios";
-import { ReactElement, useEffect } from "react";
+import { type AxiosResponse } from "axios";
+import { type ReactElement, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 
-import { VendorLabelResponseDto } from "../api/api";
+import { type VendorLabelResponseDto } from "../api/api";
 import NewLabelModal from "../components/Modals/NewLabelModal/NewLabelModal";
 import PageHeading from "../components/PageHeading/PageHeading";
 import LabelsTable from "../components/Tabels/LabelsTable/LabelsTable";
@@ -16,14 +16,16 @@ const LabelsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
 
   const { isLoading, data, remove } = useQuery<
-    AxiosResponse<VendorLabelResponseDto[]>
+    AxiosResponse<VendorLabelResponseDto>
   >(
     "labels",
-    async () => await api.get<VendorLabelResponseDto[]>("/vendor/labels"),
+    async () => await api.get<VendorLabelResponseDto>("/vendor/labels"),
   );
 
   useEffect(() => {
-    return () => remove();
+    return () => {
+      remove();
+    };
   }, []);
 
   return (
@@ -40,7 +42,7 @@ const LabelsView = (): ReactElement => {
         </PageHeading>
 
         <LabelsTable
-          data={!isLoading && data ? data.data : []}
+          data={!isLoading && data != null ? data?.data.docs : []}
           isLoading={isLoading}
         />
       </MainLayout>

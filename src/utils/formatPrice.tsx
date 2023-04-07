@@ -1,5 +1,7 @@
-import Dinero from "dinero.js";
-
-const formatPrice = (price: number): string => Dinero({ amount: price, currency: "USD" }).toFormat("$0.00");
-
-export default formatPrice;
+export const formatPrice = (value: number): string => {
+  const formatter = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+  return formatter.format(value / 100);
+};

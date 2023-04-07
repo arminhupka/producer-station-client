@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { CreateLabelResponseDto, NewLabelDto } from "../../../api/api";
+import { LabelDto, NewLabelDto } from "../../../api/api";
 import { ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
@@ -29,12 +29,12 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
   });
 
   const { mutate, isLoading, error, reset } = useMutation<
-    AxiosResponse<CreateLabelResponseDto>,
+    AxiosResponse<LabelDto>,
     AxiosError<ApiError>,
     NewLabelDto
   >(
     async ({ name, user }) =>
-      await api.post<CreateLabelResponseDto>(
+      await api.post<LabelDto>(
         "/labels",
         { name, user },
         { withCredentials: true },

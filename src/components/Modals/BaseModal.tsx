@@ -40,7 +40,12 @@ export interface IBaseModalProps extends ModalProps {
   onClose: () => void;
 }
 
-const BaseModal = ({ open, title, children, onClose }: IBaseModalProps): ReactElement => (
+const BaseModal = ({
+  open,
+  title,
+  children,
+  onClose,
+}: IBaseModalProps): ReactElement => (
   <Modal open={open} onClose={onClose}>
     <Box position='relative' height='100%'>
       <StyledModalWrapper>

@@ -1,4 +1,12 @@
-import { Alert, Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { AxiosError, AxiosResponse } from "axios";
 import { ReactElement } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -13,18 +21,24 @@ const ResetPasswordForm = (): ReactElement => {
     AxiosResponse<{ ok: true }>,
     AxiosError<ApiError>,
     ResetPasswordRequestDto
-  >(async ({ email }) => await api.post<{ ok: true }>("/users/reset-password", { email }), {
-    onSuccess: () => {
-      reset();
+  >(
+    async ({ email }) =>
+      await api.post<{ ok: true }>("/users/reset-password", { email }),
+    {
+      onSuccess: () => {
+        reset();
+      },
+      onError: () => {
+        reset();
+      },
     },
-    onError: () => {
-      reset();
-    },
-  });
+  );
 
   const { register, handleSubmit, reset } = useForm<ResetPasswordRequestDto>();
 
-  const handleResetPassword: SubmitHandler<ResetPasswordRequestDto> = (form) => {
+  const handleResetPassword: SubmitHandler<ResetPasswordRequestDto> = (
+    form,
+  ) => {
     mutate({ email: form.email });
   };
 
@@ -46,7 +60,11 @@ const ResetPasswordForm = (): ReactElement => {
               />
             </Grid>
             <Grid item xs={12}>
-              <Button type='submit' variant='contained' fullWidth disabled={isLoading}>
+              <Button
+                type='submit'
+                variant='contained'
+                fullWidth
+                disabled={isLoading}>
                 Reset Password
               </Button>
             </Grid>
@@ -54,7 +72,9 @@ const ResetPasswordForm = (): ReactElement => {
         </form>
         {isSuccess && (
           <Box mt={2}>
-            <Alert severity='success'>We sent you an email with instructions</Alert>
+            <Alert severity='success'>
+              We sent you an email with instructions
+            </Alert>
           </Box>
         )}
         {isError && error.response != null && (

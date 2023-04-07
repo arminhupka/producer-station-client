@@ -1,6 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import Cookies from "cookies-js";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+import * as Cookies from "cookies-js";
+import {
+  type TypedUseSelectorHook,
+  useDispatch,
+  useSelector,
+} from "react-redux";
 import { persistReducer, persistStore } from "redux-persist";
 import {
   FLUSH,
@@ -15,9 +19,10 @@ import {
 // @ts-expect-error
 import { CookieStorage } from "redux-persist-cookie-storage";
 
+import labelsReducer from "../src/features/labelsSlice";
 import userReducer from "../src/features/userSlice";
 
-const rootReducer = combineReducers({ userReducer });
+const rootReducer = combineReducers({ userReducer, labelsReducer });
 
 // const persistLocalConfig = {
 //   key: "root",

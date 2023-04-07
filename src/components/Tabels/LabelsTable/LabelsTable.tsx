@@ -16,12 +16,12 @@ import {
 import { ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { VendorLabelResponseDto } from "../../../api/api";
+import { VendorLabelListItem } from "../../../api/api";
 import NoImagePlaceholder from "../../../assets/images/no-image.jpg";
 import { LabelStatusEnum } from "../../../enum/LabelStatusEnum";
 
 interface IProps {
-  data: VendorLabelResponseDto[];
+  data: VendorLabelListItem[];
   isLoading: boolean;
 }
 
@@ -69,6 +69,9 @@ const GhostProduct = (): ReactElement => (
     </TableCell>
     <TableCell>
       <Skeleton />
+    </TableCell>
+    <TableCell>
+      <Skeleton />
       <Skeleton />
     </TableCell>
   </TableRow>
@@ -100,7 +103,6 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
           </>
         )}
         {!isLoading &&
-          data &&
           data.map((label) => (
             <TableRow key={label._id}>
               <TableCell width={64}>
@@ -124,13 +126,15 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
                 <Typography fontWeight={600}>{label.name}</Typography>
               </TableCell>
               <TableCell>
-                <Chip label={20} sx={ChipStyle} />
+                <Chip label={label.productsCount} sx={ChipStyle} />
               </TableCell>
               <TableCell>
                 <Chip label={`${label.commissionRate}%`} sx={ChipStyle} />
               </TableCell>
               <TableCell>{generateStatus(label.status)}</TableCell>
-              <TableCell>{new Date(Date.now()).toLocaleString()}</TableCell>
+              <TableCell>
+                {new Date(label.createdAt).toLocaleDateString()}
+              </TableCell>
               <TableCell>
                 <Link to={`/panel/labels/${label._id}`}>
                   <Button component='div' variant='contained' size='small'>

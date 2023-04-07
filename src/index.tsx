@@ -34,18 +34,16 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,
 );
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate persistor={persist}>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </PersistGate>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={store}>
+    <PersistGate persistor={persist}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <App />
+        </ThemeProvider>
+      </QueryClientProvider>
+    </PersistGate>
+  </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

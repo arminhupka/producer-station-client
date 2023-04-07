@@ -80,31 +80,85 @@
 //
 // export default NewProductModal;
 
-import { Button, Grid, TextField } from "@mui/material";
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  TextField,
+} from "@mui/material";
+import { AxiosError, AxiosResponse } from "axios";
 import { ReactElement } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 
+import { NewProductDto, ProductDto } from "../../../api/api";
+import { ApiError } from "../../../api/apiError";
+import { useAppSelector } from "../../../store";
+import { api } from "../../../utils/api";
 import BaseModal, { IBaseModalProps } from "../BaseModal";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
 const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
+  const navigate = useNavigate();
+  const labels = useAppSelector((state) => state.labelsReducer.labels);
+
+  const { register, setValue, handleSubmit } = useForm<NewProductDto>();
+  const { mutate, isLoading } = useMutation<
+    AxiosResponse<ProductDto>,
+    AxiosError<ApiError>,
+    NewProductDto
+  >(async (form) => await api.post<ProductDto>("/products", form), {
+    onSuccess: (data) => navigate(`/labels/${data.data._id}`),
+  });
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setValue("label", event.target.value);
+  };
+
+  const handleCreateNewProduct: SubmitHandler<NewProductDto> = (form) => {
+    mutate(form);
+  };
+
   return (
     <BaseModal title='New Product' onClose={onClose} open={open}>
-      <form>
-        <Grid container gap={2}>
-          <Grid item xs={12}>
-            <TextField label='Label' fullWidth />
+      <>
+        {isLoading && "loading"}
+        <form onSubmit={handleSubmit(handleCreateNewProduct)}>
+          <Grid container gap={2}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id='label'>Select label</InputLabel>
+                <Select
+                  labelId='label'
+                  label='Select label'
+                  fullWidth
+                  {...register("label")}
+                  onChange={handleChange}>
+                  {labels.map((l) => (
+                    <MenuItem key={l._id} value={l._id}>
+                      {l.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField label='Product Name' fullWidth {...register("name")} />
+            </Grid>
+            <Grid item xs={12}>
+              <Button type='submit' variant='contained' fullWidth>
+                Add New Product
+              </Button>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <TextField label='Product Name' fullWidth />
-          </Grid>
-          <Grid item xs={12}>
-            <Button type='submit' variant='contained' fullWidth>
-              Add New Product
-            </Button>
-          </Grid>
-        </Grid>
-      </form>
+        </form>
+      </>
     </BaseModal>
   );
 };

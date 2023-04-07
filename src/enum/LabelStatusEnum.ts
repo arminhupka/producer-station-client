@@ -1,6 +1,6 @@
 export enum LabelStatusEnum {
-  Draft = 'Draft',
-  Submitted = 'Submitted',
-  Active = 'Active',
-  Suspended = 'Suspended',
+  Draft = "Draft",
+  Submitted = "Submitted",
+  Active = "Active",
+  Suspended = "Suspended",
 }

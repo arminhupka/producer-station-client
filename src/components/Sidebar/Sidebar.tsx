@@ -1,4 +1,10 @@
-import { Dashboard, LibraryMusic, Payments, Person, Star } from "@mui/icons-material";
+import {
+  Dashboard,
+  LibraryMusic,
+  Payments,
+  Person,
+  Star,
+} from "@mui/icons-material";
 import { Divider, Drawer, List, useMediaQuery, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
 import { ReactElement } from "react";
@@ -16,7 +22,12 @@ const StyledDrawer = styled(Drawer)(({ theme }) => ({
   },
 }));
 
-const UserMenus: Array<{ id: number; title: string; href: string; icon: ReactElement }> = [
+const UserMenus: Array<{
+  id: number;
+  title: string;
+  href: string;
+  icon: ReactElement;
+}> = [
   {
     id: 0,
     title: "Dashboard",
@@ -59,7 +70,10 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
-    <StyledDrawer variant={isMobile ? "temporary" : "permanent"} open={isOpen} onClose={onClose}>
+    <StyledDrawer
+      variant={isMobile ? "temporary" : "permanent"}
+      open={isOpen}
+      onClose={onClose}>
       <SidebarUser />
       <Divider
         sx={(theme) => ({
@@ -69,7 +83,12 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
       />
       <List>
         {UserMenus.map((item) => (
-          <NavItem key={item.id} title={item.title} href={item.href} icon={item.icon} />
+          <NavItem
+            key={item.id}
+            title={item.title}
+            href={item.href}
+            icon={item.icon}
+          />
         ))}
       </List>
     </StyledDrawer>

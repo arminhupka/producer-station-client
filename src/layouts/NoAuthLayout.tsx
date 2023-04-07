@@ -32,7 +32,10 @@ const NoAuthLayout = ({ children }: IProps): ReactElement => {
             <Box
               width='100%'
               height='100%'
-              sx={{ background: `url(${image}) no-repeat center`, backgroundSize: "cover" }}
+              sx={{
+                background: `url(${image}) no-repeat center`,
+                backgroundSize: "cover",
+              }}
             />
           </Grid>
         )}

@@ -2,6 +2,7 @@ import { Box, CircularProgress } from "@mui/material";
 import { ReactElement } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
+import Providers from "../providers";
 import { useAppSelector } from "../store";
 
 const AuthRoute = (): ReactElement => {
@@ -19,7 +20,11 @@ const AuthRoute = (): ReactElement => {
     return <Navigate to='/login' replace />;
   }
 
-  return <Outlet />;
+  return (
+    <Providers>
+      <Outlet />
+    </Providers>
+  );
 };
 
 export default AuthRoute;

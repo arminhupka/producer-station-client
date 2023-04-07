@@ -58,6 +58,7 @@ export interface UserLoginDto {
 
 export interface UserLoginResponseDto {
   token: string;
+  refreshToken: string;
 }
 
 export interface UserProfileResponseDto {
@@ -70,7 +71,13 @@ export interface UserProfileResponseDto {
 export interface NewLabelDto {
   /** @minLength 6 */
   name: string;
-  user: string;
+  /** User ID */
+  user?: string;
+}
+
+export interface FileUser {
+  _id: string;
+  username: string;
 }
 
 export interface FileDto {
@@ -79,6 +86,7 @@ export interface FileDto {
   size: number;
   type: string;
   public: string;
+  uploadedBy: FileUser;
 }
 
 export interface Socials {
@@ -87,7 +95,7 @@ export interface Socials {
   youtube: string;
 }
 
-export interface CreateLabelResponseDto {
+export interface LabelDto {
   _id: string;
   name: string;
   description: string;
@@ -117,15 +125,38 @@ export interface UpdateLabelDto {
   youtube?: string;
 }
 
-export interface PublicLabelResponseDto {
+export interface PublicLabelListItemDto {
   _id: string;
   name: string;
-  description: string;
-  email: string;
   avatar: string;
   header: string;
   slug: string;
-  socials: Socials;
+}
+
+export interface PublicLabelListResponseDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: PublicLabelListItemDto[];
+}
+
+export interface GetFilesResponseDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: FileDto[];
 }
 
 export interface UploadDto {
@@ -137,12 +168,29 @@ export interface UploadDto {
   contentLength: number;
 }
 
-export interface VendorLabelResponseDto {
+export interface VendorLabelListItem {
   _id: string;
   avatar: string | null;
   commissionRate: number;
   name: string;
   status: "Draft" | "Submitted" | "Active" | "Suspended";
+  slug: string;
+  productsCount: number;
+  /** @format date-time */
+  createdAt: string;
+}
+
+export interface VendorLabelResponseDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: VendorLabelListItem[];
 }
 
 export interface VendorLabelDetailsResponseDto {
@@ -156,10 +204,108 @@ export interface VendorLabelDetailsResponseDto {
   avatar: FileDto | null;
   header: FileDto | null;
   slug: string;
+  productsCount: number;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
+}
+
+export interface VendorProductsListItemCategoryDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface VendorProductsListItemGenreDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface VendorProductsListItemLabelDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface VendorProductsListItemDto {
+  _id: string;
+  name: string;
+  price: number;
+  salePrice: number;
+  featured: boolean;
+  artwork: FileDto;
+  category: VendorProductsListItemCategoryDto[];
+  genre: VendorProductsListItemGenreDto[];
+  status: "Draft" | "Submitted" | "Active" | "Suspended";
+  label: VendorProductsListItemLabelDto;
+  slug: string;
+  /** @format date-time */
+  publishedAt: string;
+  /** @format date-time */
+  createdAt: string;
+}
+
+export interface VendorProductsListPaginatedDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: VendorProductsListItemDto[];
+}
+
+export interface ProductLabelDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface ProductCategoryDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface ProductGenreDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface ProductDto {
+  _id: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  salePrice: number;
+  featured: boolean;
+  artwork: FileDto;
+  audioPreview: FileDto;
+  label: ProductLabelDto;
+  category: ProductCategoryDto[];
+  genre: ProductGenreDto[];
+  status: "Draft" | "Submitted" | "Active" | "Suspended";
+  name: string;
+  new: boolean;
+  free: boolean;
+  /** @format date-time */
+  publishedAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  createdAt: string;
+  slug: string;
+}
+
+export interface GetVendorAllLabelsDto {
+  _id: string;
+  name: string;
 }
 
 export interface Labels {
@@ -193,6 +339,211 @@ export interface VendorOverviewResponseDto {
   products: Products;
 }
 
+export interface NewProductDto {
+  name: string;
+  label: string;
+}
+
+export interface PublicProductListItemCategoryDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface PublicProductListItemGenreDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface PublicProductListItemLabelDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export interface PublicProductListItemDto {
+  _id: string;
+  price: number;
+  salePrice: number;
+  featured: boolean;
+  artwork: string | null;
+  audioPreview: string | null;
+  name: string;
+  slug: string;
+  isNew: boolean;
+  isFree: boolean;
+  category: PublicProductListItemCategoryDto[];
+  genre: PublicProductListItemGenreDto[];
+  label: PublicProductListItemLabelDto;
+}
+
+export interface GetPublicProductsPaginatedDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: PublicProductListItemDto[];
+}
+
+export interface UpdateProductDto {
+  name: string;
+  description: string;
+  shortDescription: string;
+  price: number;
+  salePrice: number;
+  category: string[];
+  genre: string[];
+  status: string;
+  featured: boolean;
+  artwork: string;
+}
+
+export interface PublicProductLabel {
+  name: string;
+  slug: string;
+}
+
+export interface PublicProductDto {
+  _id: string;
+  name: string;
+  shortDescription: string;
+  description: string;
+  price: number | null;
+  salePrice: number;
+  featured: boolean;
+  slug: string;
+  new: boolean;
+  free: boolean;
+  label: PublicProductLabel;
+  artwork: string | null;
+  audioPreview: string | null;
+}
+
+export type CreateCategoryDto = object;
+
+export interface CategoryDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export type UpdateCategoryDto = object;
+
+export type CreateGenreDto = object;
+
+export interface GenreDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export type UpdateGenreDto = object;
+
+export interface OrderBilling {
+  firstName: string;
+  lastName: string;
+  street: string;
+  city: object;
+  postalCode: string;
+  country: string;
+  companyName?: string | null;
+  companyVat?: string | null;
+  companyStreet?: string | null;
+  companyCity?: object | null;
+  companyPostalCode?: string | null;
+  companyCountry?: string | null;
+}
+
+export interface CreateOrderDto {
+  /** Products ID's */
+  products: string[];
+  gateway: "paypal" | "stripe";
+  billing: OrderBilling;
+}
+
+export interface AdminUserSimplyBillinDto {
+  firstName: string;
+  lastName: string;
+}
+
+export interface AdminUserDto {
+  _id: string;
+  username: string;
+  email: string;
+  role: "ADMIN" | "VENDOR" | "USER";
+  billing: AdminUserSimplyBillinDto;
+}
+
+export interface GetAdminUsersResponseDto {
+  totalDocs: number;
+  limit: number;
+  totalPages: number;
+  page: number;
+  pagingCounter: number;
+  hasPrevPage: boolean;
+  hasNextPage: boolean;
+  prevPage: boolean;
+  nextPage: boolean;
+  docs: AdminUserDto[];
+}
+
+export interface AdminFullUserBillingDto {
+  firstName: string | null;
+  lastName: string | null;
+  street: string | null;
+  city: string | null;
+  postalCode: string | null;
+  country: string | null;
+  companyName: string | null;
+  companyVat: string | null;
+  companyStreet: string | null;
+  companyCity: string | null;
+  companyPostalCode: string | null;
+  companyCountry: string | null;
+}
+
+export interface AdminFullUserDto {
+  _id: string;
+  username: string;
+  email: string;
+  isActive: boolean;
+  isBanned: boolean;
+  role: "ADMIN" | "VENDOR" | "USER";
+  billing: AdminFullUserBillingDto;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+export interface CartProductLabelDto {
+  name: string;
+  slug: string;
+}
+
+export interface CartProductDto {
+  _id: string;
+  name: string;
+  price: number;
+  salePrice: number;
+  artwork: string | null;
+  label: CartProductLabelDto;
+}
+
+export interface CartDto {
+  _id: string;
+  products: CartProductDto[];
+  total: number;
+}
+
+export type AddRemoveToCartDto = object;
+
 export type QueryParamsType = Record<string | number, any>;
 export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
 
@@ -215,16 +566,22 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   cancelToken?: CancelToken;
 }
 
-export type RequestParams = Omit<FullRequestParams, "body" | "method" | "query" | "path">;
+export type RequestParams = Omit<
+  FullRequestParams,
+  "body" | "method" | "query" | "path"
+>;
 
 export interface ApiConfig<SecurityDataType = unknown> {
   baseUrl?: string;
   baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
-  securityWorker?: (securityData: SecurityDataType | null) => Promise<RequestParams | void> | RequestParams | void;
+  securityWorker?: (
+    securityData: SecurityDataType | null,
+  ) => Promise<RequestParams | void> | RequestParams | void;
   customFetch?: typeof fetch;
 }
 
-export interface HttpResponse<D extends unknown, E extends unknown = unknown> extends Response {
+export interface HttpResponse<D extends unknown, E extends unknown = unknown>
+  extends Response {
   data: D;
   error: E;
 }
@@ -243,54 +600,21 @@ export class HttpClient<SecurityDataType = unknown> {
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
   private abortControllers = new Map<CancelToken, AbortController>();
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) => fetch(...fetchParams);
-
   private baseApiParams: RequestParams = {
     credentials: "same-origin",
     headers: {},
     redirect: "follow",
     referrerPolicy: "no-referrer",
   };
-
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
-  }
-
-  public setSecurityData = (data: SecurityDataType | null) => {
-    this.securityData = data;
-  };
-
-  protected encodeQueryParam(key: string, value: any) {
-    const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(typeof value === "number" ? value : `${value}`)}`;
-  }
-
-  protected addQueryParam(query: QueryParamsType, key: string) {
-    return this.encodeQueryParam(key, query[key]);
-  }
-
-  protected addArrayQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter((key) => "undefined" !== typeof query[key]);
-    return keys
-      .map((key) => (Array.isArray(query[key]) ? this.addArrayQueryParam(query, key) : this.addQueryParam(query, key)))
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
   private contentFormatters: Record<ContentType, (input: any) => any> = {
     [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string") ? JSON.stringify(input) : input,
-    [ContentType.Text]: (input: any) => (input !== null && typeof input !== "string" ? JSON.stringify(input) : input),
+      input !== null && (typeof input === "object" || typeof input === "string")
+        ? JSON.stringify(input)
+        : input,
+    [ContentType.Text]: (input: any) =>
+      input !== null && typeof input !== "string"
+        ? JSON.stringify(input)
+        : input,
     [ContentType.FormData]: (input: any) =>
       Object.keys(input || {}).reduce((formData, key) => {
         const property = input[key];
@@ -307,31 +631,12 @@ export class HttpClient<SecurityDataType = unknown> {
     [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
   };
 
-  protected mergeRequestParams(params1: RequestParams, params2?: RequestParams): RequestParams {
-    return {
-      ...this.baseApiParams,
-      ...params1,
-      ...(params2 || {}),
-      headers: {
-        ...(this.baseApiParams.headers || {}),
-        ...(params1.headers || {}),
-        ...((params2 && params2.headers) || {}),
-      },
-    };
+  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
+    Object.assign(this, apiConfig);
   }
 
-  protected createAbortSignal = (cancelToken: CancelToken): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
-    }
-
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
+  public setSecurityData = (data: SecurityDataType | null) => {
+    this.securityData = data;
   };
 
   public abortRequest = (cancelToken: CancelToken) => {
@@ -364,15 +669,27 @@ export class HttpClient<SecurityDataType = unknown> {
     const payloadFormatter = this.contentFormatters[type || ContentType.Json];
     const responseFormat = format || requestParams.format;
 
-    return this.customFetch(`${baseUrl || this.baseUrl || ""}${path}${queryString ? `?${queryString}` : ""}`, {
-      ...requestParams,
-      headers: {
-        ...(requestParams.headers || {}),
-        ...(type && type !== ContentType.FormData ? { "Content-Type": type } : {}),
+    return this.customFetch(
+      `${baseUrl || this.baseUrl || ""}${path}${
+        queryString ? `?${queryString}` : ""
+      }`,
+      {
+        ...requestParams,
+        headers: {
+          ...(requestParams.headers || {}),
+          ...(type && type !== ContentType.FormData
+            ? { "Content-Type": type }
+            : {}),
+        },
+        signal: cancelToken
+          ? this.createAbortSignal(cancelToken)
+          : requestParams.signal,
+        body:
+          typeof body === "undefined" || body === null
+            ? null
+            : payloadFormatter(body),
       },
-      signal: cancelToken ? this.createAbortSignal(cancelToken) : requestParams.signal,
-      body: typeof body === "undefined" || body === null ? null : payloadFormatter(body),
-    }).then(async (response) => {
+    ).then(async (response) => {
       const r = response as HttpResponse<T, E>;
       r.data = null as unknown as T;
       r.error = null as unknown as E;
@@ -401,6 +718,76 @@ export class HttpClient<SecurityDataType = unknown> {
       return data;
     });
   };
+
+  protected encodeQueryParam(key: string, value: any) {
+    const encodedKey = encodeURIComponent(key);
+    return `${encodedKey}=${encodeURIComponent(
+      typeof value === "number" ? value : `${value}`,
+    )}`;
+  }
+
+  protected addQueryParam(query: QueryParamsType, key: string) {
+    return this.encodeQueryParam(key, query[key]);
+  }
+
+  protected addArrayQueryParam(query: QueryParamsType, key: string) {
+    const value = query[key];
+    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
+  }
+
+  protected toQueryString(rawQuery?: QueryParamsType): string {
+    const query = rawQuery || {};
+    const keys = Object.keys(query).filter(
+      (key) => "undefined" !== typeof query[key],
+    );
+    return keys
+      .map((key) =>
+        Array.isArray(query[key])
+          ? this.addArrayQueryParam(query, key)
+          : this.addQueryParam(query, key),
+      )
+      .join("&");
+  }
+
+  protected addQueryParams(rawQuery?: QueryParamsType): string {
+    const queryString = this.toQueryString(rawQuery);
+    return queryString ? `?${queryString}` : "";
+  }
+
+  protected mergeRequestParams(
+    params1: RequestParams,
+    params2?: RequestParams,
+  ): RequestParams {
+    return {
+      ...this.baseApiParams,
+      ...params1,
+      ...(params2 || {}),
+      headers: {
+        ...(this.baseApiParams.headers || {}),
+        ...(params1.headers || {}),
+        ...((params2 && params2.headers) || {}),
+      },
+    };
+  }
+
+  protected createAbortSignal = (
+    cancelToken: CancelToken,
+  ): AbortSignal | undefined => {
+    if (this.abortControllers.has(cancelToken)) {
+      const abortController = this.abortControllers.get(cancelToken);
+      if (abortController) {
+        return abortController.signal;
+      }
+      return void 0;
+    }
+
+    const abortController = new AbortController();
+    this.abortControllers.set(cancelToken, abortController);
+    return abortController.signal;
+  };
+
+  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
+    fetch(...fetchParams);
 }
 
 /**
@@ -410,20 +797,9 @@ export class HttpClient<SecurityDataType = unknown> {
  *
  * ProductStation API Documentation
  */
-export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDataType> {
-  /**
-   * No description
-   *
-   * @name AppControllerGetHello
-   * @request GET:/
-   */
-  appControllerGetHello = (params: RequestParams = {}) =>
-    this.request<void, any>({
-      path: `/`,
-      method: "GET",
-      ...params,
-    });
-
+export class Api<
+  SecurityDataType extends unknown,
+> extends HttpClient<SecurityDataType> {
   users = {
     /**
      * No description
@@ -433,7 +809,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Register user
      * @request POST:/users
      */
-    usersControllerRegisterUser: (data: RegisterUserDto, params: RequestParams = {}) =>
+    usersControllerRegisterUser: (
+      data: RegisterUserDto,
+      params: RequestParams = {},
+    ) =>
       this.request<
         OkResponseDto,
         {
@@ -461,7 +840,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Activating account
      * @request GET:/users/activation/{token}
      */
-    usersControllerActivateUserWithToken: (token: string, params: RequestParams = {}) =>
+    usersControllerActivateUserWithToken: (
+      token: string,
+      params: RequestParams = {},
+    ) =>
       this.request<
         OkResponseDto,
         {
@@ -486,12 +868,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UsersControllerUpdate
      * @summary Updating user
      * @request PATCH:/users/{id}
+     * @secure
      */
-    usersControllerUpdate: (id: string, data: UpdateUserDto, params: RequestParams = {}) =>
+    usersControllerUpdate: (
+      id: string,
+      data: UpdateUserDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/users/${id}`,
         method: "PATCH",
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -504,7 +892,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Requesting reset password
      * @request POST:/users/reset-password
      */
-    usersControllerResetPassword: (data: ResetPasswordRequestDto, params: RequestParams = {}) =>
+    usersControllerResetPassword: (
+      data: ResetPasswordRequestDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/users/reset-password`,
         method: "POST",
@@ -521,7 +912,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Change password with token
      * @request POST:/users/reset-password/{token}
      */
-    usersControllerResetPasswordWithToken: (token: string, data: ResetPasswordDto, params: RequestParams = {}) =>
+    usersControllerResetPasswordWithToken: (
+      token: string,
+      data: ResetPasswordDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/users/reset-password/${token}`,
         method: "POST",
@@ -566,6 +961,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name AuthControllerGetProfile
      * @summary Getting basic user details and auth checking
      * @request GET:/auth/me
+     * @secure
      */
     authControllerGetProfile: (params: RequestParams = {}) =>
       this.request<
@@ -581,6 +977,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       >({
         path: `/auth/me`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -590,12 +987,52 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Auth
      * @name AuthControllerGetAuth
+     * @summary Check user auth
      * @request GET:/auth
+     * @secure
      */
     authControllerGetAuth: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<
+        any,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
         path: `/auth`,
         method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Auth
+     * @name AuthControllerRefreshToken
+     * @summary Get new refresh token
+     * @request GET:/auth/refresh
+     * @secure
+     */
+    authControllerRefreshToken: (params: RequestParams = {}) =>
+      this.request<
+        any,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/auth/refresh`,
+        method: "GET",
+        secure: true,
         ...params,
       }),
   };
@@ -607,12 +1044,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name LabelsControllerCreate
      * @summary Create new label
      * @request POST:/labels
+     * @secure
      */
     labelsControllerCreate: (data: NewLabelDto, params: RequestParams = {}) =>
-      this.request<CreateLabelResponseDto, any>({
+      this.request<LabelDto, any>({
         path: `/labels`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -626,10 +1065,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @summary Get labels
      * @request GET:/labels
      */
-    labelsControllerGetLabels: (params: RequestParams = {}) =>
-      this.request<void, any>({
+    labelsControllerGetLabels: (
+      query?: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<PublicLabelListResponseDto, any>({
         path: `/labels`,
         method: "GET",
+        query: query,
+        format: "json",
         ...params,
       }),
 
@@ -640,10 +1089,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name LabelsControllerUpdate
      * @summary Updating label
      * @request PATCH:/labels/{id}
+     * @secure
      */
-    labelsControllerUpdate: (id: string, data: UpdateLabelDto, params: RequestParams = {}) =>
+    labelsControllerUpdate: (
+      id: string,
+      data: UpdateLabelDto,
+      params: RequestParams = {},
+    ) =>
       this.request<
-        CreateLabelResponseDto,
+        LabelDto,
         | {
             /** @example 400 */
             statusCode: number;
@@ -680,6 +1134,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/labels/${id}`,
         method: "PATCH",
         body: data,
+        secure: true,
         type: ContentType.Json,
         format: "json",
         ...params,
@@ -694,9 +1149,61 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/labels/{id}
      */
     labelsControllerFindOne: (id: string, params: RequestParams = {}) =>
-      this.request<PublicLabelResponseDto, void>({
+      this.request<
+        PublicLabelListResponseDto,
+        {
+          /** @example 404 */
+          statusCode: number;
+          /** @example "Not Found" */
+          message: string;
+          /** @example "Not Found" */
+          error?: string;
+        }
+      >({
         path: `/labels/${id}`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Labels
+     * @name LabelsControllerDelete
+     * @summary Delete label
+     * @request DELETE:/labels/{id}
+     */
+    labelsControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        LabelDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/labels/${id}`,
+        method: "DELETE",
         format: "json",
         ...params,
       }),
@@ -709,11 +1216,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name FilesControllerDownload
      * @summary Download file
      * @request GET:/files/{id}/download
+     * @secure
      */
     filesControllerDownload: (id: string, params: RequestParams = {}) =>
       this.request<string, any>({
         path: `/files/${id}/download`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -725,11 +1234,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name FilesControllerGetDetails
      * @summary Get file details
      * @request GET:/files/{id}
+     * @secure
      */
     filesControllerGetDetails: (id: string, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<FileDto, any>({
         path: `/files/${id}`,
         method: "GET",
+        secure: true,
+        format: "json",
         ...params,
       }),
 
@@ -740,11 +1252,41 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name FilesControllerDelete
      * @summary Delete file
      * @request DELETE:/files/{id}
+     * @secure
      */
     filesControllerDelete: (id: string, params: RequestParams = {}) =>
       this.request<FileDto, any>({
         path: `/files/${id}`,
         method: "DELETE",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Files
+     * @name FilesControllerGetFiles
+     * @summary Get files list
+     * @request GET:/files
+     * @secure
+     */
+    filesControllerGetFiles: (params: RequestParams = {}) =>
+      this.request<
+        GetFilesResponseDto,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/files`,
+        method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -800,22 +1342,210 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags Vendor
      * @name VendorControllerGetLabels
-     * @summary Get user labels
+     * @summary Get vendor labels
      * @request GET:/vendor/labels
+     * @secure
      */
     vendorControllerGetLabels: (params: RequestParams = {}) =>
       this.request<
-        VendorLabelResponseDto[],
-        {
-          /** @example 401 */
-          statusCode: number;
-          /** @example "Unauthorized" */
-          message: string;
-          /** @example "Unauthorized" */
-          error?: string;
-        }
+        VendorLabelResponseDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
       >({
         path: `/vendor/labels`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetSingleLabel
+     * @summary Get vendor label details
+     * @request GET:/vendor/labels/{id}
+     * @secure
+     */
+    vendorControllerGetSingleLabel: (id: string, params: RequestParams = {}) =>
+      this.request<
+        VendorLabelDetailsResponseDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/vendor/labels/${id}`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetLabelProductsPaginated
+     * @summary Get products by label
+     * @request GET:/vendor/labels/{id}/products
+     */
+    vendorControllerGetLabelProductsPaginated: (
+      id: string,
+      query?: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        VendorProductsListPaginatedDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/vendor/labels/${id}/products`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetVendorProducts
+     * @summary Get vendor products
+     * @request GET:/vendor/products
+     */
+    vendorControllerGetVendorProducts: (
+      query?: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+        product?: string;
+        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        VendorProductsListPaginatedDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/vendor/products`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetVendorProduct
+     * @summary Get vendor product
+     * @request GET:/vendor/products/{id}
+     */
+    vendorControllerGetVendorProduct: (
+      id: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        ProductDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/vendor/products/${id}`,
         method: "GET",
         format: "json",
         ...params,
@@ -825,13 +1555,335 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags Vendor
-     * @name VendorControllerGetLabel
-     * @summary Get label details
-     * @request GET:/vendor/labels/{id}
+     * @name VendorControllerGetAllLabels
+     * @summary Fetch all labels without pagination
+     * @request GET:/vendor/all-labels
      */
-    vendorControllerGetLabel: (id: string, params: RequestParams = {}) =>
+    vendorControllerGetAllLabels: (params: RequestParams = {}) =>
       this.request<
-        VendorLabelDetailsResponseDto,
+        GetVendorAllLabelsDto[],
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/vendor/all-labels`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerOverview
+     * @summary Get current vendor details
+     * @request GET:/vendor/overview
+     * @secure
+     */
+    vendorControllerOverview: (params: RequestParams = {}) =>
+      this.request<
+        VendorOverviewResponseDto,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/vendor/overview`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  };
+  products = {
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerCreate
+     * @summary Create new product
+     * @request POST:/products
+     */
+    productsControllerCreate: (
+      data: NewProductDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        ProductDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/products`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerGetAll
+     * @summary Get all public products
+     * @request GET:/products
+     */
+    productsControllerGetAll: (
+      query?: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+        product?: string;
+        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<GetPublicProductsPaginatedDto, any>({
+        path: `/products`,
+        method: "GET",
+        query: query,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerUpdate
+     * @summary Update product
+     * @request PATCH:/products/{id}
+     */
+    productsControllerUpdate: (
+      id: string,
+      data: UpdateProductDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        ProductDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/products/${id}`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerDelete
+     * @summary Delete product
+     * @request DELETE:/products/{id}
+     */
+    productsControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        ProductDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/products/${id}`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerGetPublicProduct
+     * @summary Get public product details
+     * @request GET:/products/{id}
+     */
+    productsControllerGetPublicProduct: (
+      id: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        PublicProductDto,
+        {
+          /** @example 404 */
+          statusCode: number;
+          /** @example "Not Found" */
+          message: string;
+          /** @example "Not Found" */
+          error?: string;
+        }
+      >({
+        path: `/products/${id}`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+  };
+  categories = {
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerCreate
+     * @summary Create new category
+     * @request POST:/categories
+     */
+    categoriesControllerCreate: (
+      data: CreateCategoryDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        CategoryDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 409 */
+            statusCode: number;
+            /** @example "Conflict" */
+            message: string;
+            /** @example "Conflict" */
+            error?: string;
+          }
+      >({
+        path: `/categories`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerGetAll
+     * @summary Get all categories
+     * @request GET:/categories
+     */
+    categoriesControllerGetAll: (params: RequestParams = {}) =>
+      this.request<
+        CategoryDto[],
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/categories`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerDelete
+     * @summary Delete category
+     * @request DELETE:/categories/{id}
+     */
+    categoriesControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        CategoryDto,
         | {
             /** @example 401 */
             statusCode: number;
@@ -849,8 +1901,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             error?: string;
           }
       >({
-        path: `/vendor/labels/${id}`,
-        method: "GET",
+        path: `/categories/${id}`,
+        method: "DELETE",
         format: "json",
         ...params,
       }),
@@ -858,14 +1910,102 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @tags Vendor
-     * @name VendorControllerOverview
-     * @summary Get current vendor details
-     * @request GET:/vendor/overview
+     * @tags Category
+     * @name CategoriesControllerUpdate
+     * @summary Update category
+     * @request PATCH:/categories/{id}
      */
-    vendorControllerOverview: (params: RequestParams = {}) =>
+    categoriesControllerUpdate: (
+      id: string,
+      data: UpdateCategoryDto,
+      params: RequestParams = {},
+    ) =>
       this.request<
-        VendorOverviewResponseDto,
+        CategoryDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/categories/${id}`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  genres = {
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerCreate
+     * @summary Create new genre
+     * @request POST:/genres
+     */
+    genresControllerCreate: (
+      data: CreateGenreDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 409 */
+            statusCode: number;
+            /** @example "Conflict" */
+            message: string;
+            /** @example "Conflict" */
+            error?: string;
+          }
+      >({
+        path: `/genres`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerGetAll
+     * @summary Get all genres
+     * @request GET:/genres
+     */
+    genresControllerGetAll: (params: RequestParams = {}) =>
+      this.request<
+        GenreDto[],
         {
           /** @example 401 */
           statusCode: number;
@@ -875,10 +2015,344 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           error?: string;
         }
       >({
-        path: `/vendor/overview`,
+        path: `/genres`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerDelete
+     * @summary Delete genre
+     * @request DELETE:/genres/{id}
+     */
+    genresControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/genres/${id}`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerUpdate
+     * @summary Update genre
+     * @request PATCH:/genres/{id}
+     */
+    genresControllerUpdate: (
+      id: string,
+      data: UpdateGenreDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/genres/${id}`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  orders = {
+    /**
+     * No description
+     *
+     * @tags Orders
+     * @name OrdersControllerCreate
+     * @summary Create new order
+     * @request POST:/orders
+     * @secure
+     */
+    ordersControllerCreate: (
+      data: CreateOrderDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/orders`,
+        method: "POST",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        ...params,
+      }),
+  };
+  admin = {
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetAllOrders
+     * @summary Get all orders
+     * @request GET:/admin/orders
+     * @secure
+     */
+    adminControllerGetAllOrders: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/admin/orders`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetOrder
+     * @summary Get single order
+     * @request GET:/admin/orders/{id}
+     * @secure
+     */
+    adminControllerGetOrder: (id: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/admin/orders/${id}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetProducts
+     * @summary Get products
+     * @request GET:/admin/products
+     * @secure
+     */
+    adminControllerGetProducts: (
+      query?: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+        product?: string;
+        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/admin/products`,
+        method: "GET",
+        query: query,
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetProduct
+     * @summary Get single product details
+     * @request GET:/admin/products/{id}
+     * @secure
+     */
+    adminControllerGetProduct: (id: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/admin/products/${id}`,
+        method: "GET",
+        secure: true,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetUsers
+     * @summary Get all users
+     * @request GET:/admin/users
+     * @secure
+     */
+    adminControllerGetUsers: (
+      query: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+        user: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        GetAdminUsersResponseDto,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/admin/users`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Admin
+     * @name AdminControllerGetUser
+     * @summary Get user
+     * @request GET:/admin/users/{id}
+     * @secure
+     */
+    adminControllerGetUser: (
+      id: string,
+      query: {
+        /** @minLength 1 */
+        page?: number;
+        /** @minLength 1 */
+        limit?: number;
+        user: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        AdminFullUserDto,
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/admin/users/${id}`,
+        method: "GET",
+        query: query,
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+  };
+  carts = {
+    /**
+     * No description
+     *
+     * @name CartsControllerCreate
+     * @request POST:/carts
+     */
+    cartsControllerCreate: (params: RequestParams = {}) =>
+      this.request<CartDto, any>({
+        path: `/carts`,
+        method: "POST",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartsControllerAddProduct
+     * @request POST:/carts/add
+     */
+    cartsControllerAddProduct: (
+      data: AddRemoveToCartDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<CartDto, any>({
+        path: `/carts/add`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartsControllerRemoveProduct
+     * @request DELETE:/carts/delete
+     */
+    cartsControllerRemoveProduct: (
+      data: AddRemoveToCartDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<CartDto, any>({
+        path: `/carts/delete`,
+        method: "DELETE",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CartsControllerGetCart
+     * @request GET:/carts/{id}
+     */
+    cartsControllerGetCart: (id: string, params: RequestParams = {}) =>
+      this.request<CartDto, any>({
+        path: `/carts/${id}`,
         method: "GET",
         format: "json",
         ...params,
       }),
   };
+
+  /**
+   * No description
+   *
+   * @name AppControllerGetHello
+   * @request GET:/
+   */
+  appControllerGetHello = (params: RequestParams = {}) =>
+    this.request<void, any>({
+      path: `/`,
+      method: "GET",
+      ...params,
+    });
 }

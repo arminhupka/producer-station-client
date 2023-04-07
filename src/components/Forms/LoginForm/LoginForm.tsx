@@ -30,7 +30,7 @@ import {
   useAppSelector,
 } from "../../../store";
 import { api } from "../../../utils/api";
-import setAuthToken from "../../../utils/setAuthToken";
+import { setAuthToken, setRefreshToken } from "../../../utils/setAuthToken";
 
 const LoginForm = (): ReactElement => {
   const navigate = useNavigate();
@@ -51,6 +51,7 @@ const LoginForm = (): ReactElement => {
     {
       onSuccess: async (data) => {
         setAuthToken(data.data.token);
+        setRefreshToken(data.data.refreshToken);
         await dispatch(getProfile());
       },
     },

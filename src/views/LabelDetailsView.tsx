@@ -7,16 +7,19 @@ import {
   CircularProgress,
   Grid,
 } from "@mui/material";
-import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement, useEffect, useState } from "react";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ReactElement, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
 import { FiDollarSign } from "react-icons/fi";
 import { useMutation, useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-import { UpdateLabelDto, VendorLabelDetailsResponseDto } from "../api/api";
-import { ApiError } from "../api/apiError";
+import {
+  type UpdateLabelDto,
+  type VendorLabelDetailsResponseDto,
+} from "../api/api";
+import { type ApiError } from "../api/apiError";
 import DashboardCard from "../components/DashboardCard/DashboardCard";
 import LabelForm from "../components/Forms/LabelForm/LabelForm";
 import PageHeading from "../components/PageHeading/PageHeading";
@@ -25,11 +28,18 @@ import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 import { UpdateLabelValidator } from "../validators/LabelUpdateValidation";
 
-export const LabelDetails = (): ReactElement => {
+export const LabelDetailsView = (): ReactElement => {
+  const navigate = useNavigate();
   const [updated, setUpdated] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError<ApiError> | null>(null);
 
   const { id } = useParams();
+
+  if (id === undefined) {
+    navigate("/labels");
+    return <></>;
+  }
+
   const { isLoading, data, remove, refetch } = useQuery<
     AxiosResponse<VendorLabelDetailsResponseDto>,
     AxiosError<ApiError>
@@ -97,20 +107,22 @@ export const LabelDetails = (): ReactElement => {
     await handleRefetch();
   };
 
-  const handleSubmitLabel = async () => {
+  const handleSubmitLabel = async (): Promise<void> => {
     await mutateAsync({
       status: LabelStatusEnum.Submitted,
     });
     await handleRefetch();
   };
 
-  const handleRefetch = async () => {
+  const handleRefetch = async (): Promise<void> => {
     remove();
     await refetch();
   };
 
   useEffect(() => {
-    return () => remove();
+    return () => {
+      remove();
+    };
   }, []);
 
   useEffect(() => {
@@ -135,7 +147,7 @@ export const LabelDetails = (): ReactElement => {
       </Backdrop>
       <MainLayout>
         {isUpdating && <p>UPDATING</p>}
-        {!isLoading && data && (
+        {!isLoading && data != null && (
           <PageHeading title={data.data.name}>
             <Grid container spacing={2}>
               <Grid item>
@@ -159,9 +171,9 @@ export const LabelDetails = (): ReactElement => {
             </Grid>
           </PageHeading>
         )}
-        {!isLoading && data && (
+        {!isLoading && data != null && (
           <>
-            {error?.response && (
+            {error?.response != null && (
               <Box mb={2}>
                 <Alert variant='standard' severity='error'>
                   {error.response.data.message}
@@ -221,4 +233,4 @@ export const LabelDetails = (): ReactElement => {
   );
 };
 
-export default LabelDetails;
+export default LabelDetailsView;

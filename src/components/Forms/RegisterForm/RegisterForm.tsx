@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import { ReactElement, useState } from "react";
+import { type ReactElement, useState } from "react";
 
 const loremIpsum =
   "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis egestas elit et mauris euismod vehicula. Phasellus tempus turpis lacus, non pulvinar elit molestie et. Quisque tempus sapien diam, vel imperdiet risus fringilla eu. Phasellus egestas ultrices ligula, vel auctor lorem euismod vel. Donec vitae ipsum enim. Phasellus viverra mollis turpis, et porta libero efficitur eget. Praesent in nulla convallis, volutpat metus a, venenatis ligula.";
@@ -7,8 +7,12 @@ const loremIpsum =
 const RegisterForm = (): ReactElement => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
-  const handleNextStep = () => setCurrentStep((prevState) => prevState + 1);
-  const handlePrevStep = () => setCurrentStep((prevState) => prevState - 1);
+  const handleNextStep = () => {
+    setCurrentStep((prevState) => prevState + 1);
+  };
+  const handlePrevStep = () => {
+    setCurrentStep((prevState) => prevState - 1);
+  };
 
   const FormStepOne = (): ReactElement => (
     <Box maxHeight={500}>
@@ -52,7 +56,7 @@ const RegisterForm = (): ReactElement => {
     </Grid>
   );
 
-  const generateForm = () => {
+  const generateForm = (): ReactElement => {
     switch (currentStep) {
       case 0: {
         return <FormStepOne />;
@@ -62,6 +66,9 @@ const RegisterForm = (): ReactElement => {
       }
       case 2: {
         return <FormStepThree />;
+      }
+      default: {
+        return <></>;
       }
     }
   };
@@ -100,6 +107,9 @@ const RegisterForm = (): ReactElement => {
             </Button>
           </>
         );
+      }
+      default: {
+        return false;
       }
     }
   };
