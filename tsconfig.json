@@ -13,7 +13,7 @@
     "noImplicitThis": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
   },
   "exclude": [
     "node_modules",
@@ -24,5 +24,6 @@
     "jest",
     "src/setupTests.ts"
   ],
-  "types": ["typePatches"]
+  "types": ["typePatches"],
+
 }

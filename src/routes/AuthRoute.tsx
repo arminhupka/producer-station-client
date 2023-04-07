@@ -1,5 +1,5 @@
 import { Box, CircularProgress } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 
 import Providers from "../providers";

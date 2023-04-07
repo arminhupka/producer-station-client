@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Divider, Drawer, List, useMediaQuery, useTheme } from "@mui/material";
 import { styled } from "@mui/system";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 import NavItem from "./NavItem/NavItem";
 import SidebarUser from "./SidebarUser/SidebarUser";

@@ -1,10 +1,11 @@
 import { Button, Grid, TextField } from "@mui/material";
 
-import BaseModal, { IBaseModalProps } from "../BaseModal";
+import BaseModal, { type IBaseModalProps } from "../BaseModal";
+import { type ReactElement } from "react";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
-const NewFileUpload = ({ open, onClose }: TProps) => (
+const NewFileUpload = ({ open, onClose }: TProps): ReactElement => (
   <BaseModal title='Select file to upload' onClose={onClose} open={open}>
     <Grid container spacing={2}>
       <Grid item xs={12}>

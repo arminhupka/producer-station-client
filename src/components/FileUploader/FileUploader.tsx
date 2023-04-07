@@ -1,5 +1,5 @@
 import { Box, Button, LinearProgress, Typography } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 const FileUploader = (): ReactElement => (
   <Box p={2} display='flex' flexDirection='column' gap={2}>

@@ -1,5 +1,5 @@
 import { Box, Container, Grid, useMediaQuery, useTheme } from "@mui/material";
-import { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 
 import image from "../assets/images/unauth-bg.jpg";
 

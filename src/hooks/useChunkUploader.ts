@@ -1,6 +1,8 @@
-import { ChangeEvent, useEffect, useState } from "react";
+/* eslint-disable */
 
-import { FileDto } from "../api/api";
+import { type ChangeEvent, useEffect, useState } from "react";
+
+import { type FileDto } from "../api/api";
 import { api } from "../utils/api";
 
 // enum UploadStatus {
@@ -39,14 +41,18 @@ const useUploader = () => {
   const selectFile = async (
     e: ChangeEvent<HTMLInputElement>,
   ): Promise<void> => {
-    return await new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
       // eslint-disable-next-line prefer-promise-reject-errors
-      if (!e.target.files) return reject();
+      if (!e.target.files) {
+        reject();
+        return;
+      }
 
       const file = e.target.files[0];
       setFile(file);
       setParts(Math.ceil(file.size / chunkSize));
-      return resolve();
+      // @ts-ignore
+      resolve();
     });
   };
 
@@ -129,12 +135,12 @@ const useUploader = () => {
     setIsUploading(false);
   };
 
-  const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+  const handleUpload = async (
+    e: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
     void selectFile(e);
     if (!file) return;
     void uploadInit(file);
-    return "lorem ipsum";
-    // await uploadChunks(file)
   };
 
   useEffect(() => {

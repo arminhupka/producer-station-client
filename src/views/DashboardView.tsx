@@ -1,6 +1,6 @@
 import { MoneySharp } from "@mui/icons-material";
 import { Grid } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Helmet } from "react-helmet";
 
 import DashboardCard from "../components/DashboardCard/DashboardCard";

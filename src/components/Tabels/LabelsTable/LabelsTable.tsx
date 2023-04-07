@@ -4,19 +4,19 @@ import {
   Chip,
   Paper,
   Skeleton,
-  SxProps,
+  type SxProps,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Theme,
+  type Theme,
   Typography,
 } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { VendorLabelListItem } from "../../../api/api";
+import { type VendorLabelListItem } from "../../../api/api";
 import NoImagePlaceholder from "../../../assets/images/no-image.jpg";
 import { LabelStatusEnum } from "../../../enum/LabelStatusEnum";
 

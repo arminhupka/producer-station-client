@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 import { useAppSelector } from "../../../store";
 

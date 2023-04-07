@@ -1,17 +1,17 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Alert, Button, Grid, TextField } from "@mui/material";
-import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ReactElement } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { LabelDto, NewLabelDto } from "../../../api/api";
-import { ApiError } from "../../../api/apiError";
+import { type LabelDto, type NewLabelDto } from "../../../api/api";
+import { type ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
 import { NewLabelFormValidator } from "../../../validators/NewLabelValidator";
-import BaseModal, { IBaseModalProps } from "../BaseModal";
+import BaseModal, { type IBaseModalProps } from "../BaseModal";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -51,7 +51,7 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
     mutate({ name: form.name, user: userId });
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     onClose();
     reset();
     formReset();

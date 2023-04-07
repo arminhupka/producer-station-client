@@ -303,13 +303,13 @@ declare module "@mui/material/styles/createPalette" {
   interface Palette {
     dark: string;
     darkLight: string;
-    neutral: { [key: string]: string };
+    neutral: Record<string, string>;
   }
 
   interface PaletteOptions {
     dark?: string;
     darkLight?: string;
-    neutral?: { [key: string]: string };
+    neutral?: Record<string, string>;
   }
 }
 

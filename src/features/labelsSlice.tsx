@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { GetVendorAllLabelsDto } from "../api/api";
+import { type GetVendorAllLabelsDto } from "../api/api";
 
 interface InitialStateType {
   labels: GetVendorAllLabelsDto[];

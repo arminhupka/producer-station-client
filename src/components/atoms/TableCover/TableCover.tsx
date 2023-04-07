@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 import placeholder from "../../../assets/images/no-image.jpg";
 import { StyledImage, StyledWrapper } from "./TableCover.styles";

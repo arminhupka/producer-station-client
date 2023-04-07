@@ -87,20 +87,20 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent,
+  type SelectChangeEvent,
   TextField,
 } from "@mui/material";
-import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ReactElement } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { NewProductDto, ProductDto } from "../../../api/api";
-import { ApiError } from "../../../api/apiError";
+import { type NewProductDto, type ProductDto } from "../../../api/api";
+import { type ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
-import BaseModal, { IBaseModalProps } from "../BaseModal";
+import BaseModal, { type IBaseModalProps } from "../BaseModal";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -114,10 +114,12 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
     AxiosError<ApiError>,
     NewProductDto
   >(async (form) => await api.post<ProductDto>("/products", form), {
-    onSuccess: (data) => navigate(`/labels/${data.data._id}`),
+    onSuccess: (data) => {
+      navigate(`/labels/${data.data._id}`);
+    },
   });
 
-  const handleChange = (event: SelectChangeEvent) => {
+  const handleChange = (event: SelectChangeEvent): void => {
     setValue("label", event.target.value);
   };
 

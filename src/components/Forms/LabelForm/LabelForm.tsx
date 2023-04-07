@@ -1,14 +1,14 @@
 import { Box, Grid, Paper, TextField, Typography } from "@mui/material";
-import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement, useEffect } from "react";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ReactElement, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "react-query";
 
 import {
-  UpdateLabelDto,
-  VendorLabelDetailsResponseDto,
+  type UpdateLabelDto,
+  type VendorLabelDetailsResponseDto,
 } from "../../../api/api";
-import { ApiError } from "../../../api/apiError";
+import { type ApiError } from "../../../api/apiError";
 import { LabelStatusEnum } from "../../../enum/LabelStatusEnum";
 import { api } from "../../../utils/api";
 import ImageUploader from "../../CoverUploader/ImageUploader";
@@ -40,12 +40,12 @@ const LabelForm = ({ data, refetch }: IProps): ReactElement => {
       }),
   );
 
-  const handleAvatarChange = async (fileId: string) => {
+  const handleAvatarChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ avatar: fileId });
     refetch();
   };
 
-  const handleHeaderChange = async (fileId: string) => {
+  const handleHeaderChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ header: fileId });
     refetch();
   };

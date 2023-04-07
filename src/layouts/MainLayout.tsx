@@ -1,6 +1,6 @@
 import { Box, Container } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { ReactElement, ReactNode } from "react";
+import { type ReactElement, type ReactNode } from "react";
 
 import Header from "../components/Header/Header";
 

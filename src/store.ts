@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import * as Cookies from "cookies-js";
 import {
@@ -14,27 +16,14 @@ import {
   REGISTER,
   REHYDRATE,
 } from "redux-persist/es/constants";
-// import storage from "redux-persist/lib/storage";
-// import storageSession from "redux-persist/lib/storage/session";
-// @ts-expect-error
+
+// @ts-ignore
 import { CookieStorage } from "redux-persist-cookie-storage";
 
 import labelsReducer from "../src/features/labelsSlice";
 import userReducer from "../src/features/userSlice";
 
 const rootReducer = combineReducers({ userReducer, labelsReducer });
-
-// const persistLocalConfig = {
-//   key: "root",
-//   version: 1,
-//   storage,
-// };
-//
-// const persistSessionConfig = {
-//   key: "root",
-//   version: 1,
-//   storage: storageSession,
-// };
 
 const persistCookieConfig = {
   key: "user",
@@ -59,20 +48,7 @@ export const persistedCookieRememberReducer = persistReducer(
   rootReducer,
 );
 
-// export const persistedLocalReducer = persistReducer(
-//   persistLocalConfig,
-//   rootReducer,
-// );
-//
-// export const persistedSessionReducer = persistReducer(
-//   persistSessionConfig,
-//   rootReducer,
-// );
-
 export const store = configureStore({
-  // reducer: window.localStorage.getItem("rememberMe")
-  //   ? persistedLocalReducer
-  //   : persistedSessionReducer,
   reducer: window.localStorage.getItem("rememberMe")
     ? persistedCookieRememberReducer
     : persistedCookieReducer,

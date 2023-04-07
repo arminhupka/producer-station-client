@@ -6,18 +6,19 @@ import { resetUser } from "../../features/userSlice";
 import useModalState from "../../hooks/useModalState";
 import { useAppDispatch } from "../../store";
 import Sidebar from "../Sidebar/Sidebar";
+import { type ReactElement } from "react";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
 }));
 
-const Header = () => {
+const Header = (): ReactElement => {
   const { isOpen, onOpen, onClose } = useModalState();
 
   const dispatch = useAppDispatch();
 
-  const handleUserLogout = () => {
+  const handleUserLogout = (): void => {
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("rememberMe");
     dispatch(resetUser());

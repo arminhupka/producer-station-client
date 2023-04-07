@@ -1,10 +1,10 @@
 import { Close as CloseIcon } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
-import Modal, { ModalProps } from "@mui/material/Modal";
+import Modal, { type ModalProps } from "@mui/material/Modal";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 const StyledModalWrapper = styled(Box)(({ theme }) => ({
   height: "100%",

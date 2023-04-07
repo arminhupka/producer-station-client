@@ -1,5 +1,5 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 
 interface IProps {
   onVerify: () => void;

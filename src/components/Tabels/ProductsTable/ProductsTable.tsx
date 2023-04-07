@@ -11,10 +11,10 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { ReactElement } from "react";
+import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
 
-import { VendorProductsListItemDto } from "../../../api/api";
+import { type VendorProductsListItemDto } from "../../../api/api";
 import placeholder from "../../../assets/images/no-image.jpg";
 import { formatPrice } from "../../../utils/formatPrice";
 
@@ -50,7 +50,7 @@ interface IProps {
   data: VendorProductsListItemDto[];
 }
 
-const ProductsTable = ({ isLoading, data }: IProps) => (
+const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
   <Paper>
     <Table>
       <TableHead>

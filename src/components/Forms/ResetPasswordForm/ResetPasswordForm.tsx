@@ -7,13 +7,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { AxiosError, AxiosResponse } from "axios";
-import { ReactElement } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ReactElement } from "react";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 
-import { ResetPasswordRequestDto } from "../../../api/api";
-import { ApiError } from "../../../api/apiError";
+import { type ResetPasswordRequestDto } from "../../../api/api";
+import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 
 const ResetPasswordForm = (): ReactElement => {

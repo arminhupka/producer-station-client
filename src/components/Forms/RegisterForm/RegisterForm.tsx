@@ -7,10 +7,10 @@ const loremIpsum =
 const RegisterForm = (): ReactElement => {
   const [currentStep, setCurrentStep] = useState<number>(0);
 
-  const handleNextStep = () => {
+  const handleNextStep = async (): Promise<void> => {
     setCurrentStep((prevState) => prevState + 1);
   };
-  const handlePrevStep = () => {
+  const handlePrevStep = async (): Promise<void> => {
     setCurrentStep((prevState) => prevState - 1);
   };
 
@@ -73,7 +73,7 @@ const RegisterForm = (): ReactElement => {
     }
   };
 
-  const generateFormButtons = () => {
+  const generateFormButtons = (): ReactElement => {
     switch (currentStep) {
       case 0: {
         return (
@@ -109,7 +109,7 @@ const RegisterForm = (): ReactElement => {
         );
       }
       default: {
-        return false;
+        return <></>;
       }
     }
   };
