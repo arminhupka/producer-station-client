@@ -20,11 +20,11 @@ import { injectStore } from "./utils/api";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // keepPreviousData: false,
-      // retry: false,
+      keepPreviousData: false,
+      retry: false,
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      // cacheTime: 0,
+      cacheTime: 0,
     },
   },
 });

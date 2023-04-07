@@ -15,10 +15,9 @@ import ImageUploader from "../../CoverUploader/ImageUploader";
 
 interface IProps {
   data: VendorLabelDetailsResponseDto;
-  refetch: () => void;
 }
 
-const LabelForm = ({ data, refetch }: IProps): ReactElement => {
+const LabelForm = ({ data }: IProps): ReactElement => {
   const {
     register,
     setValue,
@@ -42,12 +41,10 @@ const LabelForm = ({ data, refetch }: IProps): ReactElement => {
 
   const handleAvatarChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ avatar: fileId });
-    refetch();
   };
 
   const handleHeaderChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ header: fileId });
-    refetch();
   };
 
   useEffect(() => {

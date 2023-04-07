@@ -1,18 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  Alert,
-  Backdrop,
-  Box,
-  Button,
-  CircularProgress,
-  Grid,
-} from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { type AxiosError, type AxiosResponse } from "axios";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement } from "react";
 import { Helmet } from "react-helmet";
-import { FormProvider, type SubmitHandler, useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import { FiDollarSign } from "react-icons/fi";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
@@ -23,15 +16,13 @@ import { type ApiError } from "../api/apiError";
 import DashboardCard from "../components/DashboardCard/DashboardCard";
 import LabelForm from "../components/Forms/LabelForm/LabelForm";
 import PageHeading from "../components/PageHeading/PageHeading";
-import { LabelStatusEnum } from "../enum/LabelStatusEnum";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
 import { UpdateLabelValidator } from "../validators/LabelUpdateValidation";
+import FullLoader from "../components/atoms/FullLoader/FullLoader";
 
 export const LabelDetailsView = (): ReactElement => {
   const navigate = useNavigate();
-  const [updated, setUpdated] = useState<boolean>(false);
-  const [error, setError] = useState<AxiosError<ApiError> | null>(null);
 
   const { id } = useParams();
 
@@ -40,7 +31,7 @@ export const LabelDetailsView = (): ReactElement => {
     return <></>;
   }
 
-  const { isLoading, data, remove, refetch } = useQuery<
+  const { isLoading, data: resp } = useQuery<
     AxiosResponse<VendorLabelDetailsResponseDto>,
     AxiosError<ApiError>
   >(
@@ -49,188 +40,79 @@ export const LabelDetailsView = (): ReactElement => {
       await api.get<VendorLabelDetailsResponseDto>(`/vendor/labels/${id}`),
   );
 
-  const { mutateAsync, isLoading: isUpdating } = useMutation<
-    AxiosResponse<VendorLabelDetailsResponseDto>,
-    AxiosError<ApiError>,
-    UpdateLabelDto
-  >(
-    async ({
-      avatar,
-      header,
-      name,
-      email,
-      description,
-      status,
-      facebook,
-      instagram,
-      youtube,
-    }) =>
-      await api.patch<VendorLabelDetailsResponseDto>(`/labels/${id}`, {
-        avatar,
-        header,
-        name,
-        email,
-        description,
-        status,
-        facebook,
-        instagram,
-        youtube,
-      }),
-    {
-      onMutate: () => {
-        setError(null);
-        setUpdated(false);
-      },
-      onSuccess: () => {
-        setUpdated(true);
-      },
-      onError: (error) => {
-        setError(error);
-      },
-    },
-  );
-
   const methods = useForm<UpdateLabelDto>({
     resolver: yupResolver(UpdateLabelValidator),
     mode: "onChange",
   });
 
-  const handleLabelUpdate: SubmitHandler<UpdateLabelDto> = async (form) => {
-    await mutateAsync({
-      name: form.name,
-      email: form.email,
-      description: form.description,
-      facebook: form.facebook,
-      instagram: form.instagram,
-      youtube: form.youtube,
-    });
-    await handleRefetch();
-  };
+  if (isLoading && !resp) {
+    return <FullLoader />;
+  }
 
-  const handleSubmitLabel = async (): Promise<void> => {
-    await mutateAsync({
-      status: LabelStatusEnum.Submitted,
-    });
-    await handleRefetch();
-  };
-
-  const handleRefetch = async (): Promise<void> => {
-    remove();
-    await refetch();
-  };
-
-  useEffect(() => {
-    return () => {
-      remove();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (updated) {
-      setTimeout(() => {
-        setUpdated(false);
-      }, 5000);
-    }
-  }, [updated]);
-
-  return (
-    <>
-      <Helmet>
-        <title>
-          {data != null ? data.data.name : "Loading"} | Producer Station
-        </title>
-      </Helmet>
-      <Backdrop
-        open={isUpdating || isLoading}
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <CircularProgress color='inherit' size={50} />
-      </Backdrop>
-      <MainLayout>
-        {isUpdating && <p>UPDATING</p>}
-        {!isLoading && data != null && (
-          <PageHeading title={data.data.name}>
+  if (!isLoading && resp) {
+    return (
+      <>
+        <Helmet>
+          <title>{`${resp.data.name} | ${
+            process.env.REACT_APP_TITLE as string
+          }`}</title>
+        </Helmet>
+        <MainLayout>
+          <PageHeading title={resp.data.name}>
             <Grid container spacing={2}>
               <Grid item>
-                <Button
-                  variant='outlined'
-                  onClick={methods.handleSubmit(handleLabelUpdate)}
-                  disabled={data.data.status !== LabelStatusEnum.Draft}>
-                  Update Label
-                </Button>
+                <Button variant='outlined'>Update Label</Button>
               </Grid>
               <Grid item>
-                <Button
-                  variant='contained'
-                  onClick={handleSubmitLabel}
-                  disabled={data.data.status !== LabelStatusEnum.Draft}>
-                  {data.data.status === LabelStatusEnum.Draft
-                    ? "Submit"
-                    : data.data.status}
-                </Button>
+                <Button variant='contained'>Submit</Button>
               </Grid>
             </Grid>
           </PageHeading>
-        )}
-        {!isLoading && data != null && (
-          <>
-            {error?.response != null && (
-              <Box mb={2}>
-                <Alert variant='standard' severity='error'>
-                  {error.response.data.message}
-                </Alert>
-              </Box>
-            )}
-            {updated && (
-              <Box mb={2}>
-                <Alert variant='standard' severity='success'>
-                  Label updated
-                </Alert>
-              </Box>
-            )}
-            <Box mb={2}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} lg={3}>
-                  <DashboardCard
-                    title='Commission'
-                    value={`${data.data.commissionRate}%`}
-                    icon={<FiDollarSign />}
-                    color='red'
-                  />
-                </Grid>
-                <Grid item xs={12} lg={3}>
-                  <DashboardCard
-                    title='Commission'
-                    value={50}
-                    icon={<FiDollarSign />}
-                    color='red'
-                  />
-                </Grid>{" "}
-                <Grid item xs={12} lg={3}>
-                  <DashboardCard
-                    title='Commission'
-                    value={50}
-                    icon={<FiDollarSign />}
-                    color='red'
-                  />
-                </Grid>
-                <Grid item xs={12} lg={3}>
-                  <DashboardCard
-                    title='Commission'
-                    value={50}
-                    icon={<FiDollarSign />}
-                    color='red'
-                  />
-                </Grid>
+          <Box mb={2}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} lg={3}>
+                <DashboardCard
+                  title='Commission'
+                  value={`${resp.data.commissionRate}%`}
+                  icon={<FiDollarSign />}
+                  color='red'
+                />
               </Grid>
-            </Box>
-            <FormProvider {...methods}>
-              <LabelForm data={data.data} refetch={handleRefetch} />
-            </FormProvider>
-          </>
-        )}
-      </MainLayout>
-    </>
-  );
+              <Grid item xs={12} lg={3}>
+                <DashboardCard
+                  title='Commission'
+                  value={0}
+                  icon={<FiDollarSign />}
+                  color='red'
+                />
+              </Grid>{" "}
+              <Grid item xs={12} lg={3}>
+                <DashboardCard
+                  title='Commission'
+                  value={0}
+                  icon={<FiDollarSign />}
+                  color='red'
+                />
+              </Grid>
+              <Grid item xs={12} lg={3}>
+                <DashboardCard
+                  title='Commission'
+                  value={0}
+                  icon={<FiDollarSign />}
+                  color='red'
+                />
+              </Grid>
+            </Grid>
+          </Box>
+          <FormProvider {...methods}>
+            <LabelForm data={resp.data} />
+          </FormProvider>
+        </MainLayout>
+      </>
+    );
+  }
+
+  return <></>;
 };
 
 export default LabelDetailsView;
