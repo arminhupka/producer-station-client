@@ -18,11 +18,11 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { type ReactElement, useEffect, useState } from "react";
+import { type ReactElement } from "react";
 
 import NavItem from "./NavItem/NavItem";
 import SidebarUser from "./SidebarUser/SidebarUser";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { setMenuFull } from "../../features/appSlice";
 
 interface IStyledDrawer extends DrawerProps {
@@ -101,16 +101,10 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const dispatch = useAppDispatch();
-
-  const [hideTitles, setHideTitles] = useState<boolean>(false);
-
-  useEffect(() => {
-    localStorage.setItem("fullMenu", hideTitles.toString());
-  }, [hideTitles]);
+  const isFullMenu = useAppSelector((state) => state.appReducer.isFullMenu);
 
   const handleToggleTitlesDisplay = (): void => {
-    setHideTitles(!hideTitles);
-    dispatch(setMenuFull(!hideTitles));
+    dispatch(setMenuFull(!isFullMenu));
   };
 
   return (
@@ -118,9 +112,9 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
       variant={isMobile ? "temporary" : "permanent"}
       open={isOpen}
       onClose={onClose}
-      small={!hideTitles}>
+      small={!isFullMenu}>
       <StyledWrapper>
-        {hideTitles && <SidebarUser />}
+        {isFullMenu && <SidebarUser />}
         <Divider
           sx={(theme) => ({
             mb: 2,
@@ -134,7 +128,7 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
               title={item.title}
               href={item.href}
               icon={item.icon}
-              hideTitles={hideTitles}
+              hideTitles={isFullMenu}
             />
           ))}
         </List>
@@ -148,10 +142,10 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
                 background: "transparent",
               },
             }}>
-            {!hideTitles && (
+            {!isFullMenu && (
               <KeyboardArrowRight color='secondary' fontSize='large' />
             )}
-            {hideTitles && (
+            {isFullMenu && (
               <KeyboardArrowLeft color='secondary' fontSize='large' />
             )}
           </IconButton>

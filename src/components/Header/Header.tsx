@@ -5,6 +5,7 @@ import {
   Button,
   IconButton,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
@@ -39,25 +40,28 @@ const Header = (): ReactElement => {
     dispatch(resetUser());
   };
 
-  // [theme.breakpoints.up("lg")]: {
-  //   paddingLeft: isOpen ? 96 : 280,
-  // },
-
   return (
     <StyledAppBar isFullMenu={!isFullMenu}>
       <Sidebar isOpen={isOpen} onClose={onClose} />
       <Container maxWidth='xl'>
-        <Toolbar disableGutters>
+        <Toolbar
+          disableGutters
+          sx={{
+            alignItems: "center",
+          }}>
           <IconButton
             onClick={onOpen}
             sx={{
               display: {
-                sm: "block",
+                sm: "flex",
                 lg: "none",
               },
             }}>
             <Menu />
           </IconButton>
+          <Typography color='primary' fontWeight={700}>
+            Producer Station Vendor Panel
+          </Typography>
           <Button
             variant='contained'
             size='small'

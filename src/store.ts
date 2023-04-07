@@ -38,6 +38,7 @@ const persistCookieRememberConfig = {
       default: 365 * 86400, // Cookies expire after one year
     },
   }),
+  blacklist: ["labelsReducer"],
 };
 
 export const persistedCookieReducer = persistReducer(
