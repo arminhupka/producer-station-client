@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import axios, { type AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { type AxiosError } from "axios";
 
 import { resetUser } from "../features/userSlice";
 import { type store } from "../store";
@@ -25,6 +25,10 @@ const refreshToken = async (): Promise<UserLoginResponseDto> => {
     setRefreshToken(data.refreshToken);
     return data;
   } catch (err) {
+    _store?.dispatch(resetUser());
+    window.localStorage.removeItem("token");
+    window.localStorage.removeItem("refreshToken");
+    window.localStorage.removeItem("rememberMe");
     throw err;
   }
 };
@@ -49,10 +53,6 @@ api.interceptors.response.use(undefined, async (err: AxiosError) => {
     prevRequest.headers.Authorization = `Bearer ${token.token}`;
     rertying = false;
     return await api(prevRequest);
-
-    // _store?.dispatch(resetUser());
-    // window.localStorage.removeItem("token");
-    // window.localStorage.removeItem("rememberMe");
   }
 
   throw err;

@@ -7,7 +7,7 @@ import {
   type UserProfileResponseDto,
 } from "../api/api";
 import { setAllLabels } from "../features/labelsSlice";
-import { setUser } from "../features/userSlice";
+import { resetUser, setUser } from "../features/userSlice";
 import { useAppDispatch } from "../store";
 import { api } from "../utils/api";
 
@@ -34,7 +34,17 @@ const FetchingProvider = ({ children }: IProps): ReactElement => {
   const user = useQuery<AxiosResponse<UserProfileResponseDto>>(
     "get-user",
     async () => await api.get<UserProfileResponseDto>("/auth/me"),
-    { onSuccess: (data) => dispatch(setUser(data.data)) },
+    {
+      onSuccess: (data) => {
+        const role = data.data.role;
+
+        if (role === "USER") {
+          dispatch(resetUser());
+        } else {
+          dispatch(setUser(data.data));
+        }
+      },
+    },
   );
 
   if (vendorLabels.isLoading || user.isLoading) {
