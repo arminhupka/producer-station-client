@@ -4,7 +4,6 @@ import {
   Button,
   Chip,
   Paper,
-  Skeleton,
   Table,
   TableBody,
   TableCell,
@@ -17,6 +16,7 @@ import { Link } from "react-router-dom";
 import { type VendorProductsListItemDto } from "../../../api/api";
 import placeholder from "../../../assets/images/no-image.jpg";
 import { formatPrice } from "../../../utils/formatPrice";
+import Skeletons from "../../molecules/Skeletons/Skeletons";
 
 enum ProductStatusEnum {
   Draft = "DRAFT",
@@ -66,130 +66,8 @@ const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {isLoading && (
-          <>
-            <TableRow>
-              <TableCell>
-                <Skeleton variant='rectangular' width={90} height={90} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-              <TableCell>
-                <Skeleton variant='rectangular' width='100%' height={20} />
-              </TableCell>
-            </TableRow>
-          </>
-        )}
+        {isLoading && <Skeletons rows={2} cols={8} />}
         {!isLoading &&
-          data.length > 0 &&
           data.map((product) => (
             <TableRow key={product._id}>
               <TableCell>

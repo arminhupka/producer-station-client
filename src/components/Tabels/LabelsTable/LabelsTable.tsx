@@ -3,7 +3,6 @@ import {
   Button,
   Chip,
   Paper,
-  Skeleton,
   type SxProps,
   Table,
   TableBody,
@@ -19,6 +18,7 @@ import { Link } from "react-router-dom";
 import { type VendorLabelListItem } from "../../../api/api";
 import NoImagePlaceholder from "../../../assets/images/no-image.jpg";
 import { LabelStatusEnum } from "../../../enum/LabelStatusEnum";
+import Skeletons from "../../molecules/Skeletons/Skeletons";
 
 interface IProps {
   data: VendorLabelListItem[];
@@ -50,33 +50,6 @@ const generateStatus = (status: string): ReactElement => {
   }
 };
 
-const GhostProduct = (): ReactElement => (
-  <TableRow>
-    <TableCell width='64'>
-      <Skeleton variant='rounded' width={64} height={64} />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-    </TableCell>
-    <TableCell>
-      <Skeleton />
-      <Skeleton />
-    </TableCell>
-  </TableRow>
-);
-
 const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
   <Paper>
     <Table>
@@ -92,16 +65,7 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
         </TableRow>
       </TableHead>
       <TableBody>
-        {isLoading && (
-          <>
-            <GhostProduct />
-            <GhostProduct />
-            <GhostProduct />
-            <GhostProduct />
-            <GhostProduct />
-            <GhostProduct />
-          </>
-        )}
+        {isLoading && <Skeletons rows={8} cols={7} />}
         {!isLoading &&
           data.map((label) => (
             <TableRow key={label._id}>
