@@ -18,10 +18,12 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 
 import NavItem from "./NavItem/NavItem";
 import SidebarUser from "./SidebarUser/SidebarUser";
+import { useAppDispatch } from "../../store";
+import { setMenuFull } from "../../features/appSlice";
 
 interface IStyledDrawer extends DrawerProps {
   small?: boolean;
@@ -97,11 +99,18 @@ interface IProps {
 
 const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
+  const dispatch = useAppDispatch();
+
   const [hideTitles, setHideTitles] = useState<boolean>(false);
+
+  useEffect(() => {
+    localStorage.setItem("fullMenu", hideTitles.toString());
+  }, [hideTitles]);
 
   const handleToggleTitlesDisplay = (): void => {
     setHideTitles(!hideTitles);
+    dispatch(setMenuFull(!hideTitles));
   };
 
   return (

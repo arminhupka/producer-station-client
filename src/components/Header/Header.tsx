@@ -1,20 +1,34 @@
 import { Menu } from "@mui/icons-material";
-import { AppBar, Button, IconButton, Toolbar } from "@mui/material";
+import {
+  AppBar,
+  type AppBarProps,
+  Button,
+  IconButton,
+  Toolbar,
+} from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import { resetUser } from "../../features/userSlice";
 import useModalState from "../../hooks/useModalState";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import Sidebar from "../Sidebar/Sidebar";
 import { type ReactElement } from "react";
 import Container from "@mui/material/Container";
 
-const StyledAppBar = styled(AppBar)(({ theme }) => ({
+interface IStyledAppBar extends AppBarProps {
+  isFullMenu: boolean;
+}
+
+const StyledAppBar = styled(AppBar)<IStyledAppBar>(({ theme, isFullMenu }) => ({
   background: theme.palette.background.paper,
   boxShadow: theme.shadows[3],
+  [theme.breakpoints.up("lg")]: {
+    paddingLeft: isFullMenu ? 96 : 280,
+  },
 }));
 
 const Header = (): ReactElement => {
+  const isFullMenu = useAppSelector((state) => state.appReducer.isFullMenu);
   const { isOpen, onOpen, onClose } = useModalState();
 
   const dispatch = useAppDispatch();
@@ -25,14 +39,15 @@ const Header = (): ReactElement => {
     dispatch(resetUser());
   };
 
+  // [theme.breakpoints.up("lg")]: {
+  //   paddingLeft: isOpen ? 96 : 280,
+  // },
+
   return (
-    <StyledAppBar>
+    <StyledAppBar isFullMenu={!isFullMenu}>
       <Sidebar isOpen={isOpen} onClose={onClose} />
-      <Container maxWidth='xl' disableGutters>
-        <Toolbar
-          sx={{
-            px: 2,
-          }}>
+      <Container maxWidth='xl'>
+        <Toolbar disableGutters>
           <IconButton
             onClick={onOpen}
             sx={{

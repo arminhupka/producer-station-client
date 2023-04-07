@@ -3,14 +3,19 @@ import { styled } from "@mui/material/styles";
 import { type ReactElement, type ReactNode } from "react";
 
 import Header from "../components/Header/Header";
+import { useAppSelector } from "../store";
 
-const StyledRoot = styled("div")(({ theme }) => ({
+interface IStyledRoot {
+  isOpen: boolean;
+}
+
+const StyledRoot = styled("div")<IStyledRoot>(({ theme, isOpen }) => ({
   display: "flex",
   flex: "1 1 auto",
   maxWidth: "100%",
   paddingTop: 64,
   [theme.breakpoints.up("lg")]: {
-    paddingLeft: 280,
+    paddingLeft: isOpen ? 96 : 280,
   },
 }));
 
@@ -19,10 +24,12 @@ interface IProps {
 }
 
 const MainLayout = ({ children }: IProps): ReactElement => {
+  const isFullMenu = useAppSelector((state) => state.appReducer.isFullMenu);
+
   return (
     <Box height='100%'>
       <Header />
-      <StyledRoot>
+      <StyledRoot isOpen={!isFullMenu}>
         <Box py={8} width='100%'>
           <Container maxWidth='xl'>{children}</Container>
         </Box>

@@ -20,10 +20,11 @@ import {
 // @ts-ignore
 import { CookieStorage } from "redux-persist-cookie-storage";
 
-import labelsReducer from "../src/features/labelsSlice";
-import userReducer from "../src/features/userSlice";
+import labelsReducer from "./features/labelsSlice";
+import userReducer from "./features/userSlice";
+import appReducer from "./features/appSlice";
 
-const rootReducer = combineReducers({ userReducer, labelsReducer });
+const rootReducer = combineReducers({ userReducer, labelsReducer, appReducer });
 
 const persistCookieConfig = {
   key: "user",
