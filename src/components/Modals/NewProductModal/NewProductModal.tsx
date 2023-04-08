@@ -81,6 +81,7 @@
 // export default NewProductModal;
 
 import {
+  Alert,
   Button,
   FormControl,
   Grid,
@@ -101,6 +102,7 @@ import { type ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
 import BaseModal, { type IBaseModalProps } from "../BaseModal";
+import Loader from "../../atoms/Loader/Loader";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -109,7 +111,8 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
   const labels = useAppSelector((state) => state.labelsReducer.labels);
 
   const { register, setValue, handleSubmit } = useForm<NewProductDto>();
-  const { mutate, isLoading } = useMutation<
+
+  const { mutate, isLoading, error } = useMutation<
     AxiosResponse<ProductDto>,
     AxiosError<ApiError>,
     NewProductDto
@@ -130,36 +133,47 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
   return (
     <BaseModal title='New Product' onClose={onClose} open={open}>
       <>
-        {isLoading && "loading"}
-        <form onSubmit={handleSubmit(handleCreateNewProduct)}>
-          <Grid container gap={2}>
-            <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id='label'>Select label</InputLabel>
-                <Select
-                  labelId='label'
-                  label='Select label'
+        {isLoading && <Loader />}
+        {!isLoading && (
+          <form onSubmit={handleSubmit(handleCreateNewProduct)}>
+            <Grid container gap={2}>
+              <Grid item xs={12}>
+                <FormControl fullWidth>
+                  <InputLabel id='label'>Select label</InputLabel>
+                  <Select
+                    labelId='label'
+                    label='Select label'
+                    fullWidth
+                    {...register("label")}
+                    onChange={handleChange}>
+                    {labels.map((l) => (
+                      <MenuItem key={l._id} value={l._id}>
+                        {l.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  label='Product Name'
                   fullWidth
-                  {...register("label")}
-                  onChange={handleChange}>
-                  {labels.map((l) => (
-                    <MenuItem key={l._id} value={l._id}>
-                      {l.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                  {...register("name")}
+                />
+              </Grid>
+              {error?.response && (
+                <Grid item xs={12}>
+                  <Alert severity='error'>{error.response.data.message}</Alert>
+                </Grid>
+              )}
+              <Grid item xs={12}>
+                <Button type='submit' variant='contained' fullWidth>
+                  Add New Product
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12}>
-              <TextField label='Product Name' fullWidth {...register("name")} />
-            </Grid>
-            <Grid item xs={12}>
-              <Button type='submit' variant='contained' fullWidth>
-                Add New Product
-              </Button>
-            </Grid>
-          </Grid>
-        </form>
+          </form>
+        )}
       </>
     </BaseModal>
   );

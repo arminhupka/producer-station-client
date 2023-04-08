@@ -9,15 +9,18 @@ import {
   type VendorLabelDetailsResponseDto,
 } from "../../../api/api";
 import { type ApiError } from "../../../api/apiError";
-import { LabelStatusEnum } from "../../../enum/LabelStatusEnum";
 import { api } from "../../../utils/api";
 import ImageUploader from "../../CoverUploader/ImageUploader";
+import { useLocation } from "react-router-dom";
 
 interface IProps {
   data: VendorLabelDetailsResponseDto;
+  disableEdit: boolean;
 }
 
-const LabelForm = ({ data }: IProps): ReactElement => {
+const LabelForm = ({ data, disableEdit }: IProps): ReactElement => {
+  const location = useLocation();
+
   const {
     register,
     setValue,
@@ -41,10 +44,12 @@ const LabelForm = ({ data }: IProps): ReactElement => {
 
   const handleAvatarChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ avatar: fileId });
+    window.location.href = location.pathname;
   };
 
   const handleHeaderChange = async (fileId: string): Promise<void> => {
     await mutateAsync({ header: fileId });
+    window.location.href = location.pathname;
   };
 
   useEffect(() => {
@@ -74,6 +79,7 @@ const LabelForm = ({ data }: IProps): ReactElement => {
                   {...register("name")}
                   helperText={errors.name?.message}
                   error={!!errors.name}
+                  disabled={disableEdit}
                   required
                 />
               </Grid>
@@ -84,19 +90,21 @@ const LabelForm = ({ data }: IProps): ReactElement => {
                   {...register("email")}
                   helperText={errors.email?.message}
                   error={!!errors.email}
+                  disabled={disableEdit}
                   required
                 />
               </Grid>
               <Grid item xs={12}>
                 <TextField
                   label='Description'
-                  rows={8}
+                  rows={3}
                   multiline
                   fullWidth
                   required
                   {...register("description")}
                   helperText={errors.description?.message}
                   error={!!errors.description}
+                  disabled={disableEdit}
                 />
               </Grid>
             </Grid>
@@ -115,6 +123,7 @@ const LabelForm = ({ data }: IProps): ReactElement => {
                   label='Facebook'
                   fullWidth
                   {...register("facebook")}
+                  disabled={disableEdit}
                 />
               </Grid>
               <Grid item xs={12}>
@@ -122,10 +131,16 @@ const LabelForm = ({ data }: IProps): ReactElement => {
                   label='Instagram'
                   fullWidth
                   {...register("instagram")}
+                  disabled={disableEdit}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField label='YouTube' fullWidth {...register("youtube")} />
+                <TextField
+                  label='YouTube'
+                  fullWidth
+                  {...register("youtube")}
+                  disabled={disableEdit}
+                />
               </Grid>
             </Grid>
           </Box>
@@ -138,7 +153,7 @@ const LabelForm = ({ data }: IProps): ReactElement => {
             image={data.avatar?.public}
             onUpload={handleAvatarChange}
             buttonLabel='Upload Avatar'
-            disabled={data.status !== LabelStatusEnum.Draft}
+            disabled={disableEdit}
           />
         </Box>
         <Box flex={1}>
@@ -147,7 +162,7 @@ const LabelForm = ({ data }: IProps): ReactElement => {
             image={data.header?.public}
             onUpload={handleHeaderChange}
             buttonLabel='Upload Header'
-            disabled={data.status !== LabelStatusEnum.Draft}
+            disabled={disableEdit}
           />
         </Box>
       </Box>

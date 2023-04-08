@@ -4,6 +4,7 @@ import { type ChangeEvent, useEffect, useState } from "react";
 
 import { type FileDto } from "../api/api";
 import { api } from "../utils/api";
+import { useLocation } from "react-router-dom";
 
 // enum UploadStatus {
 //   INIT = "Initialization",
@@ -37,6 +38,7 @@ const useUploader = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadedPercents, setUploadedPercents] = useState<number>(0);
   const [details, setDetails] = useState<null | FileDto>(null);
+  const location = useLocation();
 
   const selectFile = async (
     e: ChangeEvent<HTMLInputElement>,
