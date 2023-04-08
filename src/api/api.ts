@@ -285,8 +285,8 @@ export interface ProductDto {
   price: number;
   salePrice: number;
   featured: boolean;
-  artwork: FileDto;
-  audioPreview: FileDto;
+  artwork: FileDto | null;
+  audioPreview: FileDto | null;
   label: ProductLabelDto;
   category: ProductCategoryDto[];
   genre: ProductGenreDto[];

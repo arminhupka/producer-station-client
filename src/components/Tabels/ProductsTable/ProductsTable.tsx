@@ -91,7 +91,7 @@ const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
                 {new Date(product.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell>
-                <Link to={`/panel/product/${product._id}`}>
+                <Link to={`/panel/products/${product._id}`}>
                   <Button
                     component='div'
                     variant='contained'

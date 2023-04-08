@@ -28,7 +28,7 @@ const NoAuthLayout = ({ children }: IProps): ReactElement => {
           </Container>
         </Grid>
         {!isMobile && (
-          <Grid item xs={7} bgcolor='red'>
+          <Grid item xs={7} bgcolor='primary.main'>
             <Box
               width='100%'
               height='100%'
