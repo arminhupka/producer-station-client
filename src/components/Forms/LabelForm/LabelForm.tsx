@@ -7,7 +7,7 @@ import { useMutation } from "react-query";
 import {
   type UpdateLabelDto,
   type VendorLabelDetailsResponseDto,
-} from "../../../api/api";
+} from "../../../api/api-types";
 import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 import ImageUploader from "../../CoverUploader/ImageUploader";

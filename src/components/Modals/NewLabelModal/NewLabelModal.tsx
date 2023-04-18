@@ -6,7 +6,7 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 
-import { type LabelDto, type NewLabelDto } from "../../../api/api";
+import { type LabelDto, type NewLabelDto } from "../../../api/api-types";
 import { type ApiError } from "../../../api/apiError";
 import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";

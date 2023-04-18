@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { type AxiosError } from "axios";
 
-import { type UserProfileResponseDto } from "../api/api";
+import { type UserProfileResponseDto } from "../api/api-types";
 import { type ApiError } from "../api/apiError";
 import { api } from "../utils/api";
 

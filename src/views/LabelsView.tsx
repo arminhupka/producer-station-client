@@ -4,13 +4,14 @@ import { type ReactElement, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 
-import { type VendorLabelResponseDto } from "../api/api";
+import { type VendorLabelResponseDto } from "../api/api-types";
 import NewLabelModal from "../components/Modals/NewLabelModal/NewLabelModal";
 import PageHeading from "../components/PageHeading/PageHeading";
 import LabelsTable from "../components/Tabels/LabelsTable/LabelsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
+import FullLoader from "../components/atoms/FullLoader/FullLoader";
 
 const LabelsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
@@ -27,6 +28,10 @@ const LabelsView = (): ReactElement => {
       remove();
     };
   }, []);
+
+  if (isLoading) {
+    return <FullLoader />;
+  }
 
   return (
     <>

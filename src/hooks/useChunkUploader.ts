@@ -2,7 +2,7 @@
 
 import { type ChangeEvent, useEffect, useState } from "react";
 
-import { type FileDto } from "../api/api";
+import { type FileDto } from "../api/api-types";
 import { api } from "../utils/api";
 import { useLocation } from "react-router-dom";
 

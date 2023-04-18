@@ -12,7 +12,7 @@ import type {
   LabelDto,
   UpdateLabelDto,
   VendorLabelDetailsResponseDto,
-} from "../api/api";
+} from "../api/api-types";
 import { type ApiError } from "../api/apiError";
 import DashboardCard from "../components/DashboardCard/DashboardCard";
 import LabelForm from "../components/Forms/LabelForm/LabelForm";

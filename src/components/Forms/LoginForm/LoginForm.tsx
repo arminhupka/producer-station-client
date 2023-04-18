@@ -16,16 +16,16 @@ import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 
-import { type UserLoginDto, type UserLoginResponseDto } from "../../../api/api";
+import {
+  type UserLoginDto,
+  type UserLoginResponseDto,
+} from "../../../api/api-types";
 import { type ApiError } from "../../../api/apiError";
 import { getProfile } from "../../../features/userSlice";
 import {
   persistedCookieReducer,
   persistedCookieRememberReducer,
   store,
-  // persistedLocalReducer,
-  // persistedSessionReducer,
-  // store,
   useAppDispatch,
   useAppSelector,
 } from "../../../store";

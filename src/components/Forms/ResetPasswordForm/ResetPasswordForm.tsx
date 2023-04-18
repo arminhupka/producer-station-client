@@ -12,7 +12,7 @@ import { type ReactElement } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 
-import { type ResetPasswordRequestDto } from "../../../api/api";
+import { type ResetPasswordRequestDto } from "../../../api/api-types";
 import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 

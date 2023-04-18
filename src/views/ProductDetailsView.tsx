@@ -2,7 +2,7 @@ import { type ReactElement } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios";
-import { type ProductDto } from "../api/api";
+import { type ProductDto } from "../api/api-types";
 import { type ApiError } from "../api/apiError";
 import { api } from "../utils/api";
 import FullLoader from "../components/atoms/FullLoader/FullLoader";

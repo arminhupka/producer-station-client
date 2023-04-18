@@ -4,7 +4,6 @@ import { type ReactElement, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useQuery } from "react-query";
 
-import { type VendorProductsListPaginatedDto } from "../api/api";
 import NewProductModal from "../components/Modals/NewProductModal/NewProductModal";
 import Pagination from "../components/molecules/Pagination/Pagination";
 import PageHeading from "../components/PageHeading/PageHeading";
@@ -12,6 +11,8 @@ import ProductsTable from "../components/Tabels/ProductsTable/ProductsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
+import FullLoader from "../components/atoms/FullLoader/FullLoader";
+import { type VendorProductsListPaginatedDto } from "../api/api-types";
 
 const ProductsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
@@ -30,6 +31,10 @@ const ProductsView = (): ReactElement => {
   const handleChangePage = (event: unknown, newPage: number): void => {
     setPage(newPage + 1);
   };
+
+  if (isLoading) {
+    return <FullLoader />;
+  }
 
   return (
     <>

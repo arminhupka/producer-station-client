@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import {
   type GetVendorAllLabelsDto,
   type UserProfileResponseDto,
-} from "../api/api";
+} from "../api/api-types";
 import { setAllLabels } from "../features/labelsSlice";
 import { resetUser, setUser } from "../features/userSlice";
 import { useAppDispatch } from "../store";

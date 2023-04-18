@@ -2,7 +2,7 @@ import axios, { type AxiosError } from "axios";
 
 import { resetUser } from "../features/userSlice";
 import { type store } from "../store";
-import { type UserLoginResponseDto } from "../api/api";
+import { type UserLoginResponseDto } from "../api/api-types";
 import { setAuthToken, setRefreshToken } from "./setAuthToken";
 
 let _store: typeof store | null = null;

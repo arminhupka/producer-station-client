@@ -311,6 +311,7 @@ export interface GetVendorAllLabelsDto {
 export interface Labels {
   totalLabels: number;
   activated: number;
+  drafted: number;
   submitted: number;
   suspended: number;
 }
@@ -322,7 +323,7 @@ export interface Orders {
 export interface Earnings {
   thisMonth: number;
   lastMonth: number;
-  overall: number;
+  lastThreeMonths: number;
 }
 
 export interface Products {
@@ -337,6 +338,18 @@ export interface VendorOverviewResponseDto {
   orders: Orders;
   earnings: Earnings;
   products: Products;
+}
+
+export interface EarningDateDto {
+  year: number;
+  month: number;
+  monthName: string;
+}
+
+export interface VendorEarningDto {
+  date: EarningDateDto;
+  count: number;
+  total: number;
 }
 
 export interface NewProductDto {
@@ -1424,6 +1437,7 @@ export class Api<
      * @name VendorControllerGetLabelProductsPaginated
      * @summary Get products by label
      * @request GET:/vendor/labels/{id}/products
+     * @secure
      */
     vendorControllerGetLabelProductsPaginated: (
       id: string,
@@ -1457,6 +1471,7 @@ export class Api<
         path: `/vendor/labels/${id}/products`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1468,6 +1483,7 @@ export class Api<
      * @name VendorControllerGetVendorProducts
      * @summary Get vendor products
      * @request GET:/vendor/products
+     * @secure
      */
     vendorControllerGetVendorProducts: (
       query?: {
@@ -1502,6 +1518,7 @@ export class Api<
         path: `/vendor/products`,
         method: "GET",
         query: query,
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1513,6 +1530,7 @@ export class Api<
      * @name VendorControllerGetVendorProduct
      * @summary Get vendor product
      * @request GET:/vendor/products/{id}
+     * @secure
      */
     vendorControllerGetVendorProduct: (
       id: string,
@@ -1547,6 +1565,7 @@ export class Api<
       >({
         path: `/vendor/products/${id}`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -1599,6 +1618,34 @@ export class Api<
         }
       >({
         path: `/vendor/overview`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetEarnings
+     * @summary Get vendor earnings
+     * @request GET:/vendor/earnings
+     * @secure
+     */
+    vendorControllerGetEarnings: (params: RequestParams = {}) =>
+      this.request<
+        VendorEarningDto[],
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/vendor/earnings`,
         method: "GET",
         secure: true,
         format: "json",
