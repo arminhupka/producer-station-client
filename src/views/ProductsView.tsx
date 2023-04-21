@@ -11,30 +11,27 @@ import ProductsTable from "../components/Tabels/ProductsTable/ProductsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
-import FullLoader from "../components/atoms/FullLoader/FullLoader";
 import { type VendorProductsListPaginatedDto } from "../api/api-types";
+import SearchBar from "../components/atoms/SearchBar/SearchBar";
 
 const ProductsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
   const [page, setPage] = useState(1);
+  const [keyword, setKeyword] = useState<string>("");
 
   const { isLoading, data } = useQuery<
     AxiosResponse<VendorProductsListPaginatedDto>
   >(
-    ["products", page],
+    ["products", page, keyword],
     async () =>
       await api.get<VendorProductsListPaginatedDto>("/vendor/products", {
-        params: { limit: 10, page },
+        params: { limit: 10, page, product: keyword || undefined },
       }),
   );
 
   const handleChangePage = (event: unknown, newPage: number): void => {
     setPage(newPage + 1);
   };
-
-  if (isLoading) {
-    return <FullLoader />;
-  }
 
   return (
     <>
@@ -48,8 +45,9 @@ const ProductsView = (): ReactElement => {
             Add Product
           </Button>
         </PageHeading>
+        <SearchBar onInputChange={setKeyword} />
         <ProductsTable isLoading={isLoading} data={data?.data.docs ?? []} />
-        {data != null && (
+        {data && (
           <Pagination
             count={data.data.totalDocs}
             page={data.data.page}

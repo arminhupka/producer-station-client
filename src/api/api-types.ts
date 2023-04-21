@@ -168,6 +168,8 @@ export interface UploadDto {
   contentLength: number;
 }
 
+export type CancelUploadDto = object;
+
 export interface VendorLabelListItem {
   _id: string;
   avatar: string | null;
@@ -294,6 +296,7 @@ export interface ProductDto {
   name: string;
   new: boolean;
   free: boolean;
+  files: FileDto[];
   /** @format date-time */
   publishedAt: string;
   /** @format date-time */
@@ -413,6 +416,7 @@ export interface UpdateProductDto {
   category?: string[];
   genre?: string[];
   status?: string;
+  files?: string[];
   featured?: boolean;
   artwork?: string;
 }
@@ -436,6 +440,10 @@ export interface PublicProductDto {
   label: PublicProductLabel;
   artwork: string | null;
   audioPreview: string | null;
+}
+
+export interface AddFileToProductDto {
+  fileId: string;
 }
 
 export type CreateCategoryDto = object;
@@ -1348,6 +1356,53 @@ export class Api<
         format: "json",
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Upload
+     * @name UploadControllerCancelUpload
+     * @summary Cancel multipart upload
+     * @request DELETE:/upload/cancel
+     */
+    uploadControllerCancelUpload: (
+      data: CancelUploadDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        OkResponseDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/upload/cancel`,
+        method: "DELETE",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
   };
   vendor = {
     /**
@@ -1657,12 +1712,15 @@ export class Api<
      *
      * @tags Vendor
      * @name VendorControllerOrdersCount
+     * @summary Get vendor completed orders
      * @request GET:/vendor/overview/orders-count
+     * @secure
      */
     vendorControllerOrdersCount: (params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/vendor/overview/orders-count`,
         method: "GET",
+        secure: true,
         ...params,
       }),
   };
@@ -1856,6 +1914,54 @@ export class Api<
       >({
         path: `/products/${id}`,
         method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Product
+     * @name ProductsControllerAddFile
+     * @summary Add file to product
+     * @request POST:/products/{id}/file
+     */
+    productsControllerAddFile: (
+      id: string,
+      data: AddFileToProductDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        ProductDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 403 */
+            statusCode: number;
+            /** @example "Forbidden" */
+            message: string;
+            /** @example "Forbidden" */
+            error?: string;
+          }
+      >({
+        path: `/products/${id}/file`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         format: "json",
         ...params,
       }),

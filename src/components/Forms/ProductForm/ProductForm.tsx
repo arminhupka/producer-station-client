@@ -1,94 +1,64 @@
-// import type { ReactElement, SyntheticEvent } from "react";
-// import { useState } from "react";
-// import { TabContext, TabPanel } from "@mui/lab";
-// import ProductFormTabs from "./ProductFormTabs/ProductFormTabs";
-// import { type ProductDto } from "../../../api/api-types";
-// import ProductFilesTab from "./ProductFilesTab/ProductFilesTab";
-//
-// interface IProps {
-//   product: ProductDto;
-// }
-//
-// const ProductForm = ({ product }: IProps): ReactElement => {
-//   const [currentTab, setCurrentTab] = useState<string>("1");
-//
-//   const handleChangeTab = (event: SyntheticEvent, newValue: string): void => {
-//     setCurrentTab(newValue);
-//   };
-//
-//   return (
-//     <>
-//       <TabContext value={currentTab}>
-//         <ProductFormTabs onTabChange={handleChangeTab} />
-//         <TabPanel value='1'>
-//           <h1>Product form</h1>
-//         </TabPanel>
-//         <TabPanel value='3'>
-//           <ProductFilesTab />
-//         </TabPanel>
-//       </TabContext>
-//     </>
-//   );
-// };
-//
-// export default ProductForm;
-
-/* eslint-disable */
-
 import { AttachMoney, MoneyOff } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Card,
   Checkbox,
-  Divider,
   FormControlLabel,
   Grid,
   InputAdornment,
   Paper,
   TextField,
-  Typography,
 } from "@mui/material";
-import { ReactElement, useEffect, useState } from "react";
+import { type ReactElement, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 import {
-  CategoryDto,
-  ProductDto,
-  UpdateProductDto,
+  type CategoryDto,
+  type ProductDto,
+  type UpdateProductDto,
 } from "../../../api/api-types";
 import useModalState from "../../../hooks/useModalState";
-import FileUploader from "../../FileUploader/FileUploader";
 import NewFileUpload from "../../Modals/NewFileUpload/NewFileUpload";
 import { formatPrice } from "../../../utils/formatPrice";
+import AutoCompleteChips from "../../molecules/AutoCompleteChips/AutoCompleteChips";
+import ImageUploader, {
+  AspectEnum,
+} from "../../molecules/ImageUploader/ImageUploader";
+import useChunkedUploader from "../../../hooks/useChunkedUploader";
+import { useMutation } from "react-query";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ApiError } from "../../../api/apiError";
+import { api } from "../../../utils/api";
+import AudioPreviewUploader from "../../molecules/AudioPreviewUploader/AudioPreviewUploader";
 
 interface IProps {
   product: ProductDto;
   categories: CategoryDto[];
-  onUpdate: (update: UpdateProductDto) => void;
+  onUpdate?: (update: UpdateProductDto) => void;
   isUpdating: boolean;
+  onRefetch?: () => void;
+  disabled?: boolean;
 }
-
-interface IForm {
-  price: string | number | null;
-  salePrice: string | number | null;
-  category: CategoryDto[];
-}
-
-// export interface IProductUpdate
-//   extends Omit<UpdateProductDto, "price" | "salePrice"> {
-//   price: string | number | null;
-//   salePrice: string | number | null;
-// }
 
 const ProductForm = ({
   product,
   categories,
   onUpdate,
-  isUpdating,
+  onRefetch,
+  disabled,
 }: IProps): ReactElement => {
   const { isOpen, onOpen, onClose } = useModalState();
-  const [categoryIsFull, setCategoryIsFull] = useState<boolean>(false);
+  const { upload, isUploaded, uploadedFileDetails, uploading } =
+    useChunkedUploader();
+
+  const productMutation = useMutation<
+    AxiosResponse<ProductDto>,
+    AxiosError<ApiError>,
+    UpdateProductDto
+  >(
+    async (form) =>
+      await api.patch<ProductDto>(`/products/${product._id}`, form),
+  );
 
   const {
     register,
@@ -105,43 +75,47 @@ const ProductForm = ({
     );
     setValue("shortDescription", product.shortDescription);
     setValue("description", product.description);
+    setValue(
+      "category",
+      product.category.map((c) => c._id),
+    );
   }, []);
 
   useEffect(() => {
-    console.log(errors);
-  }, [errors]);
+    if (isUploaded && uploadedFileDetails) {
+      void productMutation
+        .mutateAsync({ artwork: uploadedFileDetails._id })
+        .then(() => {
+          if (onRefetch) {
+            onRefetch();
+          }
+        });
+    }
+  }, [isUploaded, uploadedFileDetails]);
 
   return (
     <>
-      <NewFileUpload onClose={onClose} open={isOpen} />
+      <NewFileUpload
+        onClose={onClose}
+        open={isOpen}
+        productId={product._id}
+        onUploaded={onRefetch}
+      />
       <Box>
-        <Grid container spacing={2}>
-          <Grid
-            item
-            xs={12}
-            lg={4}
-            display='flex'
-            flexDirection='column'
-            gap={2}>
-            {/* <CoverUploader /> */}
-            <Card>
-              <Box
-                p={2}
-                display='flex'
-                justifyContent='space-between'
-                alignItems='center'>
-                <Typography component='h2' fontWeight={600}>
-                  Files
-                </Typography>
-                <Button variant='contained' size='small' onClick={onOpen}>
-                  Add File
-                </Button>
-              </Box>
-              <Divider />
-              <FileUploader />
-            </Card>
+        <Button onClick={onOpen}>Add new file</Button>
+        <Grid container spacing={3}>
+          <Grid item xs={4}>
+            <Box display='flex' flexDirection='column' gap={3}>
+              <ImageUploader
+                aspect={AspectEnum.square}
+                onUpload={upload}
+                defaultImage={product.artwork?.public}
+                isLoading={uploading}
+              />
+              <AudioPreviewUploader />
+            </Box>
           </Grid>
-          <Grid item xs={12} lg={8}>
+          <Grid item xs={8}>
             <Paper>
               <Box p={2}>
                 <Grid container spacing={3}>
@@ -149,6 +123,7 @@ const ProductForm = ({
                     <TextField
                       label='Product Name'
                       fullWidth
+                      disabled={disabled}
                       {...register("name")}
                     />
                   </Grid>
@@ -172,7 +147,7 @@ const ProductForm = ({
                       fullWidth
                       error={!!errors.price}
                       helperText={errors.price?.message}
-                      // disabled={!!watchIsFree}
+                      disabled={disabled}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position='start'>
@@ -180,12 +155,7 @@ const ProductForm = ({
                           </InputAdornment>
                         ),
                       }}
-                      {...register("price", {
-                        // pattern: /^\d+\.\d{2}$/,
-                        // setValueAs: (v: number) => {
-                        //   return Math.ceil(v * 100) || null;
-                        // },
-                      })}
+                      {...register("price", {})}
                     />
                   </Grid>
                   <Grid item xs={6}>
@@ -194,7 +164,7 @@ const ProductForm = ({
                       fullWidth
                       error={!!errors.salePrice}
                       helperText={errors.salePrice?.message}
-                      // disabled={!!watchIsFree}
+                      disabled={disabled}
                       InputProps={{
                         startAdornment: (
                           <InputAdornment position='start'>
@@ -208,41 +178,11 @@ const ProductForm = ({
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    {/* <Controller */}
-                    {/*   defaultValue={product.category} */}
-                    {/*   render={(props) => ( */}
-                    {/*     <Autocomplete */}
-                    {/*       {...props} */}
-                    {/*       onChange={(event, value) => { */}
-                    {/*         console.log(value); */}
-                    {/*         setCategoryIsFull(value.length === 5); */}
-                    {/*         props.field.onChange(value); */}
-                    {/*       }} */}
-                    {/*       multiple */}
-                    {/*       value={props.field.value} */}
-                    {/*       getOptionDisabled={(option) => categoryIsFull} */}
-                    {/*       getOptionLabel={(option) => option.name} */}
-                    {/*       renderOption={(props, option, { selected }) => ( */}
-                    {/*         <li {...props} key={option._id}> */}
-                    {/*           <Checkbox */}
-                    {/*             style={{ marginRight: 8 }} */}
-                    {/*             checked={selected} */}
-                    {/*           /> */}
-                    {/*           {option.name} */}
-                    {/*         </li> */}
-                    {/*       )} */}
-                    {/*       renderInput={(param) => ( */}
-                    {/*         <TextField {...param} label='Categories' /> */}
-                    {/*       )} */}
-                    {/*       options={categories} */}
-                    {/*       isOptionEqualToValue={(option, value) => */}
-                    {/*         option._id === value._id */}
-                    {/*       } */}
-                    {/*     /> */}
-                    {/*   )} */}
-                    {/*   name='category' */}
-                    {/*   control={control} */}
-                    {/* /> */}
+                    <AutoCompleteChips
+                      data={categories}
+                      productCategories={product.category}
+                      disabled={disabled}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
@@ -250,6 +190,7 @@ const ProductForm = ({
                       multiline
                       rows={3}
                       fullWidth
+                      disabled={disabled}
                       {...register("shortDescription")}
                     />
                   </Grid>
@@ -259,19 +200,9 @@ const ProductForm = ({
                       multiline
                       rows={8}
                       fullWidth
+                      disabled={disabled}
                       {...register("description")}
                     />
-                  </Grid>
-                  <Grid
-                    item
-                    xs={12}
-                    display='flex'
-                    justifyContent='flex-end'
-                    gap={2}>
-                    <Button variant='outlined' type='submit'>
-                      Update Product
-                    </Button>
-                    <Button variant='contained'>Submit Product</Button>
                   </Grid>
                 </Grid>
               </Box>

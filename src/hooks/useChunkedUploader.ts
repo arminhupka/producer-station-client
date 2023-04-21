@@ -43,6 +43,7 @@ const useChunkedUploader = () => {
   const [uploadedPercents, setUploadedPercents] = useState<number>(0);
 
   const [isUploaded, setIsUploaded] = useState<boolean>();
+  const [uploading, setUploading] = useState<boolean>(false);
 
   const [uploadID, setUploadId] = useState<string | null>(null);
   const [key, setKey] = useState<string | null>(null);
@@ -171,17 +172,24 @@ const useChunkedUploader = () => {
   };
 
   const upload = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
-    const { file, parts } = await selectFile(e);
+    setUploading(true);
+    try {
+      const { file, parts } = await selectFile(e);
 
-    setKey(file.name);
+      setKey(file.name);
 
-    const uploadId = await uploadInitializer(file);
+      const uploadId = await uploadInitializer(file);
 
-    setUploadId(uploadId);
+      setUploadId(uploadId);
 
-    const uploadedParts = await uploadChunks(file, uploadId, parts);
-    const uploadedData = await finalizeUpload(file, uploadId, uploadedParts);
-    setUploadedFileDetails(uploadedData);
+      const uploadedParts = await uploadChunks(file, uploadId, parts);
+      const uploadedData = await finalizeUpload(file, uploadId, uploadedParts);
+      setUploadedFileDetails(uploadedData);
+    } catch {
+      console.error("Error during uploading");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const cancelUpload = async (): Promise<void> => {
@@ -216,6 +224,7 @@ const useChunkedUploader = () => {
     selectedFile,
     isUploaded,
     cancelUpload,
+    uploading,
   };
 };
 

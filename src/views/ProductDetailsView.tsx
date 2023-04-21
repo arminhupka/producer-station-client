@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect } from "react";
+import { type ReactElement } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios";
@@ -18,6 +18,8 @@ import { Alert, Box } from "@mui/material";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { NewProductValidator } from "../validators/NewProductValidator";
 import ProductFormButtons from "../components/molecules/ProductFormButtons/ProductFormButtons";
+import PageHeading from "../components/PageHeading/PageHeading";
+import { LabelStatusEnum } from "../enum/LabelStatusEnum";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
@@ -25,10 +27,6 @@ const ProductDetailsView = (): ReactElement => {
   const formMethods = useForm<UpdateProductDto>({
     resolver: yupResolver(NewProductValidator),
   });
-
-  useEffect(() => {
-    console.log(formMethods);
-  }, [formMethods]);
 
   if (!id) {
     navigate("/panel/products");
@@ -72,11 +70,20 @@ const ProductDetailsView = (): ReactElement => {
     }
 
     const form = formMethods.getValues();
+
     await mutateProduct.mutateAsync({
       ...form,
       price: (form.price && Math.ceil(+form.price * 100)) ?? null,
       salePrice: (form.salePrice && Math.ceil(+form.salePrice * 100)) ?? null,
     });
+  };
+
+  const handleProductSubmit = async (): Promise<void> => {
+    mutateProduct.mutate({ status: LabelStatusEnum.Submitted.toUpperCase() });
+  };
+
+  const handleProductRefetch = async (): Promise<void> => {
+    await queryProduct.refetch();
   };
 
   if (queryProduct.isLoading) {
@@ -99,12 +106,18 @@ const ProductDetailsView = (): ReactElement => {
                 <Alert severity='error'>{mutateError.message}</Alert>
               </Box>
             )}
-            <ProductFormButtons onUpdate={handleProductUpdate} />
+            <PageHeading title={product.name}>
+              <ProductFormButtons
+                onUpdate={handleProductUpdate}
+                onSubmit={handleProductSubmit}
+              />
+            </PageHeading>
             <ProductForm
               product={product}
               categories={categories}
               isUpdating={false}
               onUpdate={() => {}}
+              onRefetch={handleProductRefetch}
             />
           </FormProvider>
         </MainLayout>

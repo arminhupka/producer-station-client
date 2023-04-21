@@ -11,7 +11,6 @@ import LabelsTable from "../components/Tabels/LabelsTable/LabelsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
 import { api } from "../utils/api";
-import FullLoader from "../components/atoms/FullLoader/FullLoader";
 
 const LabelsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
@@ -28,10 +27,6 @@ const LabelsView = (): ReactElement => {
       remove();
     };
   }, []);
-
-  if (isLoading) {
-    return <FullLoader />;
-  }
 
   return (
     <>

@@ -5,11 +5,13 @@ import {
   Button,
   Chip,
   Paper,
+  type SxProps,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
+  type Theme,
 } from "@mui/material";
 import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
@@ -26,22 +28,30 @@ enum ProductStatusEnum {
   Suspended = "SUSPENDED",
 }
 
+const ChipStyle: SxProps<Theme> = {
+  fontSize: 11,
+  fontWeight: 700,
+  textTransform: "capitalize",
+};
+
 const generateStatus = (status: string): ReactElement => {
+  const transformed = status[0].toLowerCase() + status.slice(1).toLowerCase();
+
   switch (status) {
     case ProductStatusEnum.Draft: {
-      return <Chip label={status} color='info' />;
+      return <Chip sx={ChipStyle} label={transformed} color='info' />;
     }
     case ProductStatusEnum.Submitted: {
-      return <Chip label={status} color='warning' />;
+      return <Chip sx={ChipStyle} label={transformed} color='warning' />;
     }
     case ProductStatusEnum.Active: {
-      return <Chip label={status} color='success' />;
+      return <Chip sx={ChipStyle} label={transformed} color='success' />;
     }
     case ProductStatusEnum.Suspended: {
-      return <Chip label={status} color='error' />;
+      return <Chip sx={ChipStyle} label={transformed} color='error' />;
     }
     default: {
-      return <Chip label={status} />;
+      return <Chip sx={ChipStyle} label={transformed} />;
     }
   }
 };
@@ -68,7 +78,7 @@ const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
           </TableRow>
         </TableHead>
         <TableBody>
-          {isLoading && <Skeletons rows={2} cols={8} />}
+          {isLoading && <Skeletons rows={10} cols={8} />}
           {!isLoading &&
             data.map((product) => (
               <TableRow key={product._id}>

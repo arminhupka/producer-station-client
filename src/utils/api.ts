@@ -30,8 +30,28 @@ const refreshToken = async (): Promise<UserLoginResponseDto> => {
     throw new Error(err);
   }
 };
-
 const token = localStorage.getItem("token");
+
+const logout = (): void => {
+  _store?.dispatch(resetUser());
+  window.localStorage.removeItem("token");
+  window.localStorage.removeItem("refreshToken");
+  window.localStorage.removeItem("rememberMe");
+};
+
+type IRequestCb = (token: string) => void;
+let isRefreshing = false;
+const refreshSubscribers: IRequestCb[] = [];
+
+const subscribeTokenRefresh = (cb: IRequestCb): void => {
+  refreshSubscribers.push(cb);
+};
+
+const onRefreshed = (token: string): void => {
+  refreshSubscribers.forEach((cb) => {
+    cb(token);
+  });
+};
 
 export const api = axios.create({
   baseURL: process.env.REACT_APP_API,
@@ -40,20 +60,43 @@ export const api = axios.create({
   },
 });
 
-let retry: boolean = false;
-
 api.interceptors.response.use(undefined, async (err: AxiosError) => {
-  const prevRequest = err.config;
+  if (err?.response?.status === 401) {
+    const prevRequest = err.config;
 
-  if (err.response?.status === 401 && !retry && prevRequest) {
-    retry = true;
-    const token = await refreshToken();
-    prevRequest.headers.Authorization = `Bearer ${token.token}`;
-    retry = false;
-    return await api(prevRequest);
+    if (prevRequest?.url === "/auth/refresh") {
+      logout();
+    }
+
+    const retryOriginalRequest = new Promise((resolve) => {
+      subscribeTokenRefresh((newToken: string) => {
+        if (prevRequest) {
+          if (prevRequest?.headers) {
+            prevRequest.headers.Authorization = `Bearer ${newToken}`;
+          }
+          resolve(api(prevRequest));
+        }
+      });
+    });
+
+    if (!isRefreshing && prevRequest) {
+      isRefreshing = true;
+      await refreshToken()
+        .then(({ token }) => {
+          prevRequest.headers.Authorization = `Bearer ${token}`;
+          onRefreshed(token);
+        })
+        .catch(async () => {
+          throw Error("error");
+        })
+        .finally(() => {
+          refreshSubscribers.length = 0;
+          isRefreshing = false;
+        });
+    }
+
+    return await retryOriginalRequest;
   }
-
-  retry = false;
 
   throw err;
 });
