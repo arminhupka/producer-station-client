@@ -1,46 +1,112 @@
-import { type ReactElement } from "react";
+import { type ReactElement, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios";
-import { type ProductDto } from "../api/api-types";
+import {
+  type CategoryDto,
+  type ProductDto,
+  type UpdateProductDto,
+} from "../api/api-types";
 import { type ApiError } from "../api/apiError";
 import { api } from "../utils/api";
 import FullLoader from "../components/atoms/FullLoader/FullLoader";
 import { Helmet } from "react-helmet";
 import MainLayout from "../layouts/MainLayout";
-import ArtworkPlaceholder from "../assets/images/no-image.jpg";
+import ProductForm from "../components/Forms/ProductForm/ProductForm";
+import { FormProvider, useForm } from "react-hook-form";
+import { Alert, Box } from "@mui/material";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { NewProductValidator } from "../validators/NewProductValidator";
+import ProductFormButtons from "../components/molecules/ProductFormButtons/ProductFormButtons";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const formMethods = useForm<UpdateProductDto>({
+    resolver: yupResolver(NewProductValidator),
+  });
+
+  useEffect(() => {
+    console.log(formMethods);
+  }, [formMethods]);
 
   if (!id) {
     navigate("/panel/products");
     return <></>;
   }
 
-  const query = useQuery<AxiosResponse<ProductDto>, AxiosError<ApiError>>(
+  const queryProduct = useQuery<
+    AxiosResponse<ProductDto>,
+    AxiosError<ApiError>
+  >(
     "get-product",
     async () => await api.get<ProductDto>(`/vendor/products/${id}`),
   );
 
-  const product = query?.data?.data;
+  const queryCategories = useQuery<
+    AxiosResponse<CategoryDto[]>,
+    AxiosError<ApiError>
+  >("get-categories", async () => await api.get<CategoryDto[]>("/categories"));
 
-  if (query.isLoading) {
+  const mutateProduct = useMutation<
+    AxiosResponse<ProductDto>,
+    AxiosError<ApiError>,
+    UpdateProductDto
+  >(async (form) => await api.patch<ProductDto>(`/products/${id}`, form), {
+    onSuccess: async () => {
+      queryProduct.remove();
+      await queryProduct.refetch();
+    },
+  });
+
+  const product = queryProduct?.data?.data;
+  const categories = queryCategories?.data?.data;
+
+  const mutateError = mutateProduct.error?.response?.data;
+
+  const handleProductUpdate = async (): Promise<void> => {
+    await formMethods.trigger();
+
+    if (Object.keys(formMethods.formState.errors).length) {
+      return;
+    }
+
+    const form = formMethods.getValues();
+    await mutateProduct.mutateAsync({
+      ...form,
+      price: (form.price && Math.ceil(+form.price * 100)) ?? null,
+      salePrice: (form.salePrice && Math.ceil(+form.salePrice * 100)) ?? null,
+    });
+  };
+
+  if (queryProduct.isLoading) {
     return <FullLoader />;
   }
 
   return (
     <>
+      {mutateProduct.isLoading && <FullLoader />}
       <Helmet>
-        <title>{`${query?.data?.data.name ?? ""} | ${
+        <title>{`${queryProduct?.data?.data.name ?? ""} | ${
           process.env.REACT_APP_TITLE as string
         }`}</title>
       </Helmet>
-      {product && (
+      {product && categories?.length && (
         <MainLayout>
-          <p>{product.name}</p>
-          <img src={product.artwork?.public ?? ArtworkPlaceholder} alt='' />
+          <FormProvider {...formMethods}>
+            {mutateError && (
+              <Box mb={2}>
+                <Alert severity='error'>{mutateError.message}</Alert>
+              </Box>
+            )}
+            <ProductFormButtons onUpdate={handleProductUpdate} />
+            <ProductForm
+              product={product}
+              categories={categories}
+              isUpdating={false}
+              onUpdate={() => {}}
+            />
+          </FormProvider>
         </MainLayout>
       )}
     </>

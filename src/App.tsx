@@ -11,6 +11,7 @@ import ProductsView from "./views/ProductsView";
 import RegisterView from "./views/RegisterView";
 import ResetPasswordView from "./views/ResetPasswordView";
 import ProductDetailsView from "./views/ProductDetailsView";
+import OrdersView from "./views/OrdersView";
 
 const App = (): ReactElement => (
   <BrowserRouter>
@@ -21,6 +22,7 @@ const App = (): ReactElement => (
         <Route path='/panel/labels/:id' element={<LabelDetailsView />} />
         <Route path='/panel/products' element={<ProductsView />} />
         <Route path='/panel/products/:id' element={<ProductDetailsView />} />
+        <Route path='/panel/orders' element={<OrdersView />} />
       </Route>
       <Route path='/' element={<LoginView />} />
       <Route path='/register' element={<RegisterView />} />

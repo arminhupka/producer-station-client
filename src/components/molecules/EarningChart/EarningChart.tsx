@@ -36,7 +36,7 @@ const ProductsSalesChart = ({
     series: [
       {
         name: "Sales (USD)",
-        data: incomes.map((item) => +formatPrice(item).slice(1)),
+        data: incomes.map((item) => +formatPrice(item)),
       },
     ],
   };

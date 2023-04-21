@@ -27,6 +27,11 @@ const DashboardView = (): ReactElement => {
     async () => await api.get<VendorOverviewResponseDto>("/vendor/overview"),
   );
 
+  const orders = useQuery<AxiosResponse<number>>(
+    "vendorOrders",
+    async () => await api.get("/vendor/overview/orders-count"),
+  );
+
   const earningsData = earnings.data?.data;
   const oveviewData = overview.data?.data;
 
@@ -37,7 +42,7 @@ const DashboardView = (): ReactElement => {
     incomes: earningsData?.map((d) => d.total) ?? [],
   };
 
-  if (earnings.isLoading || overview.isLoading) {
+  if (earnings.isLoading || overview.isLoading || orders.isLoading) {
     return <FullLoader />;
   }
 
@@ -47,7 +52,7 @@ const DashboardView = (): ReactElement => {
         <title>Dashboard | ProducerStation</title>
       </Helmet>
       <MainLayout>
-        {earningsData && oveviewData && (
+        {earningsData && oveviewData && orders.data && (
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
               <DashboardCard
@@ -61,7 +66,7 @@ const DashboardView = (): ReactElement => {
             <Grid item xs={12} md={6} lg={3}>
               <DashboardCard
                 title='Total Orders'
-                value='250'
+                value={orders.data.data}
                 icon={<MoneySharp />}
                 color='primary.main'
                 isLoading={false}

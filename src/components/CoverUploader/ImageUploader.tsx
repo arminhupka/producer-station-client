@@ -1,16 +1,8 @@
-import {
-  Box,
-  Button,
-  Card,
-  CircularProgress,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Box, Card, Divider, Typography } from "@mui/material";
 import { styled } from "@mui/system";
-import type { MouseEvent, MutableRefObject, ReactElement } from "react";
-import { useEffect, useRef } from "react";
+import type { MutableRefObject, ReactElement } from "react";
+import { useRef } from "react";
 import PlaceholderImage from "../../assets/images/no-image.jpg";
-import useChunkUploader from "../../hooks/useChunkUploader";
 
 const StyledImage = styled("img")(() => ({
   width: "100%",
@@ -42,19 +34,13 @@ const ImageUploader = ({
   disabled,
   title,
 }: IProps): ReactElement => {
-  const { handleUpload, details, isUploading } = useChunkUploader();
+  // const { handleUpload, isUploading } = useChunkUploader();
 
   const inputBtnRef = useRef() as MutableRefObject<HTMLInputElement>;
 
-  const handleMuiButton = (e: MouseEvent<HTMLButtonElement>): void => {
-    inputBtnRef.current.click();
-  };
-
-  useEffect(() => {
-    if (details != null) {
-      onUpload(details._id);
-    }
-  }, [details]);
+  // const handleMuiButton = (e: MouseEvent<HTMLButtonElement>): void => {
+  //   inputBtnRef.current.click();
+  // };
 
   return (
     <Card>
@@ -65,22 +51,22 @@ const ImageUploader = ({
           </Typography>
         )}
         <StyledCoverWrapper>
-          {isUploading && (
-            <Box
-              position='absolute'
-              top={0}
-              left={0}
-              width='100%'
-              height='100%'
-              display='flex'
-              justifyContent='center'
-              alignItems='center'
-              sx={{
-                background: "rgba(255, 255, 255, .5)",
-              }}>
-              <CircularProgress size={60} />
-            </Box>
-          )}
+          {/* {isUploading && ( */}
+          {/*   <Box */}
+          {/*     position='absolute' */}
+          {/*     top={0} */}
+          {/*     left={0} */}
+          {/*     width='100%' */}
+          {/*     height='100%' */}
+          {/*     display='flex' */}
+          {/*     justifyContent='center' */}
+          {/*     alignItems='center' */}
+          {/*     sx={{ */}
+          {/*       background: "rgba(255, 255, 255, .5)", */}
+          {/*     }}> */}
+          {/*     <CircularProgress size={60} /> */}
+          {/*   </Box> */}
+          {/* )} */}
           <StyledImage src={image ?? PlaceholderImage} />
         </StyledCoverWrapper>
       </Box>
@@ -90,16 +76,16 @@ const ImageUploader = ({
           type='file'
           hidden
           ref={inputBtnRef}
-          onChange={handleUpload}
+          // onChange={handleUpload}
           accept='image/*'
         />
-        <Button
-          variant='contained'
-          fullWidth
-          onClick={handleMuiButton}
-          disabled={isUploading || disabled}>
-          {buttonLabel}
-        </Button>
+        {/* <Button */}
+        {/*   variant='contained' */}
+        {/*   fullWidth */}
+        {/*   onClick={handleMuiButton} */}
+        {/*   // disabled={isUploading || disabled}> */}
+        {/*   {buttonLabel} */}
+        {/* </Button> */}
       </Box>
     </Card>
   );

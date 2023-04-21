@@ -4,6 +4,7 @@ import { type ReactElement, type ReactNode } from "react";
 
 import Header from "../components/Header/Header";
 import { useAppSelector } from "../store";
+import UploadingNotifications from "../components/organisms/UploadingNotifications/UploadingNotifications";
 
 interface IStyledRoot {
   isOpen: boolean;
@@ -25,11 +26,15 @@ interface IProps {
 
 const MainLayout = ({ children }: IProps): ReactElement => {
   const isFullMenu = useAppSelector((state) => state.appReducer.isFullMenu);
+  const showUploadNodes = !!useAppSelector((state) => state.uploadReducer.nodes)
+    .length;
 
   return (
     <Box height='100%'>
+      {showUploadNodes && <UploadingNotifications />}
       <Header />
       <StyledRoot isOpen={!isFullMenu}>
+        <UploadingNotifications />
         <Box py={8} width='100%'>
           <Container maxWidth='xl'>{children}</Container>
         </Box>

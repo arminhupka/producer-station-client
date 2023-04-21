@@ -81,11 +81,13 @@ const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
                 <TableCell>{product.name}</TableCell>
                 <TableCell>{generateStatus(product.status)}</TableCell>
                 <TableCell>
-                  {product.price != null ? formatPrice(product.price) : "-"}
+                  {product.price != null
+                    ? formatPrice(product.price, true)
+                    : "-"}
                 </TableCell>
                 <TableCell>
                   {product.salePrice != null
-                    ? formatPrice(product.salePrice)
+                    ? formatPrice(product.salePrice, true)
                     : "-"}
                 </TableCell>
                 <TableCell>{product.label.name}</TableCell>

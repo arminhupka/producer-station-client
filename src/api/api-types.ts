@@ -405,16 +405,16 @@ export interface GetPublicProductsPaginatedDto {
 }
 
 export interface UpdateProductDto {
-  name: string;
-  description: string;
-  shortDescription: string;
-  price: number;
-  salePrice: number;
-  category: string[];
-  genre: string[];
-  status: string;
-  featured: boolean;
-  artwork: string;
+  name?: string;
+  description?: string;
+  shortDescription?: string;
+  price?: number | string | null;
+  salePrice?: number | string | null;
+  category?: string[];
+  genre?: string[];
+  status?: string;
+  featured?: boolean;
+  artwork?: string;
 }
 
 export interface PublicProductLabel {
@@ -1649,6 +1649,20 @@ export class Api<
         method: "GET",
         secure: true,
         format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerOrdersCount
+     * @request GET:/vendor/overview/orders-count
+     */
+    vendorControllerOrdersCount: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/vendor/overview/orders-count`,
+        method: "GET",
         ...params,
       }),
   };
