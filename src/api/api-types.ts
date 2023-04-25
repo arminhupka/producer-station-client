@@ -9,6 +9,8 @@
  * ---------------------------------------------------------------
  */
 
+import { ProductStatusEnum } from "../enum/ProductStatusEnum";
+
 export interface RegisterUserDto {
   /** @minLength 4 */
   username: string;
@@ -292,7 +294,7 @@ export interface ProductDto {
   label: ProductLabelDto;
   category: ProductCategoryDto[];
   genre: ProductGenreDto[];
-  status: "Draft" | "Submitted" | "Active" | "Suspended";
+  status: ProductStatusEnum;
   name: string;
   new: boolean;
   free: boolean;

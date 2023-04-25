@@ -19,7 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { NewProductValidator } from "../validators/NewProductValidator";
 import ProductFormButtons from "../components/molecules/ProductFormButtons/ProductFormButtons";
 import PageHeading from "../components/PageHeading/PageHeading";
-import { LabelStatusEnum } from "../enum/LabelStatusEnum";
+import { ProductStatusEnum } from "../enum/ProductStatusEnum";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
@@ -79,7 +79,15 @@ const ProductDetailsView = (): ReactElement => {
   };
 
   const handleProductSubmit = async (): Promise<void> => {
-    mutateProduct.mutate({ status: LabelStatusEnum.Submitted.toUpperCase() });
+    mutateProduct.mutate({ status: ProductStatusEnum.SUBMITTED });
+  };
+
+  const handleProductPublish = async (): Promise<void> => {
+    mutateProduct.mutate({ status: ProductStatusEnum.ACTIVE });
+  };
+
+  const handleProductSuspend = async (): Promise<void> => {
+    mutateProduct.mutate({ status: ProductStatusEnum.SUSPENDED });
   };
 
   const handleProductRefetch = async (): Promise<void> => {
@@ -108,8 +116,11 @@ const ProductDetailsView = (): ReactElement => {
             )}
             <PageHeading title={product.name}>
               <ProductFormButtons
+                status={product.status}
                 onUpdate={handleProductUpdate}
                 onSubmit={handleProductSubmit}
+                onPublish={handleProductPublish}
+                onSuspend={handleProductSuspend}
               />
             </PageHeading>
             <ProductForm

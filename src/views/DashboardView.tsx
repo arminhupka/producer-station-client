@@ -57,7 +57,7 @@ const DashboardView = (): ReactElement => {
             <Grid item xs={12} md={6} lg={3}>
               <DashboardCard
                 title='Current month earnings'
-                value={formatPrice(currentMonthEarning)}
+                value={`$${formatPrice(currentMonthEarning)}`}
                 icon={<MoneySharp />}
                 color='success.main'
                 isLoading={false}
