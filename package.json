@@ -44,6 +44,7 @@
     "redux-persist-cookie-storage": "^1.0.0",
     "reduxjs-toolkit-persist": "^7.2.1",
     "styled-components": "^5.3.9",
+    "timers-browserify": "^2.0.12",
     "web-vitals": "^3.3.1",
     "yup": "^1.0.2"
   },

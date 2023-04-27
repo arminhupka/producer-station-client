@@ -3,6 +3,8 @@ import {
   type Dispatch,
   type ReactElement,
   type SetStateAction,
+  useEffect,
+  useState,
 } from "react";
 import { Box, Paper, TextField } from "@mui/material";
 
@@ -12,17 +14,21 @@ interface IProps {
 }
 
 const SearchBar = ({ onInputChange, disabled }: IProps): ReactElement => {
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setInterval(() => {
-      if (e.target.value.length > 3) {
-        onInputChange(e.target.value);
-      }
-    }, 3000);
+  const [keyword, setKeyword] = useState<string>("");
 
-    if (e.target.value === "") {
-      onInputChange(e.target.value);
-    }
+  const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    setKeyword(e.target.value);
   };
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onInputChange(keyword);
+    }, 500);
+
+    return () => {
+      clearInterval(timeout);
+    };
+  }, [keyword]);
 
   return (
     <Box mb={2}>
@@ -30,7 +36,7 @@ const SearchBar = ({ onInputChange, disabled }: IProps): ReactElement => {
         <Box p={2} display='flex' justifyContent='flex-end'>
           <TextField
             label='Search product'
-            onChange={handleInputChange}
+            onChange={handleChange}
             disabled={disabled}
           />
         </Box>

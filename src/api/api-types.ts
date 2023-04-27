@@ -446,6 +446,7 @@ export interface PublicProductDto {
 
 export interface AddFileToProductDto {
   fileId: string;
+  customName?: string;
 }
 
 export type CreateCategoryDto = object;

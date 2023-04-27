@@ -22,7 +22,7 @@ import {
 } from "../../../api/api-types";
 import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
-import FileInput from "../../atoms/FileInput/FileInput";
+import { useForm } from "react-hook-form";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -31,14 +31,23 @@ interface IProps extends TProps {
   onUploaded?: () => void;
 }
 
+interface IForm {
+  customName: string;
+}
+
 const NewFileUpload = ({
   open,
   onClose,
   productId,
   onUploaded,
 }: IProps): ReactElement => {
-  const { upload, uploadedPercents, isUploaded, uploadedFileDetails } =
-    useChunkedUploader();
+  const {
+    upload,
+    uploadedPercents,
+    isUploaded,
+    uploadedFileDetails,
+    uploading,
+  } = useChunkedUploader();
 
   const addFileToProductMutation = useMutation<
     AxiosResponse<ProductDto>,
@@ -57,48 +66,62 @@ const NewFileUpload = ({
 
   const [uploadType, setUploadType] = useState<null | UploadTypeEnum>(null);
 
+  const { register, getValues } = useForm<IForm>();
+
   const handleChange = (event: SelectChangeEvent): void => {
     setUploadType(event.target.value as UploadTypeEnum);
   };
 
   useEffect(() => {
     if (isUploaded && uploadedFileDetails) {
-      addFileToProductMutation.mutate({ fileId: uploadedFileDetails._id });
+      const customName = getValues("customName");
+
+      addFileToProductMutation.mutate({
+        fileId: uploadedFileDetails._id,
+        customName,
+      });
     }
   }, [isUploaded, uploadedFileDetails]);
 
   return (
     <BaseModal title='Select file to upload' onClose={onClose} open={open}>
       <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <FormControl fullWidth>
-            <InputLabel id='upload-type-select-label'>File Type</InputLabel>
-            <Select
-              labelId='upload-type-select-label'
-              value={uploadType}
-              label='Type'
-              onChange={handleChange}>
-              <MenuItem value={UploadTypeEnum.AUDIO_PREVIEW}>
-                Audio Preview
-              </MenuItem>
-              <MenuItem value={UploadTypeEnum.PRODUCT_FILE}>
-                Product File
-              </MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12}>
-          <TextField label='File name' fullWidth />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField type='file' onChange={upload} fullWidth />
-        </Grid>
-        <Grid item xs={12}>
-          <LinearProgress variant='determinate' value={uploadedPercents} />
-        </Grid>
-        <Grid item xs={12}>
-          <FileInput />
-        </Grid>
+        {!uploading && (
+          <>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id='upload-type-select-label'>File Type</InputLabel>
+                <Select
+                  labelId='upload-type-select-label'
+                  value={uploadType}
+                  label='Type'
+                  onChange={handleChange}>
+                  <MenuItem value={UploadTypeEnum.AUDIO_PREVIEW}>
+                    Audio Preview
+                  </MenuItem>
+                  <MenuItem value={UploadTypeEnum.PRODUCT_FILE}>
+                    Product File
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label='File name'
+                fullWidth
+                {...register("customName", { required: true, minLength: 3 })}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField type='file' onChange={upload} fullWidth />
+            </Grid>
+          </>
+        )}
+        {uploading && (
+          <Grid item xs={12}>
+            <LinearProgress variant='determinate' value={uploadedPercents} />
+          </Grid>
+        )}
         <Grid item xs={12}>
           <Button variant='contained' fullWidth>
             Upload

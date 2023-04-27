@@ -9,7 +9,12 @@ import {
   Paper,
   TextField,
 } from "@mui/material";
-import { type ReactElement, useEffect } from "react";
+import {
+  type ReactElement,
+  type SyntheticEvent,
+  useEffect,
+  useState,
+} from "react";
 import { useFormContext } from "react-hook-form";
 
 import {
@@ -30,6 +35,11 @@ import { type AxiosError, type AxiosResponse } from "axios";
 import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 import AudioPreviewUploader from "../../molecules/AudioPreviewUploader/AudioPreviewUploader";
+import FullLoader from "../../atoms/FullLoader/FullLoader";
+import { TabContext, TabPanel } from "@mui/lab";
+import TabList from "@mui/lab/TabList";
+import Tab from "@mui/material/Tab";
+import FilesList from "../../molecules/FilesList/FilesList";
 
 interface IProps {
   product: ProductDto;
@@ -47,6 +57,7 @@ const ProductForm = ({
   onRefetch,
   disabled,
 }: IProps): ReactElement => {
+  const [currentTab, setCurrentTab] = useState<string>("0");
   const { isOpen, onOpen, onClose } = useModalState();
   const { upload, isUploaded, uploadedFileDetails, uploading } =
     useChunkedUploader();
@@ -65,6 +76,10 @@ const ProductForm = ({
     setValue,
     formState: { errors },
   } = useFormContext<UpdateProductDto>();
+
+  const handleTabChange = (e: SyntheticEvent, value: string): void => {
+    setCurrentTab(value);
+  };
 
   useEffect(() => {
     setValue("name", product.name);
@@ -95,6 +110,7 @@ const ProductForm = ({
 
   return (
     <>
+      {productMutation.isLoading && <FullLoader />}
       <NewFileUpload
         onClose={onClose}
         open={isOpen}
@@ -102,113 +118,132 @@ const ProductForm = ({
         onUploaded={onRefetch}
       />
       <Box>
-        <Button onClick={onOpen}>Add new file</Button>
-        <Grid container spacing={3}>
-          <Grid item xs={4}>
-            <Box display='flex' flexDirection='column' gap={3}>
-              <ImageUploader
-                aspect={AspectEnum.square}
-                onUpload={upload}
-                defaultImage={product.artwork?.public}
-                isLoading={uploading}
-              />
-              <AudioPreviewUploader />
-            </Box>
-          </Grid>
-          <Grid item xs={8}>
-            <Paper>
-              <Box p={2}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} lg={6}>
-                    <TextField
-                      label='Product Name'
-                      fullWidth
-                      disabled={disabled}
-                      {...register("name")}
+        <TabContext value={currentTab}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList onChange={handleTabChange}>
+              <Tab label='Details' value='0' />l
+              <Tab label='Files' value='1' />l
+            </TabList>
+          </Box>
+          <TabPanel value='0' sx={{ padding: 0, paddingTop: "20px" }}>
+            <Box>
+              <Grid container spacing={3}>
+                <Grid item xs={4}>
+                  <Box display='flex' flexDirection='column' gap={3}>
+                    <ImageUploader
+                      aspect={AspectEnum.square}
+                      onUpload={upload}
+                      defaultImage={product.artwork?.public}
+                      isLoading={uploading}
                     />
-                  </Grid>
-                  <Grid item xs={12} lg={6}>
-                    <TextField
-                      label='Label'
-                      fullWidth
-                      value={product.label.name}
-                      disabled
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <FormControlLabel
-                      control={<Checkbox />}
-                      label='Free Product'
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label='Price'
-                      fullWidth
-                      error={!!errors.price}
-                      helperText={errors.price?.message}
-                      disabled={disabled}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position='start'>
-                            <AttachMoney />
-                          </InputAdornment>
-                        ),
-                      }}
-                      {...register("price", {})}
-                    />
-                  </Grid>
-                  <Grid item xs={6}>
-                    <TextField
-                      label='Sale Price'
-                      fullWidth
-                      error={!!errors.salePrice}
-                      helperText={errors.salePrice?.message}
-                      disabled={disabled}
-                      InputProps={{
-                        startAdornment: (
-                          <InputAdornment position='start'>
-                            <MoneyOff />
-                          </InputAdornment>
-                        ),
-                      }}
-                      {...register("salePrice", {
-                        // setValueAs: (v: number) => v * 100 || null,
-                      })}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <AutoCompleteChips
-                      data={categories}
-                      productCategories={product.category}
-                      disabled={disabled}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label='Short Description'
-                      multiline
-                      rows={3}
-                      fullWidth
-                      disabled={disabled}
-                      {...register("shortDescription")}
-                    />
-                  </Grid>
-                  <Grid item xs={12}>
-                    <TextField
-                      label='Description'
-                      multiline
-                      rows={8}
-                      fullWidth
-                      disabled={disabled}
-                      {...register("description")}
-                    />
-                  </Grid>
+                    <AudioPreviewUploader />
+                  </Box>
                 </Grid>
-              </Box>
-            </Paper>
-          </Grid>
-        </Grid>
+                <Grid item xs={8}>
+                  <Paper>
+                    <Box p={2}>
+                      <Grid container spacing={3}>
+                        <Grid item xs={12} lg={6}>
+                          <TextField
+                            label='Product Name'
+                            fullWidth
+                            disabled={disabled}
+                            {...register("name")}
+                          />
+                        </Grid>
+                        <Grid item xs={12} lg={6}>
+                          <TextField
+                            label='Label'
+                            fullWidth
+                            value={product.label.name}
+                            disabled
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <FormControlLabel
+                            control={<Checkbox />}
+                            label='Free Product'
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            label='Price'
+                            fullWidth
+                            error={!!errors.price}
+                            helperText={errors.price?.message}
+                            disabled={disabled}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position='start'>
+                                  <AttachMoney />
+                                </InputAdornment>
+                              ),
+                            }}
+                            {...register("price", {})}
+                          />
+                        </Grid>
+                        <Grid item xs={6}>
+                          <TextField
+                            label='Sale Price'
+                            fullWidth
+                            error={!!errors.salePrice}
+                            helperText={errors.salePrice?.message}
+                            disabled={disabled}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position='start'>
+                                  <MoneyOff />
+                                </InputAdornment>
+                              ),
+                            }}
+                            {...register("salePrice", {
+                              // setValueAs: (v: number) => v * 100 || null,
+                            })}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <AutoCompleteChips
+                            data={categories}
+                            productCategories={product.category}
+                            disabled={disabled}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            label='Short Description'
+                            multiline
+                            rows={3}
+                            fullWidth
+                            disabled={disabled}
+                            {...register("shortDescription")}
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <TextField
+                            label='Description'
+                            multiline
+                            rows={8}
+                            fullWidth
+                            disabled={disabled}
+                            {...register("description")}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Box>
+                  </Paper>
+                </Grid>
+              </Grid>
+            </Box>
+          </TabPanel>
+          <TabPanel value='1' sx={{ padding: 0, paddingTop: "20px" }}>
+            <FilesList files={product.files} productId={product._id} />
+            <Box mt={2}>
+              <Button variant='contained' fullWidth onClick={onOpen}>
+                Upload File
+              </Button>
+            </Box>
+          </TabPanel>
+        </TabContext>
       </Box>
     </>
   );

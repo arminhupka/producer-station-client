@@ -1,48 +1,54 @@
 import { Box, Grid, Paper, TextField, Typography } from "@mui/material";
-// import { type AxiosError, type AxiosResponse } from "axios";
+
 import { type ReactElement, useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-// import { useMutation } from "react-query";
+
 import {
+  type LabelDto,
   type UpdateLabelDto,
   type VendorLabelDetailsResponseDto,
 } from "../../../api/api-types";
 import ImageUploader, {
   AspectEnum,
 } from "../../molecules/ImageUploader/ImageUploader";
-// import { type ApiError } from "../../../api/apiError";
-// import { api } from "../../../utils/api";
-
-// import { useLocation } from "react-router-dom";
+import { useMutation } from "react-query";
+import { type AxiosError, type AxiosResponse } from "axios";
+import { type ApiError } from "../../../api/apiError";
+import { api } from "../../../utils/api";
+import useChunkedUploader from "../../../hooks/useChunkedUploader";
 
 interface IProps {
   data: VendorLabelDetailsResponseDto;
   disableEdit: boolean;
+  onRefetch: () => Promise<void>;
 }
 
-const LabelForm = ({ data, disableEdit }: IProps): ReactElement => {
-  // const location = useLocation();
+const LabelForm = ({ data, disableEdit, onRefetch }: IProps): ReactElement => {
+  const { upload, isUploaded, uploadedFileDetails, uploading } =
+    useChunkedUploader();
+
+  const {
+    upload: uploadHeader,
+    isUploaded: isUploadedHeader,
+    uploadedFileDetails: uploadedFileDetailsHeader,
+    uploading: uploadingHeader,
+  } = useChunkedUploader();
+
+  const labelMutate = useMutation<
+    AxiosResponse<LabelDto>,
+    AxiosError<ApiError>,
+    UpdateLabelDto
+  >(async (form) => await api.patch(`/labels/${data._id}`, form), {
+    onSuccess: async (): Promise<void> => {
+      await onRefetch();
+    },
+  });
 
   const {
     register,
     setValue,
     formState: { errors },
   } = useFormContext<UpdateLabelDto>();
-
-  // const { mutateAsync } = useMutation<
-  //   AxiosResponse<VendorLabelDetailsResponseDto>,
-  //   AxiosError<ApiError>,
-  //   UpdateLabelDto
-  // >(
-  //   async ({ avatar, header, name, email, description }) =>
-  //     await api.patch<VendorLabelDetailsResponseDto>(`/labels/${data._id}`, {
-  //       avatar,
-  //       header,
-  //       name,
-  //       email,
-  //       description,
-  //     }),
-  // );
 
   useEffect(() => {
     if (data) {
@@ -55,6 +61,18 @@ const LabelForm = ({ data, disableEdit }: IProps): ReactElement => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (isUploaded && uploadedFileDetails) {
+      labelMutate.mutate({ avatar: uploadedFileDetails._id });
+    }
+  }, [isUploaded, uploadedFileDetails]);
+
+  useEffect(() => {
+    if (isUploadedHeader && uploadedFileDetailsHeader) {
+      labelMutate.mutate({ header: uploadedFileDetailsHeader._id });
+    }
+  }, [isUploadedHeader, uploadedFileDetailsHeader]);
+
   return (
     <Box component='form'>
       <Grid container spacing={2}>
@@ -63,12 +81,14 @@ const LabelForm = ({ data, disableEdit }: IProps): ReactElement => {
             <ImageUploader
               aspect={AspectEnum.square}
               defaultImage={data.avatar?.public}
-              isLoading={false}
+              isLoading={uploading}
+              onUpload={upload}
             />
             <ImageUploader
               aspect={AspectEnum.wide}
               defaultImage={data.header?.public}
-              isLoading={false}
+              isLoading={uploadingHeader}
+              onUpload={uploadHeader}
             />
           </Box>
         </Grid>

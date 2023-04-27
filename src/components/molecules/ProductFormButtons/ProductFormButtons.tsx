@@ -34,15 +34,13 @@ const ProductFormButtons = ({
       <Button onClick={onUpdate} startIcon={<SaveIcon />} disabled={isDisabled}>
         Save
       </Button>
-      {!isAdmin && (
-        <Button
-          variant='contained'
-          onClick={onSubmit}
-          startIcon={<SendIcon />}
-          disabled={isDisabled}>
-          Submit To Review
-        </Button>
-      )}
+      <Button
+        variant='contained'
+        onClick={onSubmit}
+        startIcon={<SendIcon />}
+        disabled={isDisabled}>
+        Submit To Review
+      </Button>
       {isAdmin && (
         <>
           <Button

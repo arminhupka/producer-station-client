@@ -20,6 +20,7 @@ import { NewProductValidator } from "../validators/NewProductValidator";
 import ProductFormButtons from "../components/molecules/ProductFormButtons/ProductFormButtons";
 import PageHeading from "../components/PageHeading/PageHeading";
 import { ProductStatusEnum } from "../enum/ProductStatusEnum";
+import { queryProduct } from "../api/queries";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
@@ -33,13 +34,7 @@ const ProductDetailsView = (): ReactElement => {
     return <></>;
   }
 
-  const queryProduct = useQuery<
-    AxiosResponse<ProductDto>,
-    AxiosError<ApiError>
-  >(
-    "get-product",
-    async () => await api.get<ProductDto>(`/vendor/products/${id}`),
-  );
+  const QueryProductDetails = queryProduct(id);
 
   const queryCategories = useQuery<
     AxiosResponse<CategoryDto[]>,
@@ -52,12 +47,12 @@ const ProductDetailsView = (): ReactElement => {
     UpdateProductDto
   >(async (form) => await api.patch<ProductDto>(`/products/${id}`, form), {
     onSuccess: async () => {
-      queryProduct.remove();
-      await queryProduct.refetch();
+      QueryProductDetails.remove();
+      await QueryProductDetails.refetch();
     },
   });
 
-  const product = queryProduct?.data?.data;
+  const product = QueryProductDetails?.data?.data;
   const categories = queryCategories?.data?.data;
 
   const mutateError = mutateProduct.error?.response?.data;
@@ -91,10 +86,10 @@ const ProductDetailsView = (): ReactElement => {
   };
 
   const handleProductRefetch = async (): Promise<void> => {
-    await queryProduct.refetch();
+    await QueryProductDetails.refetch();
   };
 
-  if (queryProduct.isLoading) {
+  if (QueryProductDetails.isLoading) {
     return <FullLoader />;
   }
 
@@ -102,7 +97,7 @@ const ProductDetailsView = (): ReactElement => {
     <>
       {mutateProduct.isLoading && <FullLoader />}
       <Helmet>
-        <title>{`${queryProduct?.data?.data.name ?? ""} | ${
+        <title>{`${QueryProductDetails?.data?.data.name ?? ""} | ${
           process.env.REACT_APP_TITLE as string
         }`}</title>
       </Helmet>

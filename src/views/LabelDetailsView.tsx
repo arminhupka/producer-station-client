@@ -69,6 +69,10 @@ export const LabelDetailsView = (): ReactElement => {
 
   const disableEdit = query.data?.data.status !== "Draft";
 
+  const handleRefetch = async (): Promise<void> => {
+    await query.refetch();
+  };
+
   if (query.isLoading || mutation.isLoading) {
     return <FullLoader />;
   }
@@ -143,7 +147,11 @@ export const LabelDetailsView = (): ReactElement => {
             </Grid>
           </Box>
           <FormProvider {...methods}>
-            <LabelForm data={query.data.data} disableEdit={disableEdit} />
+            <LabelForm
+              data={query.data.data}
+              disableEdit={disableEdit}
+              onRefetch={handleRefetch}
+            />
           </FormProvider>
         </MainLayout>
       </>
