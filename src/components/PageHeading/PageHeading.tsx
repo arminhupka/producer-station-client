@@ -11,7 +11,7 @@ interface IProps {
 const PageHeading = ({ title, children }: IProps): ReactElement => (
   // <Box mb={4} display='flex' alignItems='center' justifyContent='space-between'>
   <StyledWrapper>
-    <Typography component='h4' variant='h4' fontWeight='bold'>
+    <Typography flex={1} component='h4' variant='h4' fontWeight='bold'>
       {title}
     </Typography>
     {/* eslint-disable-next-line @typescript-eslint/strict-boolean-expressions */}

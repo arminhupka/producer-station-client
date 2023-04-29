@@ -11,3 +11,11 @@ export const queryProduct = (
     "get-product",
     async () => await api.get<ProductDto>(`/vendor/products/${id}`),
   );
+
+export const handleDownloadFile = (
+  id: string,
+): UseQueryResult<AxiosResponse<string>> =>
+  useQuery<AxiosResponse<string>>(
+    "download-file",
+    async () => await api.get<string>(`/files/${id}/download`),
+  );

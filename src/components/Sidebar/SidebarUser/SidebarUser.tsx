@@ -8,7 +8,7 @@ const SidebarUser = (): ReactElement => {
 
   return (
     <Box px={2} py={3} display='flex' alignItems='center'>
-      <Box ml={2}>
+      <Box>
         <Typography color='white' fontWeight='bold'>
           {userState?.username}
         </Typography>

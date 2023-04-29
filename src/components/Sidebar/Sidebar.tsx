@@ -54,12 +54,14 @@ const StyledWrapper = styled(Box)(() => ({
   flexDirection: "column",
 }));
 
-const UserMenus: Array<{
+interface IMenuItem {
   id: number;
   title: string;
   href: string;
   icon: ReactElement;
-}> = [
+}
+
+const UserMenus: IMenuItem[] = [
   {
     id: 0,
     title: "Dashboard",
@@ -92,12 +94,73 @@ const UserMenus: Array<{
   },
 ];
 
+const AdminMenus: IMenuItem[] = [
+  {
+    id: 5,
+    title: "Categories",
+    href: "/panel/admin/categories",
+    icon: <Dashboard />,
+  },
+  {
+    id: 6,
+    title: "Genres",
+    href: "/panel/admin/genres",
+    icon: <Dashboard />,
+  },
+  {
+    id: 7,
+    title: "Instruments",
+    href: "/panel/admin/instruments",
+    icon: <Dashboard />,
+  },
+  {
+    id: 8,
+    title: "Orders",
+    href: "/panel/admin/orders",
+    icon: <Dashboard />,
+  },
+  {
+    id: 9,
+    title: "Users",
+    href: "/panel/admin/Users",
+    icon: <Dashboard />,
+  },
+  {
+    id: 10,
+    title: "Banners",
+    href: "/panel/admin/banners",
+    icon: <Dashboard />,
+  },
+  {
+    id: 11,
+    title: "Products",
+    href: "/panel/admin/products",
+    icon: <Dashboard />,
+  },
+  {
+    id: 12,
+    title: "Labels",
+    href: "/panel/admin/labels",
+    icon: <Dashboard />,
+  },
+  {
+    id: 13,
+    title: "Files",
+    href: "/panel/admin/files",
+    icon: <Dashboard />,
+  },
+];
+
 interface IProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
+  const IsAdmin = useAppSelector(
+    (state) => state.userReducer.user?.role === "ADMIN",
+  );
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("lg"));
   const dispatch = useAppDispatch();
@@ -121,7 +184,7 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
             borderColor: theme.palette.neutral[700],
           })}
         />
-        <List sx={{ flex: 1 }}>
+        <List>
           {UserMenus.map((item) => (
             <NavItem
               key={item.id}
@@ -132,7 +195,29 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
             />
           ))}
         </List>
-        <Box display='flex' justifyContent='center'>
+        {IsAdmin && (
+          <>
+            <Divider
+              sx={(theme) => ({
+                mb: 2,
+                borderColor: theme.palette.neutral[700],
+              })}
+            />
+
+            <List>
+              {AdminMenus.map((item) => (
+                <NavItem
+                  key={item.id}
+                  title={item.title}
+                  href={item.href}
+                  icon={item.icon}
+                  hideTitles={isFullMenu}
+                />
+              ))}
+            </List>
+          </>
+        )}
+        <Box mt='auto' display='flex' justifyContent='center'>
           <IconButton
             focusRipple={false}
             onClick={handleToggleTitlesDisplay}

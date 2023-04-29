@@ -1,5 +1,5 @@
 import { type ReactElement } from "react";
-import { Box, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import NotInterestedIcon from "@mui/icons-material/NotInterested";
 import PublicIcon from "@mui/icons-material/Public";
 import SendIcon from "@mui/icons-material/Send";
@@ -7,6 +7,7 @@ import SaveIcon from "@mui/icons-material/Save";
 
 import { useAppSelector } from "../../../store";
 import { ProductStatusEnum } from "../../../enum/ProductStatusEnum";
+import { StyledWrapper } from "./ProductFormButtons.styles";
 
 interface IProps {
   status: ProductStatusEnum;
@@ -30,8 +31,12 @@ const ProductFormButtons = ({
   const isDisabled = !isAdmin && status !== ProductStatusEnum.DRAFT;
 
   return (
-    <Box mb={2} display='flex' gap={2} justifyContent='flex-end'>
-      <Button onClick={onUpdate} startIcon={<SaveIcon />} disabled={isDisabled}>
+    <StyledWrapper>
+      <Button
+        onClick={onUpdate}
+        startIcon={<SaveIcon />}
+        disabled={isDisabled}
+        variant='outlined'>
         Save
       </Button>
       <Button
@@ -59,7 +64,7 @@ const ProductFormButtons = ({
           </Button>
         </>
       )}
-    </Box>
+    </StyledWrapper>
   );
 };
 

@@ -7,8 +7,9 @@ import Typography from "@mui/material/Typography";
 import { type ReactElement } from "react";
 
 const StyledModalWrapper = styled(Box)(({ theme }) => ({
-  height: "100%",
   background: "white",
+  borderRadius: theme.spacing(2),
+  overflow: "hidden",
   [theme.breakpoints.up("md")]: {
     position: "absolute",
     height: "auto",
@@ -47,7 +48,7 @@ const BaseModal = ({
   onClose,
 }: IBaseModalProps): ReactElement => (
   <Modal open={open} onClose={onClose}>
-    <Box position='relative' height='100%'>
+    <Box p={3} position='relative' height='100%'>
       <StyledModalWrapper>
         <StyledHeading>
           <Typography component='h2' fontSize='larger' fontWeight={600}>

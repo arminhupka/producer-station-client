@@ -42,11 +42,12 @@ const NewFileUpload = ({
   onUploaded,
 }: IProps): ReactElement => {
   const {
-    upload,
     uploadedPercents,
     isUploaded,
     uploadedFileDetails,
     uploading,
+    select,
+    startUpload,
   } = useChunkedUploader();
 
   const addFileToProductMutation = useMutation<
@@ -113,7 +114,7 @@ const NewFileUpload = ({
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField type='file' onChange={upload} fullWidth />
+              <TextField type='file' onChange={select} fullWidth />
             </Grid>
           </>
         )}
@@ -123,7 +124,11 @@ const NewFileUpload = ({
           </Grid>
         )}
         <Grid item xs={12}>
-          <Button variant='contained' fullWidth>
+          <Button
+            variant='contained'
+            type='submit'
+            fullWidth
+            onClick={startUpload}>
             Upload
           </Button>
         </Grid>

@@ -119,12 +119,14 @@ const ProductForm = ({
       />
       <Box>
         <TabContext value={currentTab}>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList onChange={handleTabChange}>
-              <Tab label='Details' value='0' />l
-              <Tab label='Files' value='1' />l
-            </TabList>
-          </Box>
+          <Paper elevation={8}>
+            <Box p={2}>
+              <TabList onChange={handleTabChange}>
+                <Tab label='Details' value='0' />l
+                <Tab label='Files' value='1' />l
+              </TabList>
+            </Box>
+          </Paper>
           <TabPanel value='0' sx={{ padding: 0, paddingTop: "20px" }}>
             <Box>
               <Grid container spacing={3}>

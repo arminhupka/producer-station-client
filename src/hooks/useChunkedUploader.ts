@@ -171,6 +171,45 @@ const useChunkedUploader = () => {
     return data;
   };
 
+  const select = (e: ChangeEvent<HTMLInputElement>): void => {
+    if (!(e.target.files && e.target.files.length)) {
+      return;
+    }
+
+    if (e.target.files && e.target.files.length) {
+      const file = e.target.files[0];
+      const parts = calculateParts(file.size, chunkSize);
+      setPartsToUpload(parts);
+      setSelectedFile(file);
+    }
+  };
+
+  const startUpload = async (): Promise<void> => {
+    if (!selectedFile) return;
+
+    try {
+      setUploading(true);
+      setKey(selectedFile.name);
+      const uploadId = await uploadInitializer(selectedFile);
+      setUploadId(uploadId);
+      const uploadedParts = await uploadChunks(
+        selectedFile,
+        uploadId,
+        partsToUpload,
+      );
+      const uploadedData = await finalizeUpload(
+        selectedFile,
+        uploadId,
+        uploadedParts,
+      );
+      setUploadedFileDetails(uploadedData);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const upload = async (e: ChangeEvent<HTMLInputElement>): Promise<void> => {
     setUploading(true);
     try {
@@ -225,6 +264,8 @@ const useChunkedUploader = () => {
     isUploaded,
     cancelUpload,
     uploading,
+    select,
+    startUpload,
   };
 };
 

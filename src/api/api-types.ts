@@ -449,7 +449,9 @@ export interface AddFileToProductDto {
   customName?: string;
 }
 
-export type CreateCategoryDto = object;
+export type CreateCategoryDto = {
+  name: string;
+};
 
 export interface CategoryDto {
   _id: string;
