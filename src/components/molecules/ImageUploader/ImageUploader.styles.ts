@@ -1,5 +1,4 @@
-import { styled } from "@mui/system";
-import { Box } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { AspectEnum } from "./ImageUploader";
 
 interface IStyledImage {
@@ -14,9 +13,19 @@ export const StyledImage = styled("img")<IStyledImage>(({ aspect }) => ({
   aspectRatio: `${aspect === AspectEnum.square ? "1/1" : "16/9"}`,
 }));
 
-export const StyledCoverWrapper = styled(Box)(() => ({
-  position: "relative",
-  display: "flex",
-  borderRadius: 3,
-  overflow: "hidden",
-}));
+interface IStyledCoverWrapper {
+  aspect: AspectEnum;
+}
+
+export const StyledCoverWrapper = styled(Box)<IStyledCoverWrapper>(
+  ({ theme, aspect }) => ({
+    position: "relative",
+    minHeight: "300px",
+    minWidth: "300px",
+    display: "flex",
+    borderRadius: 3,
+    overflow: "hidden",
+    background: theme.palette.divider,
+    aspectRatio: aspect === AspectEnum.square ? "1/1" : "16/9",
+  }),
+);

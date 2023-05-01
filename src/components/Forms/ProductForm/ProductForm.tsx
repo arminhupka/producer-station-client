@@ -46,7 +46,7 @@ interface IProps {
   categories: CategoryDto[];
   onUpdate?: (update: UpdateProductDto) => void;
   isUpdating: boolean;
-  onRefetch?: () => void;
+  onRefetch: () => void;
   disabled?: boolean;
 }
 
@@ -137,12 +137,21 @@ const ProductForm = ({
                       onUpload={upload}
                       defaultImage={product.artwork?.public}
                       isLoading={uploading}
+                      title='Artwork'
                     />
-                    <AudioPreviewUploader />
+                    <AudioPreviewUploader
+                      productId={product._id}
+                      audioUrl={product.audioPreview?.public}
+                      onRefetch={onRefetch}
+                    />
                   </Box>
                 </Grid>
                 <Grid item xs={8}>
-                  <Paper>
+                  <Paper
+                    sx={{
+                      height: "100%",
+                      ".MuiPaper-root": { height: "100%" },
+                    }}>
                     <Box p={2}>
                       <Grid container spacing={3}>
                         <Grid item xs={12} lg={6}>
@@ -208,6 +217,35 @@ const ProductForm = ({
                             data={categories}
                             productCategories={product.category}
                             disabled={disabled}
+                            title='Categories'
+                            registerAs='categories'
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <AutoCompleteChips
+                            data={categories}
+                            productCategories={product.category}
+                            disabled={disabled}
+                            title='Genres'
+                            registerAs='genres'
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <AutoCompleteChips
+                            data={categories}
+                            productCategories={product.category}
+                            disabled={disabled}
+                            title='Format'
+                            registerAs='genres'
+                          />
+                        </Grid>
+                        <Grid item xs={12}>
+                          <AutoCompleteChips
+                            data={categories}
+                            productCategories={product.category}
+                            disabled={disabled}
+                            title='Instruments'
+                            registerAs='instruments'
                           />
                         </Grid>
                         <Grid item xs={12}>

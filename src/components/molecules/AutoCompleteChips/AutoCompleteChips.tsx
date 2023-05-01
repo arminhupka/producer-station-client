@@ -12,12 +12,16 @@ interface IProps {
   data: CategoryDto[];
   productCategories: CategoryDto[];
   disabled?: boolean;
+  title: string;
+  registerAs: string;
 }
 
 const AutoCompleteChips = ({
   data,
   productCategories,
   disabled,
+  title,
+  registerAs,
 }: IProps): ReactElement => {
   const { setValue } = useFormContext<UpdateProductDto>();
 
@@ -47,11 +51,11 @@ const AutoCompleteChips = ({
       )}
       defaultValue={productCategories}
       renderInput={(params) => (
-        <TextField {...params} variant='outlined' label='Categories' />
+        <TextField {...params} variant='outlined' label={title} />
       )}
       onChange={(_, v) => {
         const categoriesId = v.map((c) => c._id);
-        setValue("category", categoriesId);
+        setValue(registerAs as keyof UpdateProductDto, categoriesId);
       }}
     />
   );

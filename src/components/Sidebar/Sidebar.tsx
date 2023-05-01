@@ -24,6 +24,7 @@ import NavItem from "./NavItem/NavItem";
 import SidebarUser from "./SidebarUser/SidebarUser";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { setMenuFull } from "../../features/appSlice";
+import InviteCard from "../atoms/InviteCard/InviteCard";
 
 interface IStyledDrawer extends DrawerProps {
   small?: boolean;
@@ -217,14 +218,22 @@ const Sidebar = ({ isOpen, onClose }: IProps): ReactElement => {
             </List>
           </>
         )}
-        <Box mt='auto' display='flex' justifyContent='center'>
+
+        {isFullMenu && <InviteCard />}
+        <Box
+          mt={isFullMenu ? 2 : "auto"}
+          p={2}
+          display='flex'
+          justifyContent='center'>
           <IconButton
             focusRipple={false}
             onClick={handleToggleTitlesDisplay}
             sx={{
-              paddingY: "20px",
+              width: "100%",
+              padding: 2,
+              borderRadius: 2,
               "&:hover": {
-                background: "transparent",
+                background: "secondary.contrastText",
               },
             }}>
             {!isFullMenu && (

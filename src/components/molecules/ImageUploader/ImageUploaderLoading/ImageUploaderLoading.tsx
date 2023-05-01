@@ -1,9 +1,7 @@
 import { type ReactElement } from "react";
-import { alpha, Box, CircularProgress, useTheme } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 const ImageUploaderLoading = (): ReactElement => {
-  const theme = useTheme();
-
   return (
     <Box
       position='absolute'
@@ -11,9 +9,8 @@ const ImageUploaderLoading = (): ReactElement => {
       width='100%'
       height='100%'
       alignItems='center'
-      justifyContent='center'
-      bgcolor={alpha(theme.palette.primary.main, 0.6)}>
-      <CircularProgress size={49} />
+      justifyContent='center'>
+      <CircularProgress color='primary' size={49} />
     </Box>
   );
 };

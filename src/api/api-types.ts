@@ -421,6 +421,7 @@ export interface UpdateProductDto {
   files?: string[];
   featured?: boolean;
   artwork?: string;
+  audioPreview?: string;
 }
 
 export interface PublicProductLabel {

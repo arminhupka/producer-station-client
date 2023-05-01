@@ -250,6 +250,17 @@ const useChunkedUploader = () => {
       });
   };
 
+  const reset = (): void => {
+    setUploading(false);
+    setSelectedFile(null);
+    setKey(null);
+    setUploadedParts(0);
+    setUploadedPercents(0);
+    setPartsToUpload(0);
+    setIsUploaded(false);
+    setUploadedFileDetails(null);
+  };
+
   useEffect(() => {
     const value = (uploadedParts / partsToUpload) * 100;
 
@@ -266,6 +277,7 @@ const useChunkedUploader = () => {
     uploading,
     select,
     startUpload,
+    reset,
   };
 };
 

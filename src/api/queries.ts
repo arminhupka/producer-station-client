@@ -1,6 +1,6 @@
 import { useQuery, type UseQueryResult } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios/index";
-import { type ProductDto } from "./api-types";
+import { type ProductDto, type UpdateProductDto } from "./api-types";
 import { type ApiError } from "./apiError";
 import { api } from "../utils/api";
 
@@ -19,3 +19,11 @@ export const handleDownloadFile = (
     "download-file",
     async () => await api.get<string>(`/files/${id}/download`),
   );
+
+export const updateProduct = async (
+  productId: string,
+  form: UpdateProductDto,
+): Promise<ProductDto> => {
+  const { data } = await api.patch<ProductDto>(`/products/${productId}`, form);
+  return data;
+};

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { StyledCoverWrapper, StyledImage } from "./ImageUploader.styles";
 import ImageUploaderLoading from "./ImageUploaderLoading/ImageUploaderLoading";
+import Typography from "@mui/material/Typography";
 
 export enum AspectEnum {
   square = "square",
@@ -19,6 +20,7 @@ interface IProps {
   defaultImage: string | undefined;
   onUpload?: (e: ChangeEvent<HTMLInputElement>) => void | Promise<void>;
   isLoading: boolean;
+  title?: string;
 }
 
 const ImageUploader = ({
@@ -26,6 +28,7 @@ const ImageUploader = ({
   onUpload,
   defaultImage,
   isLoading,
+  title,
 }: IProps): ReactElement => {
   const inputRef = useRef() as MutableRefObject<HTMLInputElement>;
 
@@ -35,10 +38,25 @@ const ImageUploader = ({
 
   return (
     <Card>
+      {title && (
+        <>
+          <Box p={2}>
+            <Typography component='h3' fontWeight={600}>
+              {title}
+            </Typography>
+          </Box>
+          <Divider />
+        </>
+      )}
       <Box p={2}>
-        <StyledCoverWrapper>
+        <StyledCoverWrapper aspect={aspect}>
           {isLoading && <ImageUploaderLoading />}
-          <StyledImage aspect={aspect} src={defaultImage ?? PlaceholderImage} />
+          {!isLoading && (
+            <StyledImage
+              aspect={aspect}
+              src={defaultImage ?? PlaceholderImage}
+            />
+          )}
         </StyledCoverWrapper>
       </Box>
       <Divider />

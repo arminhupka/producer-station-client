@@ -2153,6 +2153,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/debounce@*":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@types/debounce/-/debounce-1.2.1.tgz#79b65710bc8b6d44094d286aecf38e44f9627852"
+  integrity sha512-epMsEE85fi4lfmJUH/89/iV/LI+F5CvNIvmgs5g5jYFPfhO2S/ae8WSsLOKWdwtoaZw9Q2IhJ4tQ5tFCcS/4HA==
+
 "@types/dinero.js@^1.9.0":
   version "1.9.0"
   resolved "https://registry.npmjs.org/@types/dinero.js/-/dinero.js-1.9.0.tgz"
@@ -2414,6 +2419,13 @@
   version "0.0.3"
   resolved "https://registry.npmjs.org/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz"
   integrity sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==
+
+"@types/wavesurfer.js@^6.0.5":
+  version "6.0.5"
+  resolved "https://registry.yarnpkg.com/@types/wavesurfer.js/-/wavesurfer.js-6.0.5.tgz#49136d3ee39833f3995b146e52359862d6e9fe99"
+  integrity sha512-ZAP/2pSyJ9jylK6bqejQTFZNJ8h5Ds1i7uaT0/22xsHSAiji83rxZcT92cNwomZ+mDpS++G9yXEU8CN2MYidSA==
+  dependencies:
+    "@types/debounce" "*"
 
 "@types/ws@^8.5.1":
   version "8.5.4"
@@ -8790,7 +8802,7 @@ serve-static@1.15.0:
 
 setimmediate@^1.0.4:
   version "1.0.5"
-  resolved "https://registry.yarnpkg.com/setimmediate/-/setimmediate-1.0.5.tgz#290cbb232e306942d7d7ea9b83732ab7856f8285"
+  resolved "https://registry.npmjs.org/setimmediate/-/setimmediate-1.0.5.tgz"
   integrity sha512-MATJdZp8sLqDl/68LfQmbP8zKPLQNV6BIZoIgrscFDQ+RsvK/BxeDQOgyxKKoh0y/8h3BqVFnCqQ/gd+reiIXA==
 
 setprototypeof@1.1.0:
@@ -9425,7 +9437,7 @@ thunky@^1.0.2:
 
 timers-browserify@^2.0.12:
   version "2.0.12"
-  resolved "https://registry.yarnpkg.com/timers-browserify/-/timers-browserify-2.0.12.tgz#44a45c11fbf407f34f97bccd1577c652361b00ee"
+  resolved "https://registry.npmjs.org/timers-browserify/-/timers-browserify-2.0.12.tgz"
   integrity sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==
   dependencies:
     setimmediate "^1.0.4"
@@ -9769,6 +9781,16 @@ watchpack@^2.4.0:
   dependencies:
     glob-to-regexp "^0.4.1"
     graceful-fs "^4.1.2"
+
+wavesurfer-react@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/wavesurfer-react/-/wavesurfer-react-2.2.2.tgz#6720f73fc1780bc47340ee454b9c552144717c52"
+  integrity sha512-3w98DzGjZxMYFrP0syvyk1YYifFVLqhjtfUgJpygezSWPVXq0XTFKHlkNZrpJ8iLAtahpFb7CIeL60HYdw91MA==
+
+wavesurfer.js@^6.6.3:
+  version "6.6.3"
+  resolved "https://registry.yarnpkg.com/wavesurfer.js/-/wavesurfer.js-6.6.3.tgz#eadebf0542be702f1eef2f52c3e312b839030166"
+  integrity sha512-XqUOXe8+SOTe8uKCHaqW0vJ5etCCQvq/NgaPycn9HAX/nUi+2zoWD+w9i7H5vBT9UCDNawOia+vS5Ct3kZGQzA==
 
 wbuf@^1.1.0, wbuf@^1.7.3:
   version "1.7.3"

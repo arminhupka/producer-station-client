@@ -82,7 +82,7 @@ const ProductsTable = ({ isLoading, data }: IProps): ReactElement => (
           {!isLoading &&
             data.map((product) => (
               <TableRow key={product._id}>
-                <TableCell>
+                <TableCell width={48}>
                   <Avatar
                     sx={{ width: 48, height: 48, borderRadius: 1 }}
                     src={product.artwork?.public ?? placeholder}
