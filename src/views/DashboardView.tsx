@@ -15,6 +15,7 @@ import FullLoader from "../components/atoms/FullLoader/FullLoader";
 import { api } from "../utils/api";
 import { formatPrice } from "../utils/formatPrice";
 import EarningsChart from "../components/molecules/EarningChart/EarningChart";
+import LastOrders from "../components/molecules/LastOrders/LastOrders";
 
 const DashboardView = (): ReactElement => {
   const earnings = useQuery<AxiosResponse<VendorEarningDto[]>>(
@@ -93,6 +94,9 @@ const DashboardView = (): ReactElement => {
                 incomes={earningChartData.incomes}
                 months={earningChartData.months}
               />
+            </Grid>
+            <Grid item xs={12} lg={6}>
+              <LastOrders />
             </Grid>
           </Grid>
         )}

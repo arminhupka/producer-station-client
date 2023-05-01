@@ -218,7 +218,7 @@ const ProductForm = ({
                             productCategories={product.category}
                             disabled={disabled}
                             title='Categories'
-                            registerAs='categories'
+                            registerAs='category'
                           />
                         </Grid>
                         <Grid item xs={12}>
