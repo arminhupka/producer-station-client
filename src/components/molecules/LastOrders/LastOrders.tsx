@@ -1,21 +1,28 @@
 import { Box, Card, CardContent, Typography } from "@mui/material";
 import LastOrdersItem from "./LastOrdersItem/LastOrdersItem";
+import { type ReactElement } from "react";
 
-const LastOrders = () => (
-  <Card>
-    <CardContent>
+const LastOrders = (): ReactElement => (
+  <Card sx={{ height: "100%" }}>
+    <CardContent
+      sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Typography variant='overline' color='textSecondary'>
-        From last six months
+        Based on overall orders
       </Typography>
-      <Typography variant='h4' color='textPrimary'>
+      <Typography variant='h5' color='textPrimary'>
         Last orders
       </Typography>
-      <Box mt={2}>
+      <Box
+        flex={1}
+        mt={2}
+        display='flex'
+        flexDirection='column'
+        justifyContent='space-between'>
         <LastOrdersItem />
         <LastOrdersItem />
         <LastOrdersItem />
         <LastOrdersItem />
-        <LastOrdersItem />
+        <LastOrdersItem isLast />
       </Box>
     </CardContent>
   </Card>

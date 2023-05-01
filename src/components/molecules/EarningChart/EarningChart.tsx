@@ -47,7 +47,7 @@ const ProductsSalesChart = ({
         <Typography variant='overline' color='textSecondary'>
           From last six months
         </Typography>
-        <Typography variant='h4' color='textPrimary'>
+        <Typography variant='h5' color='textPrimary'>
           Your Income
         </Typography>
         <Box mt={2}>

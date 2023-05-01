@@ -11,9 +11,13 @@ import {
   StyledWrapper,
 } from "./LastOrder.styles";
 
-const LastOrdersItem = (): ReactElement => (
+interface IProps {
+  isLast?: boolean;
+}
+
+const LastOrdersItem = ({ isLast }: IProps): ReactElement => (
   <>
-    <StyledWrapper>
+    <StyledWrapper noBorder={isLast}>
       <StyledDateWrapper>
         <StyledMonth>MAY</StyledMonth>
         <StyledDate>11</StyledDate>
