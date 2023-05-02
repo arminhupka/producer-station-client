@@ -23,6 +23,8 @@ import {
 import { type ApiError } from "../../../api/apiError";
 import { api } from "../../../utils/api";
 import { useForm } from "react-hook-form";
+import Typography from "@mui/material/Typography";
+import formatBytes from "../../../utils/formatBytes";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -48,6 +50,8 @@ const NewFileUpload = ({
     uploading,
     select,
     startUpload,
+    uploadedBytes,
+    selectedFile,
   } = useChunkedUploader();
 
   const addFileToProductMutation = useMutation<
@@ -120,6 +124,10 @@ const NewFileUpload = ({
         )}
         {uploading && (
           <Grid item xs={12}>
+            <Typography mb={2} textAlign='center' fontWeight={600}>
+              Uploaded {formatBytes(uploadedBytes)} from{" "}
+              {formatBytes(selectedFile?.size ?? 0)}
+            </Typography>
             <LinearProgress variant='determinate' value={uploadedPercents} />
           </Grid>
         )}

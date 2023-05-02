@@ -48,6 +48,8 @@ const useChunkedUploader = () => {
   const [uploadID, setUploadId] = useState<string | null>(null);
   const [key, setKey] = useState<string | null>(null);
 
+  const [uploadedBytes, setUploadedBytes] = useState(0);
+
   const calculateParts = (fileSize: number, chunkSizes: number): number => {
     return Math.ceil(fileSize / chunkSizes);
   };
@@ -142,7 +144,11 @@ const useChunkedUploader = () => {
       formData.append("currentPart", (blob.id + 1).toString());
       formData.append("file", blobs[blob.id].blob);
       formData.append("contentLength", blob.blob.size.toString());
-      const { data } = await api.post<UploadResponse>("/upload", formData);
+      const { data } = await api.post<UploadResponse>("/upload", formData, {
+        onUploadProgress: (e) => {
+          setUploadedBytes((prev) => prev + e.loaded);
+        },
+      });
       tags.push(data.data.etag);
       setUploadedParts((parts) => parts + 1);
     }
@@ -278,6 +284,7 @@ const useChunkedUploader = () => {
     select,
     startUpload,
     reset,
+    uploadedBytes: +uploadedBytes.toFixed(2),
   };
 };
 

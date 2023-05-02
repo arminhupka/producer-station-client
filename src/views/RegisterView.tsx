@@ -1,16 +1,14 @@
 import { type ReactElement, useState } from "react";
 import { Helmet } from "react-helmet";
-
-import CheckInvitationForm from "../components/Forms/CheckInvitationForm/CheckInvitationForm";
 import RegisterForm from "../components/Forms/RegisterForm/RegisterForm";
 import NoAuthLayout from "../layouts/NoAuthLayout";
 
 const RegisterView = (): ReactElement => {
-  const [canRegister, setCanRegister] = useState<boolean>(false);
+  const [canRegister] = useState<boolean>(true);
 
-  const handleVerification = (): void => {
-    setCanRegister(true);
-  };
+  // const handleVerification = (): void => {
+  //   setCanRegister(true);
+  // };
 
   return (
     <>
@@ -18,7 +16,7 @@ const RegisterView = (): ReactElement => {
         <title>Register | ProducerStation</title>
       </Helmet>
       <NoAuthLayout>
-        {!canRegister && <CheckInvitationForm onVerify={handleVerification} />}
+        {/* {!canRegister && <CheckInvitationForm onVerify={handleVerification} />} */}
         {canRegister && <RegisterForm />}
       </NoAuthLayout>
     </>

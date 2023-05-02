@@ -33,7 +33,6 @@ const App = (): ReactElement => (
       <Route path='/register' element={<RegisterView />} />
       <Route path='/login' element={<LoginView />} />
       <Route path='/reset-password' element={<ResetPasswordView />} />
-      <Route path='/test' element={<h1>TEST</h1>} />
       <Route path='/*' element={<NotFoundView />} />
     </Routes>
   </BrowserRouter>

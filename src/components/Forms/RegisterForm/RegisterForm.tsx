@@ -1,11 +1,89 @@
-import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { type ReactElement, useState } from "react";
+import RegisterStepTwo from "./RegisterStepTwo/RegisterStepTwo";
+import RegisterStepThree from "./RegisterStepThree/RegisterStepThree";
+import { FormProvider, useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import RegisterStepOne from "./RegisterStepOne/RegisterStepOne";
+import RegisterStepFour from "./RegisterStepFour/RegisterStepFour";
 
-const loremIpsum =
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis egestas elit et mauris euismod vehicula. Phasellus tempus turpis lacus, non pulvinar elit molestie et. Quisque tempus sapien diam, vel imperdiet risus fringilla eu. Phasellus egestas ultrices ligula, vel auctor lorem euismod vel. Donec vitae ipsum enim. Phasellus viverra mollis turpis, et porta libero efficitur eget. Praesent in nulla convallis, volutpat metus a, venenatis ligula.";
+const emailRegex = /^\w+(.?\w+)*@\w+(.?\w+)*(\.\w{2,3})+$/;
+
+export interface IRegisterForm {
+  agreementChecked: boolean;
+  username: string;
+  password: string;
+  passwordConfirm: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  paypalEmail: string;
+  paypalEmailConfirm: string;
+}
 
 const RegisterForm = (): ReactElement => {
   const [currentStep, setCurrentStep] = useState<number>(0);
+
+  const FormSchema = yup.object().shape({
+    agreementChecked: yup.boolean().isTrue(),
+    username: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () => yup.string().required("You must provide username"),
+    }),
+    email: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () =>
+        yup
+          .string()
+          .matches(emailRegex, { message: "Email must be in proper format" })
+          .required("You must provide first name"),
+    }),
+    password: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () => yup.string().required("You must provide password"),
+    }),
+    passwordConfirm: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () =>
+        yup
+          .string()
+          .test(
+            "password-confirm",
+            "Passwords must be the same",
+            (value, context) => {
+              return value === context.parent.password;
+            },
+          )
+          .required("You must confirm your password"),
+    }),
+    firstName: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () => yup.string().required("You must provide first name"),
+    }),
+    lastName: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      then: () => yup.string().required("You must provide first name"),
+    }),
+    paypalEmail: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
+      then: () => yup.string().required("You must provide your PayPal email"),
+    }),
+    paypalEmailConfirm: yup.string().when("agreementChecked", {
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
+      then: () =>
+        yup
+          .string()
+          .required("You must confirm your PayPal email")
+          .test(
+            "paypal-confirm",
+            "Passwords must be the same",
+            (value, context) => {
+              return value === context.parent.paypalEmail;
+            },
+          ),
+    }),
+  });
 
   const handleNextStep = async (): Promise<void> => {
     setCurrentStep((prevState) => prevState + 1);
@@ -14,58 +92,19 @@ const RegisterForm = (): ReactElement => {
     setCurrentStep((prevState) => prevState - 1);
   };
 
-  const FormStepOne = (): ReactElement => (
-    <Box maxHeight={500}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <TextField multiline rows={10} value={loremIpsum} fullWidth />
-        </Grid>
-      </Grid>
-    </Box>
-  );
-  const FormStepTwo = (): ReactElement => (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <TextField label='Username' fullWidth />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField label='E-mail' fullWidth />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField label='Password' fullWidth />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField label='Password Confirm' fullWidth />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField label='First Name' fullWidth />
-      </Grid>
-      <Grid item xs={6}>
-        <TextField label='Last Name' fullWidth />
-      </Grid>
-    </Grid>
-  );
-  const FormStepThree = (): ReactElement => (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <TextField label='PayPal Email' fullWidth />
-      </Grid>
-      <Grid item xs={12}>
-        <TextField label='Confirm PayPal Email' fullWidth />
-      </Grid>
-    </Grid>
-  );
-
   const generateForm = (): ReactElement => {
     switch (currentStep) {
       case 0: {
-        return <FormStepOne />;
+        return <RegisterStepOne />;
       }
       case 1: {
-        return <FormStepTwo />;
+        return <RegisterStepTwo />;
       }
       case 2: {
-        return <FormStepThree />;
+        return <RegisterStepThree />;
+      }
+      case 3: {
+        return <RegisterStepFour />;
       }
       default: {
         return <></>;
@@ -78,7 +117,11 @@ const RegisterForm = (): ReactElement => {
       case 0: {
         return (
           <>
-            <Button variant='contained' fullWidth onClick={handleNextStep}>
+            <Button
+              variant='contained'
+              disabled={!methods.formState.isValid}
+              fullWidth
+              onClick={handleNextStep}>
               Next
             </Button>
           </>
@@ -88,9 +131,13 @@ const RegisterForm = (): ReactElement => {
         return (
           <>
             <Button variant='outlined' fullWidth onClick={handlePrevStep}>
-              Previous
+              Previous Step
             </Button>
-            <Button fullWidth variant='contained' onClick={handleNextStep}>
+            <Button
+              fullWidth
+              variant='contained'
+              onClick={handleNextStep}
+              disabled={!methods.formState.isValid}>
               Next
             </Button>
           </>
@@ -100,10 +147,14 @@ const RegisterForm = (): ReactElement => {
         return (
           <>
             <Button variant='outlined' fullWidth onClick={handlePrevStep}>
-              Previous
+              Previous Step
             </Button>
-            <Button fullWidth variant='contained' onClick={handleNextStep}>
-              Next
+            <Button
+              fullWidth
+              variant='contained'
+              onClick={handleNextStep}
+              disabled={!methods.formState.isValid}>
+              Register
             </Button>
           </>
         );
@@ -114,16 +165,20 @@ const RegisterForm = (): ReactElement => {
     }
   };
 
+  const methods = useForm<IRegisterForm>({
+    resolver: yupResolver(FormSchema),
+  });
+
   return (
     <Paper sx={{ width: "100%" }}>
       <Box p={4}>
-        <Typography mb={2} variant='h5'>
-          Register
-        </Typography>
-        <form>{generateForm()}</form>
-        <Box mt={2} display='flex' gap={2}>
-          {generateFormButtons()}
-        </Box>
+        <Typography variant='h5'>Register</Typography>
+        <FormProvider {...methods}>
+          <Box mt={4} display='flex' flexDirection='column' gap={2}>
+            {generateForm()}
+            {generateFormButtons()}
+          </Box>
+        </FormProvider>
       </Box>
     </Paper>
   );
