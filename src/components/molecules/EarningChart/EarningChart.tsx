@@ -45,10 +45,10 @@ const ProductsSalesChart = ({
     <Card>
       <CardContent>
         <Typography variant='overline' color='textSecondary'>
-          From last six months
+          Get a quick earnings overview of your last few months
         </Typography>
         <Typography variant='h5' color='textPrimary'>
-          Your Income
+          Income Snapshot
         </Typography>
         <Box mt={2}>
           <Chart

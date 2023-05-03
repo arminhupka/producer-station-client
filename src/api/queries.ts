@@ -1,6 +1,11 @@
 import { useQuery, type UseQueryResult } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios/index";
-import { type ProductDto, type UpdateProductDto } from "./api-types";
+import {
+  type OkResponseDto,
+  type ProductDto,
+  type RegisterVendorDto,
+  type UpdateProductDto,
+} from "./api-types";
 import { type ApiError } from "./apiError";
 import { api } from "../utils/api";
 
@@ -25,5 +30,12 @@ export const updateProduct = async (
   form: UpdateProductDto,
 ): Promise<ProductDto> => {
   const { data } = await api.patch<ProductDto>(`/products/${productId}`, form);
+  return data;
+};
+
+export const RegisterVendor = async (
+  form: RegisterVendorDto,
+): Promise<OkResponseDto> => {
+  const { data } = await api.post<OkResponseDto>("/users/vendor", form);
   return data;
 };

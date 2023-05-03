@@ -7,6 +7,15 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import RegisterStepOne from "./RegisterStepOne/RegisterStepOne";
 import RegisterStepFour from "./RegisterStepFour/RegisterStepFour";
+import { useMutation } from "react-query";
+import {
+  type OkResponseDto,
+  type RegisterVendorDto,
+} from "../../../api/api-types";
+import { type ApiError } from "../../../api/apiError";
+import { type AxiosError } from "axios";
+import { RegisterVendor } from "../../../api/queries";
+import RegisterInvitation from "./RegisterInvitation/RegisterInvitation";
 
 const emailRegex = /^\w+(.?\w+)*@\w+(.?\w+)*(\.\w{2,3})+$/;
 
@@ -85,25 +94,42 @@ const RegisterForm = (): ReactElement => {
     }),
   });
 
-  const handleNextStep = async (): Promise<void> => {
+  const methods = useForm<IRegisterForm>({
+    resolver: yupResolver(FormSchema),
+  });
+
+  const mutate = useMutation<
+    OkResponseDto,
+    AxiosError<ApiError>,
+    RegisterVendorDto
+  >(async (form) => await RegisterVendor(form), {
+    onSuccess: () => {
+      handleNextStep();
+    },
+  });
+
+  const handleNextStep = (): void => {
     setCurrentStep((prevState) => prevState + 1);
   };
-  const handlePrevStep = async (): Promise<void> => {
+  const handlePrevStep = (): void => {
     setCurrentStep((prevState) => prevState - 1);
   };
 
   const generateForm = (): ReactElement => {
     switch (currentStep) {
       case 0: {
-        return <RegisterStepOne />;
+        return <RegisterInvitation />;
       }
       case 1: {
-        return <RegisterStepTwo />;
+        return <RegisterStepOne />;
       }
       case 2: {
-        return <RegisterStepThree />;
+        return <RegisterStepTwo />;
       }
       case 3: {
+        return <RegisterStepThree />;
+      }
+      case 4: {
         return <RegisterStepFour />;
       }
       default: {
@@ -114,7 +140,7 @@ const RegisterForm = (): ReactElement => {
 
   const generateFormButtons = (): ReactElement => {
     switch (currentStep) {
-      case 0: {
+      case 1: {
         return (
           <>
             <Button
@@ -127,7 +153,7 @@ const RegisterForm = (): ReactElement => {
           </>
         );
       }
-      case 1: {
+      case 2: {
         return (
           <>
             <Button variant='outlined' fullWidth onClick={handlePrevStep}>
@@ -143,7 +169,7 @@ const RegisterForm = (): ReactElement => {
           </>
         );
       }
-      case 2: {
+      case 3: {
         return (
           <>
             <Button variant='outlined' fullWidth onClick={handlePrevStep}>
@@ -152,7 +178,7 @@ const RegisterForm = (): ReactElement => {
             <Button
               fullWidth
               variant='contained'
-              onClick={handleNextStep}
+              onClick={handleRegister}
               disabled={!methods.formState.isValid}>
               Register
             </Button>
@@ -165,14 +191,24 @@ const RegisterForm = (): ReactElement => {
     }
   };
 
-  const methods = useForm<IRegisterForm>({
-    resolver: yupResolver(FormSchema),
-  });
+  const handleRegister = (): void => {
+    const formValues = methods.getValues();
+    mutate.mutate({
+      username: formValues.username,
+      email: formValues.email,
+      password: formValues.password,
+      passwordConfirm: formValues.passwordConfirm,
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      paypalEmail: formValues.paypalEmail,
+      paypalEmailConfirm: formValues.paypalEmailConfirm,
+    });
+  };
 
   return (
     <Paper sx={{ width: "100%" }}>
       <Box p={4}>
-        <Typography variant='h5'>Register</Typography>
+        {currentStep < 2 && <Typography variant='h5'>Register</Typography>}
         <FormProvider {...methods}>
           <Box mt={4} display='flex' flexDirection='column' gap={2}>
             {generateForm()}

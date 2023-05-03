@@ -21,6 +21,20 @@ export interface RegisterUserDto {
   passwordConfirm: string;
 }
 
+export interface RegisterVendorDto {
+  /** @minLength 4 */
+  username: string;
+  email: string;
+  /** @minLength 6 */
+  password: string;
+  /** @minLength 6 */
+  passwordConfirm: string;
+  firstName: string;
+  lastName: string;
+  paypalEmail: string;
+  paypalEmailConfirm: string;
+}
+
 export interface OkResponseDto {
   ok: boolean;
 }

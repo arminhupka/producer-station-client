@@ -7,10 +7,10 @@ const LastOrders = (): ReactElement => (
     <CardContent
       sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <Typography variant='overline' color='textSecondary'>
-        Based on overall orders
+        See your last 6 orders at a glance
       </Typography>
       <Typography variant='h5' color='textPrimary'>
-        Last orders
+        Recent Orders
       </Typography>
       <Box
         flex={1}

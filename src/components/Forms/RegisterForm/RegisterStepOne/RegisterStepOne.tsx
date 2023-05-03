@@ -18,7 +18,7 @@ const RegisterStepOne = (): ReactElement => {
             {...register("agreementChecked")}
           />
         }
-        label='Agree'
+        label='I agree to the terms and conditions'
       />
     </Box>
   );
