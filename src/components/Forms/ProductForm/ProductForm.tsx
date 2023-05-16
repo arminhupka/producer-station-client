@@ -50,6 +50,11 @@ interface IProps {
   disabled?: boolean;
 }
 
+type IUpdateProduct = Omit<UpdateProductDto, "price" | "salePrice"> & {
+  price: string | null;
+  salePrice: string | null;
+};
+
 const ProductForm = ({
   product,
   categories,
@@ -75,7 +80,7 @@ const ProductForm = ({
     register,
     setValue,
     formState: { errors },
-  } = useFormContext<UpdateProductDto>();
+  } = useFormContext<IUpdateProduct>();
 
   const handleTabChange = (e: SyntheticEvent, value: string): void => {
     setCurrentTab(value);
@@ -99,7 +104,9 @@ const ProductForm = ({
   useEffect(() => {
     if (isUploaded && uploadedFileDetails) {
       void productMutation
-        .mutateAsync({ artwork: uploadedFileDetails._id })
+        .mutateAsync({
+          artwork: uploadedFileDetails._id,
+        })
         .then(() => {
           if (onRefetch) {
             onRefetch();
@@ -190,7 +197,7 @@ const ProductForm = ({
                                 </InputAdornment>
                               ),
                             }}
-                            {...register("price", {})}
+                            {...register("price")}
                           />
                         </Grid>
                         <Grid item xs={6}>
@@ -207,9 +214,7 @@ const ProductForm = ({
                                 </InputAdornment>
                               ),
                             }}
-                            {...register("salePrice", {
-                              // setValueAs: (v: number) => v * 100 || null,
-                            })}
+                            {...register("salePrice")}
                           />
                         </Grid>
                         <Grid item xs={12}>

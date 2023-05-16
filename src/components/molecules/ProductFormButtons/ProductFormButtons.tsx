@@ -10,7 +10,7 @@ import { ProductStatusEnum } from "../../../enum/ProductStatusEnum";
 import { StyledWrapper } from "./ProductFormButtons.styles";
 
 interface IProps {
-  status: ProductStatusEnum;
+  status: any;
   onUpdate?: () => Promise<void>;
   onSubmit?: () => Promise<void>;
   onPublish?: () => Promise<void>;

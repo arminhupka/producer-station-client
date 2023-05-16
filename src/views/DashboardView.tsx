@@ -7,6 +7,7 @@ import DashboardCard from "../components/DashboardCard/DashboardCard";
 import MainLayout from "../layouts/MainLayout";
 import { useQuery } from "react-query";
 import {
+  type OrderListItemDto,
   type VendorEarningDto,
   type VendorOverviewResponseDto,
 } from "../api/api-types";
@@ -16,6 +17,7 @@ import { api } from "../utils/api";
 import { formatPrice } from "../utils/formatPrice";
 import EarningsChart from "../components/molecules/EarningChart/EarningChart";
 import LastOrders from "../components/molecules/LastOrders/LastOrders";
+import { GetOrders } from "../api/queries";
 
 const DashboardView = (): ReactElement => {
   const earnings = useQuery<AxiosResponse<VendorEarningDto[]>>(
@@ -33,8 +35,14 @@ const DashboardView = (): ReactElement => {
     async () => await api.get("/vendor/overview/orders-count"),
   );
 
+  const lastOrders = useQuery<OrderListItemDto[]>(
+    "vendorLastOrder",
+    async () => await GetOrders(),
+  );
+
   const earningsData = earnings.data?.data;
-  const oveviewData = overview.data?.data;
+  const overviewData = overview.data?.data;
+  const lastOrdersData = lastOrders.data;
 
   const currentMonthEarning = earningsData?.at(-1)?.total ?? 0;
 
@@ -43,7 +51,12 @@ const DashboardView = (): ReactElement => {
     incomes: earningsData?.map((d) => d.total) ?? [],
   };
 
-  if (earnings.isLoading || overview.isLoading || orders.isLoading) {
+  if (
+    earnings.isLoading ||
+    overview.isLoading ||
+    orders.isLoading ||
+    lastOrders.isLoading
+  ) {
     return <FullLoader />;
   }
 
@@ -53,11 +66,11 @@ const DashboardView = (): ReactElement => {
         <title>Dashboard | ProducerStation</title>
       </Helmet>
       <MainLayout>
-        {earningsData && oveviewData && orders.data && (
+        {earningsData && overviewData && orders.data && (
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
               <DashboardCard
-                title='Current month earnings'
+                title='Earnings This Month'
                 value={`$${formatPrice(currentMonthEarning)}`}
                 icon={<MoneySharp />}
                 color='success.main'
@@ -75,8 +88,8 @@ const DashboardView = (): ReactElement => {
             </Grid>
             <Grid item xs={12} md={6} lg={3}>
               <DashboardCard
-                title='Awaiting Products'
-                value={oveviewData.products.submittedProducts}
+                title='Pending Products'
+                value={overviewData.products.submittedProducts}
                 icon={<MoneySharp />}
                 color='warning.main'
               />
@@ -96,7 +109,7 @@ const DashboardView = (): ReactElement => {
               />
             </Grid>
             <Grid item xs={12} lg={6}>
-              <LastOrders />
+              <LastOrders data={lastOrdersData ?? []} />
             </Grid>
           </Grid>
         )}

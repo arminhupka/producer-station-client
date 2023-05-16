@@ -15,10 +15,17 @@ const NoAuthLayout = ({ children }: IProps): ReactElement => {
     <Box height='100%'>
       <Grid height='100%' container>
         <Grid item xs={isMobile ? 12 : 5}>
-          <Container sx={{ height: "100%" }}>
+          <Container
+            sx={{
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
             <Box
               height='100%'
               width='100%'
+              maxWidth={500}
               display='flex'
               alignItems='center'
               justifyContent='center'

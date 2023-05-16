@@ -37,11 +37,11 @@ const RegisterForm = (): ReactElement => {
   const FormSchema = yup.object().shape({
     agreementChecked: yup.boolean().isTrue(),
     username: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () => yup.string().required("You must provide username"),
     }),
     email: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () =>
         yup
           .string()
@@ -49,11 +49,11 @@ const RegisterForm = (): ReactElement => {
           .required("You must provide first name"),
     }),
     password: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () => yup.string().required("You must provide password"),
     }),
     passwordConfirm: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () =>
         yup
           .string()
@@ -67,19 +67,19 @@ const RegisterForm = (): ReactElement => {
           .required("You must confirm your password"),
     }),
     firstName: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () => yup.string().required("You must provide first name"),
     }),
     lastName: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 0,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
       then: () => yup.string().required("You must provide first name"),
     }),
     paypalEmail: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 2,
       then: () => yup.string().required("You must provide your PayPal email"),
     }),
     paypalEmailConfirm: yup.string().when("agreementChecked", {
-      is: (agreementChecked: boolean) => agreementChecked && currentStep > 1,
+      is: (agreementChecked: boolean) => agreementChecked && currentStep > 2,
       then: () =>
         yup
           .string()
@@ -118,7 +118,7 @@ const RegisterForm = (): ReactElement => {
   const generateForm = (): ReactElement => {
     switch (currentStep) {
       case 0: {
-        return <RegisterInvitation />;
+        return <RegisterInvitation onSuccess={handleNextStep} />;
       }
       case 1: {
         return <RegisterStepOne />;

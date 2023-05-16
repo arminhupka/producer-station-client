@@ -71,7 +71,7 @@ const NewFileUpload = ({
 
   const [uploadType, setUploadType] = useState<null | UploadTypeEnum>(null);
 
-  const { register, getValues } = useForm<IForm>();
+  const { register } = useForm<IForm>();
 
   const handleChange = (event: SelectChangeEvent): void => {
     setUploadType(event.target.value as UploadTypeEnum);
@@ -79,11 +79,10 @@ const NewFileUpload = ({
 
   useEffect(() => {
     if (isUploaded && uploadedFileDetails) {
-      const customName = getValues("customName");
+      // const customName = getValues("customName");
 
       addFileToProductMutation.mutate({
         fileId: uploadedFileDetails._id,
-        customName,
       });
     }
   }, [isUploaded, uploadedFileDetails]);

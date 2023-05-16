@@ -10,7 +10,17 @@ const RegisterStepOne = (): ReactElement => {
   const { register, getValues } = useFormContext<IRegisterForm>();
   return (
     <Box>
-      <TextField multiline rows={10} value={loremIpsum} fullWidth />
+      <TextField
+        multiline
+        rows={10}
+        value={loremIpsum}
+        fullWidth
+        InputProps={{
+          readOnly: true,
+          contentEditable: false,
+          "aria-selected": false,
+        }}
+      />
       <FormControlLabel
         control={
           <Checkbox

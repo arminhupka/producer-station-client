@@ -9,8 +9,6 @@
  * ---------------------------------------------------------------
  */
 
-import { ProductStatusEnum } from "../enum/ProductStatusEnum";
-
 export interface RegisterUserDto {
   /** @minLength 4 */
   username: string;
@@ -21,6 +19,10 @@ export interface RegisterUserDto {
   passwordConfirm: string;
 }
 
+export interface OkResponseDto {
+  ok: boolean;
+}
+
 export interface RegisterVendorDto {
   /** @minLength 4 */
   username: string;
@@ -29,14 +31,12 @@ export interface RegisterVendorDto {
   password: string;
   /** @minLength 6 */
   passwordConfirm: string;
+  /** @minLength 3 */
   firstName: string;
+  /** @minLength 3 */
   lastName: string;
   paypalEmail: string;
   paypalEmailConfirm: string;
-}
-
-export interface OkResponseDto {
-  ok: boolean;
 }
 
 export interface UpdateUserDto {
@@ -182,6 +182,7 @@ export interface UploadDto {
   currentPart: number;
   parts: string;
   contentLength: number;
+  customName: string;
 }
 
 export type CancelUploadDto = object;
@@ -191,7 +192,7 @@ export interface VendorLabelListItem {
   avatar: string | null;
   commissionRate: number;
   name: string;
-  status: "Draft" | "Submitted" | "Active" | "Suspended";
+  status: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
   slug: string;
   productsCount: number;
   /** @format date-time */
@@ -229,6 +230,12 @@ export interface VendorLabelDetailsResponseDto {
   updatedAt: string;
 }
 
+export interface VendorProductListItemFile {
+  _id: object;
+  filename: string;
+  public: string;
+}
+
 export interface VendorProductsListItemCategoryDto {
   _id: string;
   name: string;
@@ -253,7 +260,7 @@ export interface VendorProductsListItemDto {
   price: number;
   salePrice: number;
   featured: boolean;
-  artwork: FileDto;
+  artwork: VendorProductListItemFile;
   category: VendorProductsListItemCategoryDto[];
   genre: VendorProductsListItemGenreDto[];
   status: "Draft" | "Submitted" | "Active" | "Suspended";
@@ -308,7 +315,7 @@ export interface ProductDto {
   label: ProductLabelDto;
   category: ProductCategoryDto[];
   genre: ProductGenreDto[];
-  status: ProductStatusEnum;
+  status: "Draft" | "Submitted" | "Active" | "Suspended";
   name: string;
   new: boolean;
   free: boolean;
@@ -371,6 +378,44 @@ export interface VendorEarningDto {
   total: number;
 }
 
+export interface OrderListItemDto {
+  _id: string;
+  completed: boolean;
+  status: "NEW" | "IN_PROGRESS" | "COMPLETED" | "REFUNDED";
+  /** @format date-time */
+  paidAt: string;
+  orderNumber: string;
+  total: number;
+  totalWithoutTax: number;
+  tax: number;
+  gateway: "paypal" | "stripe";
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  orderItems: OrderItem[];
+}
+
+export interface OrderItemProduct {
+  _id: string;
+  name: string;
+  label: OrderItemProductLabel;
+}
+
+export interface OrderItemProductLabel {
+  _id: string;
+  name: string;
+}
+
+export interface OrderItem {
+  product: OrderItemProduct;
+  price: number;
+  tax: number;
+  label_commission_rate: number;
+  label_cut: number;
+  platform_cut: number;
+}
+
 export interface NewProductDto {
   name: string;
   label: string;
@@ -427,8 +472,8 @@ export interface UpdateProductDto {
   name?: string;
   description?: string;
   shortDescription?: string;
-  price?: number | string | null;
-  salePrice?: number | string | null;
+  price?: number | null;
+  salePrice?: number | null;
   category?: string[];
   genre?: string[];
   status?: string;
@@ -461,20 +506,7 @@ export interface PublicProductDto {
 
 export interface AddFileToProductDto {
   fileId: string;
-  customName?: string;
 }
-
-export type CreateCategoryDto = {
-  name: string;
-};
-
-export interface CategoryDto {
-  _id: string;
-  name: string;
-  slug: string;
-}
-
-export type UpdateCategoryDto = object;
 
 export type CreateGenreDto = object;
 
@@ -485,6 +517,18 @@ export interface GenreDto {
 }
 
 export type UpdateGenreDto = object;
+
+export interface CreateCategoryDto {
+  name: string;
+}
+
+export interface CategoryDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export type UpdateCategoryDto = object;
 
 export interface OrderBilling {
   firstName: string;
@@ -506,6 +550,23 @@ export interface CreateOrderDto {
   products: string[];
   gateway: "paypal" | "stripe";
   billing: OrderBilling;
+}
+
+export interface PaypalCapturePaymentResponsePayerNameDto {
+  given_name: string;
+  surname: string;
+}
+
+export interface PaypalCapturePaymentResponsePayerDto {
+  name: PaypalCapturePaymentResponsePayerNameDto;
+  email_address: string;
+  payer_id: string;
+}
+
+export interface PaypalCapturePaymentResponseResponseDto {
+  id: string;
+  status: "CREATED" | "SAVED" | "APPROVED" | "VOIDED" | "COMPLETED";
+  payer: PaypalCapturePaymentResponsePayerDto;
 }
 
 export interface AdminUserSimplyBillinDto {
@@ -585,10 +646,32 @@ export interface CartDto {
 
 export type AddRemoveToCartDto = object;
 
-export type QueryParamsType = Record<string | number, any>;
-export type ResponseFormat = keyof Omit<Body, "body" | "bodyUsed">;
+export interface SettingsResponseDto {
+  appName: string;
+  appTagline: string;
+  notificationText: string;
+  showNotificationBar: boolean;
+}
 
-export interface FullRequestParams extends Omit<RequestInit, "body"> {
+export interface UpdateSettingsDto {
+  appName: string;
+  appTagline: string;
+  notificationText: string;
+  showNotificationBar: boolean;
+}
+
+import axios, {
+  AxiosInstance,
+  AxiosRequestConfig,
+  AxiosResponse,
+  HeadersDefaults,
+  ResponseType,
+} from "axios";
+
+export type QueryParamsType = Record<string | number, any>;
+
+export interface FullRequestParams
+  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -598,13 +681,9 @@ export interface FullRequestParams extends Omit<RequestInit, "body"> {
   /** query params */
   query?: QueryParamsType;
   /** format of response (i.e. response.json() -> format: "json") */
-  format?: ResponseFormat;
+  format?: ResponseType;
   /** request body */
   body?: unknown;
-  /** base url */
-  baseUrl?: string;
-  /** request cancellation token */
-  cancelToken?: CancelToken;
 }
 
 export type RequestParams = Omit<
@@ -612,22 +691,14 @@ export type RequestParams = Omit<
   "body" | "method" | "query" | "path"
 >;
 
-export interface ApiConfig<SecurityDataType = unknown> {
-  baseUrl?: string;
-  baseApiParams?: Omit<RequestParams, "baseUrl" | "cancelToken" | "signal">;
+export interface ApiConfig<SecurityDataType = unknown>
+  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
   securityWorker?: (
     securityData: SecurityDataType | null,
-  ) => Promise<RequestParams | void> | RequestParams | void;
-  customFetch?: typeof fetch;
+  ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
+  secure?: boolean;
+  format?: ResponseType;
 }
-
-export interface HttpResponse<D extends unknown, E extends unknown = unknown>
-  extends Response {
-  data: D;
-  error: E;
-}
-
-type CancelToken = Symbol | string | number;
 
 export enum ContentType {
   Json = "application/json",
@@ -637,198 +708,128 @@ export enum ContentType {
 }
 
 export class HttpClient<SecurityDataType = unknown> {
-  public baseUrl: string = "";
+  public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
   private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
-  private abortControllers = new Map<CancelToken, AbortController>();
-  private baseApiParams: RequestParams = {
-    credentials: "same-origin",
-    headers: {},
-    redirect: "follow",
-    referrerPolicy: "no-referrer",
-  };
-  private contentFormatters: Record<ContentType, (input: any) => any> = {
-    [ContentType.Json]: (input: any) =>
-      input !== null && (typeof input === "object" || typeof input === "string")
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.Text]: (input: any) =>
-      input !== null && typeof input !== "string"
-        ? JSON.stringify(input)
-        : input,
-    [ContentType.FormData]: (input: any) =>
-      Object.keys(input || {}).reduce((formData, key) => {
-        const property = input[key];
-        formData.append(
-          key,
-          property instanceof Blob
-            ? property
-            : typeof property === "object" && property !== null
-            ? JSON.stringify(property)
-            : `${property}`,
-        );
-        return formData;
-      }, new FormData()),
-    [ContentType.UrlEncoded]: (input: any) => this.toQueryString(input),
-  };
+  private secure?: boolean;
+  private format?: ResponseType;
 
-  constructor(apiConfig: ApiConfig<SecurityDataType> = {}) {
-    Object.assign(this, apiConfig);
+  constructor({
+    securityWorker,
+    secure,
+    format,
+    ...axiosConfig
+  }: ApiConfig<SecurityDataType> = {}) {
+    this.instance = axios.create({
+      ...axiosConfig,
+      baseURL: axiosConfig.baseURL || "",
+    });
+    this.secure = secure;
+    this.format = format;
+    this.securityWorker = securityWorker;
   }
 
   public setSecurityData = (data: SecurityDataType | null) => {
     this.securityData = data;
   };
 
-  public abortRequest = (cancelToken: CancelToken) => {
-    const abortController = this.abortControllers.get(cancelToken);
-
-    if (abortController) {
-      abortController.abort();
-      this.abortControllers.delete(cancelToken);
-    }
-  };
-
-  public request = async <T = any, E = any>({
-    body,
+  public request = async <T = any, _E = any>({
     secure,
     path,
     type,
     query,
     format,
-    baseUrl,
-    cancelToken,
+    body,
     ...params
-  }: FullRequestParams): Promise<HttpResponse<T, E>> => {
+  }: FullRequestParams): Promise<AxiosResponse<T>> => {
     const secureParams =
-      ((typeof secure === "boolean" ? secure : this.baseApiParams.secure) &&
+      ((typeof secure === "boolean" ? secure : this.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
       {};
     const requestParams = this.mergeRequestParams(params, secureParams);
-    const queryString = query && this.toQueryString(query);
-    const payloadFormatter = this.contentFormatters[type || ContentType.Json];
-    const responseFormat = format || requestParams.format;
+    const responseFormat = format || this.format || undefined;
 
-    return this.customFetch(
-      `${baseUrl || this.baseUrl || ""}${path}${
-        queryString ? `?${queryString}` : ""
-      }`,
-      {
-        ...requestParams,
-        headers: {
-          ...(requestParams.headers || {}),
-          ...(type && type !== ContentType.FormData
-            ? { "Content-Type": type }
-            : {}),
-        },
-        signal: cancelToken
-          ? this.createAbortSignal(cancelToken)
-          : requestParams.signal,
-        body:
-          typeof body === "undefined" || body === null
-            ? null
-            : payloadFormatter(body),
+    if (
+      type === ContentType.FormData &&
+      body &&
+      body !== null &&
+      typeof body === "object"
+    ) {
+      body = this.createFormData(body as Record<string, unknown>);
+    }
+
+    if (
+      type === ContentType.Text &&
+      body &&
+      body !== null &&
+      typeof body !== "string"
+    ) {
+      body = JSON.stringify(body);
+    }
+
+    return this.instance.request({
+      ...requestParams,
+      headers: {
+        ...(requestParams.headers || {}),
+        ...(type && type !== ContentType.FormData
+          ? { "Content-Type": type }
+          : {}),
       },
-    ).then(async (response) => {
-      const r = response as HttpResponse<T, E>;
-      r.data = null as unknown as T;
-      r.error = null as unknown as E;
-
-      const data = !responseFormat
-        ? r
-        : await response[responseFormat]()
-            .then((data) => {
-              if (r.ok) {
-                r.data = data;
-              } else {
-                r.error = data;
-              }
-              return r;
-            })
-            .catch((e) => {
-              r.error = e;
-              return r;
-            });
-
-      if (cancelToken) {
-        this.abortControllers.delete(cancelToken);
-      }
-
-      if (!response.ok) throw data;
-      return data;
+      params: query,
+      responseType: responseFormat,
+      data: body,
+      url: path,
     });
   };
 
-  protected encodeQueryParam(key: string, value: any) {
-    const encodedKey = encodeURIComponent(key);
-    return `${encodedKey}=${encodeURIComponent(
-      typeof value === "number" ? value : `${value}`,
-    )}`;
-  }
-
-  protected addQueryParam(query: QueryParamsType, key: string) {
-    return this.encodeQueryParam(key, query[key]);
-  }
-
-  protected addArrayQueryParam(query: QueryParamsType, key: string) {
-    const value = query[key];
-    return value.map((v: any) => this.encodeQueryParam(key, v)).join("&");
-  }
-
-  protected toQueryString(rawQuery?: QueryParamsType): string {
-    const query = rawQuery || {};
-    const keys = Object.keys(query).filter(
-      (key) => "undefined" !== typeof query[key],
-    );
-    return keys
-      .map((key) =>
-        Array.isArray(query[key])
-          ? this.addArrayQueryParam(query, key)
-          : this.addQueryParam(query, key),
-      )
-      .join("&");
-  }
-
-  protected addQueryParams(rawQuery?: QueryParamsType): string {
-    const queryString = this.toQueryString(rawQuery);
-    return queryString ? `?${queryString}` : "";
-  }
-
   protected mergeRequestParams(
-    params1: RequestParams,
-    params2?: RequestParams,
-  ): RequestParams {
+    params1: AxiosRequestConfig,
+    params2?: AxiosRequestConfig,
+  ): AxiosRequestConfig {
+    const method = params1.method || (params2 && params2.method);
+
     return {
-      ...this.baseApiParams,
+      ...this.instance.defaults,
       ...params1,
       ...(params2 || {}),
       headers: {
-        ...(this.baseApiParams.headers || {}),
+        ...((method &&
+          this.instance.defaults.headers[
+            method.toLowerCase() as keyof HeadersDefaults
+          ]) ||
+          {}),
         ...(params1.headers || {}),
         ...((params2 && params2.headers) || {}),
       },
     };
   }
 
-  protected createAbortSignal = (
-    cancelToken: CancelToken,
-  ): AbortSignal | undefined => {
-    if (this.abortControllers.has(cancelToken)) {
-      const abortController = this.abortControllers.get(cancelToken);
-      if (abortController) {
-        return abortController.signal;
-      }
-      return void 0;
+  protected stringifyFormItem(formItem: unknown) {
+    if (typeof formItem === "object" && formItem !== null) {
+      return JSON.stringify(formItem);
+    } else {
+      return `${formItem}`;
     }
+  }
 
-    const abortController = new AbortController();
-    this.abortControllers.set(cancelToken, abortController);
-    return abortController.signal;
-  };
+  protected createFormData(input: Record<string, unknown>): FormData {
+    return Object.keys(input || {}).reduce((formData, key) => {
+      const property = input[key];
+      const propertyContent: any[] =
+        property instanceof Array ? property : [property];
 
-  private customFetch = (...fetchParams: Parameters<typeof fetch>) =>
-    fetch(...fetchParams);
+      for (const formItem of propertyContent) {
+        const isFileType = formItem instanceof Blob || formItem instanceof File;
+        formData.append(
+          key,
+          isFileType ? formItem : this.stringifyFormItem(formItem),
+        );
+      }
+
+      return formData;
+    }, new FormData());
+  }
 }
 
 /**
@@ -866,6 +867,37 @@ export class Api<
         }
       >({
         path: `/users`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UsersControllerRegisterVendor
+     * @summary Register vendor
+     * @request POST:/users/vendor
+     */
+    usersControllerRegisterVendor: (
+      data: RegisterVendorDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        OkResponseDto,
+        {
+          /** @example 400 */
+          statusCode: number;
+          /** @example "Bad Request" */
+          message: string;
+          /** @example "Bad Request" */
+          error?: string;
+        }
+      >({
+        path: `/users/vendor`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -963,6 +995,25 @@ export class Api<
         method: "POST",
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Users
+     * @name UsersControllerCheckUsername
+     * @summary Check does username is free
+     * @request GET:/users/check-username/{username}
+     */
+    usersControllerCheckUsername: (
+      username: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<OkResponseDto, any>({
+        path: `/users/check-username/${username}`,
+        method: "GET",
+        format: "json",
         ...params,
       }),
   };
@@ -1568,6 +1619,13 @@ export class Api<
         limit?: number;
         product?: string;
         status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        sortBy?:
+          | "createdAt"
+          | "updatedAt"
+          | "submittedAt"
+          | "publishedAt"
+          | "name";
+        sortDir?: "asc" | "desc";
       },
       params: RequestParams = {},
     ) =>
@@ -1743,6 +1801,24 @@ export class Api<
         secure: true,
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @tags Vendor
+     * @name VendorControllerGetOrders
+     * @summary Ger orders
+     * @request GET:/vendor/orders
+     * @secure
+     */
+    vendorControllerGetOrders: (params: RequestParams = {}) =>
+      this.request<OrderListItemDto[], any>({
+        path: `/vendor/orders`,
+        method: "GET",
+        secure: true,
+        format: "json",
+        ...params,
+      }),
   };
   products = {
     /**
@@ -1808,6 +1884,13 @@ export class Api<
         limit?: number;
         product?: string;
         status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        sortBy?:
+          | "createdAt"
+          | "updatedAt"
+          | "submittedAt"
+          | "publishedAt"
+          | "name";
+        sortDir?: "asc" | "desc";
       },
       params: RequestParams = {},
     ) =>
@@ -1986,154 +2069,6 @@ export class Api<
         ...params,
       }),
   };
-  categories = {
-    /**
-     * No description
-     *
-     * @tags Category
-     * @name CategoriesControllerCreate
-     * @summary Create new category
-     * @request POST:/categories
-     */
-    categoriesControllerCreate: (
-      data: CreateCategoryDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<
-        CategoryDto,
-        | {
-            /** @example 400 */
-            statusCode: number;
-            /** @example "Bad Request" */
-            message: string;
-            /** @example "Bad Request" */
-            error?: string;
-          }
-        | {
-            /** @example 401 */
-            statusCode: number;
-            /** @example "Unauthorized" */
-            message: string;
-            /** @example "Unauthorized" */
-            error?: string;
-          }
-        | {
-            /** @example 409 */
-            statusCode: number;
-            /** @example "Conflict" */
-            message: string;
-            /** @example "Conflict" */
-            error?: string;
-          }
-      >({
-        path: `/categories`,
-        method: "POST",
-        body: data,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Category
-     * @name CategoriesControllerGetAll
-     * @summary Get all categories
-     * @request GET:/categories
-     */
-    categoriesControllerGetAll: (params: RequestParams = {}) =>
-      this.request<
-        CategoryDto[],
-        {
-          /** @example 401 */
-          statusCode: number;
-          /** @example "Unauthorized" */
-          message: string;
-          /** @example "Unauthorized" */
-          error?: string;
-        }
-      >({
-        path: `/categories`,
-        method: "GET",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Category
-     * @name CategoriesControllerDelete
-     * @summary Delete category
-     * @request DELETE:/categories/{id}
-     */
-    categoriesControllerDelete: (id: string, params: RequestParams = {}) =>
-      this.request<
-        CategoryDto,
-        | {
-            /** @example 401 */
-            statusCode: number;
-            /** @example "Unauthorized" */
-            message: string;
-            /** @example "Unauthorized" */
-            error?: string;
-          }
-        | {
-            /** @example 404 */
-            statusCode: number;
-            /** @example "Not Found" */
-            message: string;
-            /** @example "Not Found" */
-            error?: string;
-          }
-      >({
-        path: `/categories/${id}`,
-        method: "DELETE",
-        format: "json",
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Category
-     * @name CategoriesControllerUpdate
-     * @summary Update category
-     * @request PATCH:/categories/{id}
-     */
-    categoriesControllerUpdate: (
-      id: string,
-      data: UpdateCategoryDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<
-        CategoryDto,
-        | {
-            /** @example 401 */
-            statusCode: number;
-            /** @example "Unauthorized" */
-            message: string;
-            /** @example "Unauthorized" */
-            error?: string;
-          }
-        | {
-            /** @example 404 */
-            statusCode: number;
-            /** @example "Not Found" */
-            message: string;
-            /** @example "Not Found" */
-            error?: string;
-          }
-      >({
-        path: `/categories/${id}`,
-        method: "PATCH",
-        body: data,
-        type: ContentType.Json,
-        format: "json",
-        ...params,
-      }),
-  };
   genres = {
     /**
      * No description
@@ -2282,6 +2217,154 @@ export class Api<
         ...params,
       }),
   };
+  categories = {
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerCreate
+     * @summary Create new category
+     * @request POST:/categories
+     */
+    categoriesControllerCreate: (
+      data: CreateCategoryDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        CategoryDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 409 */
+            statusCode: number;
+            /** @example "Conflict" */
+            message: string;
+            /** @example "Conflict" */
+            error?: string;
+          }
+      >({
+        path: `/categories`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerGetAll
+     * @summary Get all categories
+     * @request GET:/categories
+     */
+    categoriesControllerGetAll: (params: RequestParams = {}) =>
+      this.request<
+        CategoryDto[],
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/categories`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerDelete
+     * @summary Delete category
+     * @request DELETE:/categories/{id}
+     */
+    categoriesControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        CategoryDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/categories/${id}`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Category
+     * @name CategoriesControllerUpdate
+     * @summary Update category
+     * @request PATCH:/categories/{id}
+     */
+    categoriesControllerUpdate: (
+      id: string,
+      data: UpdateCategoryDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        CategoryDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/categories/${id}`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
   orders = {
     /**
      * No description
@@ -2302,6 +2385,37 @@ export class Api<
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+  };
+  paypal = {
+    /**
+     * No description
+     *
+     * @tags PayPal
+     * @name PaypalControllerCapture
+     * @request POST:/paypal/capture
+     */
+    paypalControllerCapture: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/paypal/capture`,
+        method: "POST",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags PayPal
+     * @name PaypalControllerCaptureWithId
+     * @summary Capture PayPal order payment
+     * @request POST:/paypal/capture/{id}
+     */
+    paypalControllerCaptureWithId: (id: string, params: RequestParams = {}) =>
+      this.request<PaypalCapturePaymentResponseResponseDto, any>({
+        path: `/paypal/capture/${id}`,
+        method: "POST",
+        format: "json",
         ...params,
       }),
   };
@@ -2357,14 +2471,22 @@ export class Api<
         limit?: number;
         product?: string;
         status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        sortBy?:
+          | "createdAt"
+          | "updatedAt"
+          | "submittedAt"
+          | "publishedAt"
+          | "name";
+        sortDir?: "asc" | "desc";
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<VendorProductsListPaginatedDto, any>({
         path: `/admin/products`,
         method: "GET",
         query: query,
         secure: true,
+        format: "json",
         ...params,
       }),
 
@@ -2526,6 +2648,73 @@ export class Api<
         path: `/carts/${id}`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+  };
+  settings = {
+    /**
+     * No description
+     *
+     * @tags App Settings
+     * @name SettingsControllerGetSettings
+     * @summary Get settings for client
+     * @request GET:/settings
+     */
+    settingsControllerGetSettings: (params: RequestParams = {}) =>
+      this.request<SettingsResponseDto, any>({
+        path: `/settings`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags App Settings
+     * @name SettingsControllerSetSettings
+     * @summary Change settings
+     * @request PATCH:/settings
+     * @secure
+     */
+    settingsControllerSetSettings: (
+      data: UpdateSettingsDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<SettingsResponseDto, any>({
+        path: `/settings`,
+        method: "PATCH",
+        body: data,
+        secure: true,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
+  invitations = {
+    /**
+     * No description
+     *
+     * @name InvitationsControllerFindOne
+     * @request GET:/invitations/{code}
+     */
+    invitationsControllerFindOne: (code: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invitations/${code}`,
+        method: "GET",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name InvitationsControllerCreate
+     * @request POST:/invitations
+     */
+    invitationsControllerCreate: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invitations`,
+        method: "POST",
         ...params,
       }),
   };
