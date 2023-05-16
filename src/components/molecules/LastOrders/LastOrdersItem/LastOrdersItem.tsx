@@ -9,12 +9,12 @@ import {
   StyledOrderNumber,
   StyledWrapper,
 } from "./LastOrder.styles";
-import { type OrderListItemDto } from "../../../../api/api-types";
 import { formatPrice } from "../../../../utils/formatPrice";
+import { type OrderVendorListItem } from "../../../../api/api-types";
 
 interface IProps {
   isLast?: boolean;
-  order: OrderListItemDto;
+  order: OrderVendorListItem;
 }
 
 const LastOrdersItem = ({ isLast, order }: IProps): ReactElement => {

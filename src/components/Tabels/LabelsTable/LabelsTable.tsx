@@ -103,7 +103,9 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
                 <TableCell>
                   <Link to={`/panel/labels/${label._id}`}>
                     <Button component='div' variant='contained' size='small'>
-                      {label.status !== "DRAFT" ? "Details" : "Edit"}
+                      {label.status !== LabelStatusEnum.Draft
+                        ? "Details"
+                        : "Edit"}
                     </Button>
                   </Link>
                 </TableCell>

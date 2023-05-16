@@ -7,7 +7,7 @@ import DashboardCard from "../components/DashboardCard/DashboardCard";
 import MainLayout from "../layouts/MainLayout";
 import { useQuery } from "react-query";
 import {
-  type OrderListItemDto,
+  type OrderVendorListItem,
   type VendorEarningDto,
   type VendorOverviewResponseDto,
 } from "../api/api-types";
@@ -35,7 +35,7 @@ const DashboardView = (): ReactElement => {
     async () => await api.get("/vendor/overview/orders-count"),
   );
 
-  const lastOrders = useQuery<OrderListItemDto[]>(
+  const lastOrders = useQuery<OrderVendorListItem[]>(
     "vendorLastOrder",
     async () => await GetOrders(),
   );

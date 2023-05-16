@@ -2,7 +2,7 @@ import { useQuery, type UseQueryResult } from "react-query";
 import { type AxiosError, type AxiosResponse } from "axios/index";
 import {
   type OkResponseDto,
-  type OrderListItemDto,
+  type OrderVendorListItem,
   type ProductDto,
   type RegisterVendorDto,
   type UpdateProductDto,
@@ -41,7 +41,7 @@ export const RegisterVendor = async (
   return data;
 };
 
-export const GetOrders = async (): Promise<OrderListItemDto[]> => {
-  const { data } = await api.get<OrderListItemDto[]>("/vendor/orders");
+export const GetOrders = async (): Promise<OrderVendorListItem[]> => {
+  const { data } = await api.get<OrderVendorListItem[]>("/vendor/orders");
   return data;
 };

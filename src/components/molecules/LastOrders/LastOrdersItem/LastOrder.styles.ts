@@ -11,8 +11,8 @@ export const StyledWrapper = styled(Box)<IStyledWrapper>(
     alignItems: "center",
     gap: theme.spacing(2),
     ...(!noBorder && {
-      paddingBottom: theme.spacing(2),
-      marginBottom: theme.spacing(2),
+      marginBottom: theme.spacing(1),
+      paddingBottom: theme.spacing(1),
       borderBottom: `1px solid ${theme.palette.divider}`,
     }),
   }),
@@ -29,7 +29,7 @@ export const StyledDateWrapper = styled(Box)(({ theme }) => ({
 }));
 
 export const StyledDate = styled(Typography)(({ theme }) => ({
-  fontSize: theme.typography.body2.fontSize,
+  fontSize: "12px",
   fontWeight: 500,
   color: theme.palette.primary.contrastText,
 }));
