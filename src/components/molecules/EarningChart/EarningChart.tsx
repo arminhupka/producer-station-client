@@ -2,7 +2,6 @@ import { type ReactElement } from "react";
 import { Box, Card, CardContent, Typography, useTheme } from "@mui/material";
 import Chart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
-import { formatPrice } from "../../../utils/formatPrice";
 
 interface IData {
   options: ApexOptions;
@@ -20,6 +19,9 @@ const ProductsSalesChart = ({
 }: IEarningChartProps): ReactElement => {
   const theme = useTheme();
 
+  console.log(incomes);
+  console.log(months);
+
   const defaultData: IData = {
     options: {
       chart: {
@@ -36,7 +38,7 @@ const ProductsSalesChart = ({
     series: [
       {
         name: "Sales (USD)",
-        data: incomes.map((item) => +formatPrice(item)),
+        data: incomes.map((item) => item / 100),
       },
     ],
   };
