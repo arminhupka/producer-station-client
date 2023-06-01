@@ -38,6 +38,7 @@ const SearchBar = ({ onInputChange, disabled }: IProps): ReactElement => {
             label='Search product'
             onChange={handleChange}
             disabled={disabled}
+            fullWidth
           />
         </Box>
       </Paper>

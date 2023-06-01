@@ -101,7 +101,7 @@ const ProductDetailsView = (): ReactElement => {
           process.env.REACT_APP_TITLE as string
         }`}</title>
       </Helmet>
-      {product && categories?.length && (
+      {product && categories && (
         <MainLayout>
           <FormProvider {...formMethods}>
             {mutateError && (
