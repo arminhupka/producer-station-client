@@ -12,13 +12,10 @@ import {
   Typography,
 } from "@mui/material";
 import Skeletons from "../../molecules/Skeletons/Skeletons";
-import { useMutation } from "react-query";
-import { type AxiosError } from "axios";
-import { type ApiError } from "../../../api/apiError";
-import { DeleteCategory } from "../../../api/CategoryQueries";
 import DeleteIcon from "@mui/icons-material/Delete";
 import useModalState from "../../../hooks/useModalState";
 import ConfirmationModal from "../../Modals/ConfirmationModal/ConfirmationModal";
+import { deleteCategory } from "../../../api/categories";
 
 interface IProps {
   data: CategoryDto[];
@@ -36,19 +33,16 @@ const CategoriesTable = ({
   const [categoryToDelete, setCategoryToDelete] = useState<string>("");
   const { isOpen, onOpen, onClose } = useModalState();
 
-  const mutation = useMutation<CategoryDto, AxiosError<ApiError>, string>(
-    async (vars) => await DeleteCategory(vars),
-    {
-      onSuccess: () => {
-        if (onRefetch) {
-          onRefetch();
-        }
-        onClose();
-      },
+  const deleteCategoryMutation = deleteCategory({
+    onSuccess: () => {
+      if (onRefetch) {
+        onRefetch();
+      }
+      onClose();
     },
-  );
+  });
 
-  isLoading = isLoading || mutation.isLoading;
+  isLoading = isLoading || deleteCategoryMutation.isLoading;
 
   const handleDelete = (id: string, title: string): void => {
     setCategoryToDelete(id);
@@ -66,7 +60,7 @@ const CategoriesTable = ({
     <>
       <ConfirmationModal
         onConfirm={() => {
-          mutation.mutate(categoryToDelete);
+          deleteCategoryMutation.mutate(categoryToDelete);
         }}
         title={confirmationModalText}
         onClose={handleCloseConfirmationModal}

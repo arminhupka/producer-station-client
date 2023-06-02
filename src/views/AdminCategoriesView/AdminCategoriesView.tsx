@@ -3,38 +3,34 @@ import MainLayout from "../../layouts/MainLayout";
 import { Helmet } from "react-helmet";
 import PageHeading from "../../components/PageHeading/PageHeading";
 import CategoriesTable from "../../components/Tabels/CategoriesTable/CategoriesTable";
-import { GetCategories } from "../../api/CategoryQueries";
 import FullLoader from "../../components/atoms/FullLoader/FullLoader";
 import { Button } from "@mui/material";
 import useModalState from "../../hooks/useModalState";
 import NewCategoryModal from "../../components/Modals/NewCategoryModal/NewCategoryModal";
+import { getCategories } from "../../api/categories";
 
 const AdminCategoriesView = (): ReactElement => {
   const { isOpen, onOpen, onClose } = useModalState();
-  const categoriesQuery = GetCategories();
+  const { isLoading, refetch, data } = getCategories();
 
   return (
     <>
       <Helmet>
         <title>Categories | Producer Station</title>
       </Helmet>
-      <NewCategoryModal
-        onClose={onClose}
-        open={isOpen}
-        onRefetch={categoriesQuery.refetch}
-      />
+      <NewCategoryModal onClose={onClose} open={isOpen} onRefetch={refetch} />
       <MainLayout>
-        {categoriesQuery.isLoading && <FullLoader />}
+        {isLoading && <FullLoader />}
         <PageHeading title='Categories'>
           <Button variant='contained' size='small' onClick={onOpen}>
             Add Category
           </Button>
         </PageHeading>
-        {!categoriesQuery.isLoading && categoriesQuery.data?.data && (
+        {!isLoading && data && (
           <CategoriesTable
-            data={categoriesQuery.data.data}
-            isLoading={categoriesQuery.isLoading}
-            onRefetch={categoriesQuery.refetch}
+            data={data}
+            isLoading={isLoading}
+            onRefetch={refetch}
           />
         )}
       </MainLayout>

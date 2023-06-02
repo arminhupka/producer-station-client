@@ -19,6 +19,7 @@ import { useFormContext } from "react-hook-form";
 
 import {
   type CategoryDto,
+  type GenreDto,
   type ProductDto,
   type UpdateProductDto,
 } from "../../../api/api-types";
@@ -44,6 +45,7 @@ import FilesList from "../../molecules/FilesList/FilesList";
 interface IProps {
   product: ProductDto;
   categories: CategoryDto[];
+  genres: GenreDto[];
   onUpdate?: (update: UpdateProductDto) => void;
   isUpdating: boolean;
   onRefetch: () => void;
@@ -58,6 +60,7 @@ type IUpdateProduct = Omit<UpdateProductDto, "price" | "salePrice"> & {
 const ProductForm = ({
   product,
   categories,
+  genres,
   onUpdate,
   onRefetch,
   disabled,
@@ -102,6 +105,7 @@ const ProductForm = ({
   }, []);
 
   useEffect(() => {
+    console.log(genres);
     if (isUploaded && uploadedFileDetails) {
       void productMutation
         .mutateAsync({
@@ -228,8 +232,8 @@ const ProductForm = ({
                         </Grid>
                         <Grid item xs={12}>
                           <AutoCompleteChips
-                            data={categories}
-                            productCategories={product.category}
+                            data={genres}
+                            productCategories={product.genre}
                             disabled={disabled}
                             title='Genres'
                             registerAs='genres'

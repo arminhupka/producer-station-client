@@ -3,17 +3,12 @@ import BaseModal, { type IBaseModalProps } from "../BaseModal";
 import { Alert, Button, Grid, TextField } from "@mui/material";
 import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
-import {
-  type CategoryDto,
-  type CreateCategoryDto,
-} from "../../../api/api-types";
+import { type CreateCategoryDto } from "../../../api/api-types";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { AddCategory } from "../../../api/CategoryQueries";
+
 import Loader from "../../atoms/Loader/Loader";
-import { useMutation } from "react-query";
-import { type AxiosError } from "axios";
-import { type ApiError } from "../../../api/apiError";
+import { addCategory } from "../../../api/categories";
 
 type TProps = Pick<IBaseModalProps, "onClose" | "open">;
 
@@ -33,11 +28,7 @@ const NewCategoryModal = ({
   onRefetch,
   onClose,
 }: IProps): ReactElement => {
-  const mutation = useMutation<
-    CategoryDto,
-    AxiosError<ApiError>,
-    CreateCategoryDto
-  >(async (form) => await AddCategory(form), {
+  const { isLoading, error, mutate } = addCategory({
     onSuccess: (): void => {
       onRefetch();
       onClose();
@@ -52,7 +43,7 @@ const NewCategoryModal = ({
     });
 
   const handleAddNewCategory: SubmitHandler<CreateCategoryDto> = (form) => {
-    mutation.mutate(form);
+    mutate(form);
   };
 
   const handleClose = (): void => {
@@ -63,8 +54,8 @@ const NewCategoryModal = ({
   return (
     <BaseModal title='Add New Category' onClose={handleClose} open={open}>
       <>
-        {mutation.isLoading && <Loader />}
-        {!mutation.isLoading && (
+        {isLoading && <Loader />}
+        {!isLoading && (
           <form onSubmit={handleSubmit(handleAddNewCategory)}>
             <Grid container gap={2}>
               <Grid item xs={12}>
@@ -76,11 +67,9 @@ const NewCategoryModal = ({
                   {...register("name")}
                 />
               </Grid>
-              {mutation.error && (
+              {error && (
                 <Grid item xs={12}>
-                  <Alert severity='error'>
-                    {mutation.error.response?.data.message}
-                  </Alert>
+                  <Alert severity='error'>{error.response?.data.message}</Alert>
                 </Grid>
               )}
               <Grid item xs={12}>
