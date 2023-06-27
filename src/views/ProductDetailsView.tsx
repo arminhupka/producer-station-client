@@ -1,26 +1,26 @@
 import { type ReactElement } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { type UpdateProductDto } from "../api/api-types";
 import FullLoader from "../components/atoms/FullLoader/FullLoader";
 import { Helmet } from "react-helmet";
 import MainLayout from "../layouts/MainLayout";
 import ProductForm from "../components/Forms/ProductForm/ProductForm";
 import { FormProvider, useForm } from "react-hook-form";
 import { Alert, Box } from "@mui/material";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { NewProductValidator } from "../validators/NewProductValidator";
 import ProductFormButtons from "../components/molecules/ProductFormButtons/ProductFormButtons";
 import PageHeading from "../components/PageHeading/PageHeading";
 import { ProductStatusEnum } from "../enum/ProductStatusEnum";
 import { getGenres } from "../api/genres";
 import { getCategories } from "../api/categories";
 import { getProductAsVendor, updateProduct } from "../api/products";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { UpdateProductValidator } from "../validators/UpdateProductValidator";
+import { type UpdateProductDto } from "../api/api-types";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
   const { id } = useParams();
   const formMethods = useForm<UpdateProductDto>({
-    resolver: yupResolver(NewProductValidator),
+    resolver: yupResolver(UpdateProductValidator),
   });
 
   if (!id) {
