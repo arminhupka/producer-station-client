@@ -82,7 +82,7 @@ export const LabelDetailsView = (): ReactElement => {
       <>
         <Helmet>
           <title>{`${query.data.data.name} | ${
-            process.env.REACT_APP_TITLE as string
+            import.meta.env.VITE_TITLE as string
           }`}</title>
         </Helmet>
         <MainLayout>

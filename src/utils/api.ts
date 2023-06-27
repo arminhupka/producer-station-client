@@ -27,7 +27,7 @@ const refreshToken = async (): Promise<UserLoginResponseDto> => {
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("refreshToken");
     window.localStorage.removeItem("rememberMe");
-    throw new Error(err);
+    throw new Error("error during refreshing token");
   }
 };
 const token = localStorage.getItem("token");
@@ -54,7 +54,7 @@ const onRefreshed = (token: string): void => {
 };
 
 export const api = axios.create({
-  baseURL: process.env.REACT_APP_API,
+  baseURL: import.meta.env.VITE_API,
   headers: {
     Authorization: `Bearer ${token as string}`,
   },

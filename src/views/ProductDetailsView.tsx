@@ -92,7 +92,7 @@ const ProductDetailsView = (): ReactElement => {
       {updateProductMutation.isLoading && <FullLoader />}
       <Helmet>
         <title>{`${product?.name ?? ""} | ${
-          process.env.REACT_APP_TITLE as string
+          import.meta.env.VITE_TITLE as string
         }`}</title>
       </Helmet>
       {product && categories && genres && (
