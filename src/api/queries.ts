@@ -1,5 +1,5 @@
 import { useQuery, type UseQueryResult } from "react-query";
-import { type AxiosError, type AxiosResponse } from "axios/index";
+import { type AxiosError, type AxiosResponse } from "axios";
 import {
   type OkResponseDto,
   type OrderVendorListItem,

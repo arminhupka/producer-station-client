@@ -1,8 +1,6 @@
 import { Button } from "@mui/material";
-import { type AxiosResponse } from "axios";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useQuery } from "react-query";
 
 import NewProductModal from "../components/Modals/NewProductModal/NewProductModal";
 import Pagination from "../components/molecules/Pagination/Pagination";
@@ -10,28 +8,29 @@ import PageHeading from "../components/PageHeading/PageHeading";
 import ProductsTable from "../components/Tabels/ProductsTable/ProductsTable";
 import useModalState from "../hooks/useModalState";
 import MainLayout from "../layouts/MainLayout";
-import { api } from "../utils/api";
-import { type VendorProductsListPaginatedDto } from "../api/api-types";
 import SearchBar from "../components/atoms/SearchBar/SearchBar";
+import { getProductsListAsVendor } from "../api/products";
 
 const ProductsView = (): ReactElement => {
   const { onOpen, isOpen, onClose } = useModalState();
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState<string>("");
 
-  const { isLoading, data } = useQuery<
-    AxiosResponse<VendorProductsListPaginatedDto>
-  >(
-    ["products", page, keyword],
-    async () =>
-      await api.get<VendorProductsListPaginatedDto>("/vendor/products", {
-        params: { limit: 10, page, product: keyword || undefined },
-      }),
+  const { isLoading, data, refetch, isRefetching } = getProductsListAsVendor(
+    page,
+    keyword,
+    {
+      enabled: false,
+    },
   );
 
   const handleChangePage = (event: unknown, newPage: number): void => {
     setPage(newPage + 1);
   };
+
+  useEffect(() => {
+    void refetch();
+  }, [keyword]);
 
   return (
     <>
@@ -46,12 +45,15 @@ const ProductsView = (): ReactElement => {
           </Button>
         </PageHeading>
         <SearchBar onInputChange={setKeyword} />
-        <ProductsTable isLoading={isLoading} data={data?.data.docs ?? []} />
+        <ProductsTable
+          isLoading={isLoading || isRefetching}
+          data={data?.docs ?? []}
+        />
         {data && (
           <Pagination
-            count={data.data.totalDocs}
-            page={data.data.page}
-            rowsPerPage={data.data.limit}
+            count={data.totalDocs}
+            page={data.page}
+            rowsPerPage={data.limit}
             onPageChange={handleChangePage}
           />
         )}

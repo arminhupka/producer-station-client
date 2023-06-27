@@ -3,9 +3,14 @@ import {
   type UseMutationOptions,
   type UseMutationResult,
   useQuery,
+  type UseQueryOptions,
   type UseQueryResult,
 } from "react-query";
-import { type ProductDto, type UpdateProductDto } from "./api-types";
+import {
+  type ProductDto,
+  type UpdateProductDto,
+  type VendorProductsListPaginatedDto,
+} from "./api-types";
 import { type AxiosError } from "axios";
 import { type ApiError } from "./apiError";
 import { api } from "../utils/api";
@@ -32,3 +37,28 @@ export const updateProduct = (
     return data;
   }, options);
 };
+
+export const getProductsListAsVendor = (
+  page: number,
+  keyword: string,
+  options: UseQueryOptions<
+    VendorProductsListPaginatedDto,
+    AxiosError<ApiError>
+  >,
+): UseQueryResult<VendorProductsListPaginatedDto, AxiosError<ApiError>> =>
+  useQuery<VendorProductsListPaginatedDto, AxiosError<ApiError>>(
+    "getProductsListAsVendor",
+    async () => {
+      const { data } = await api.get<VendorProductsListPaginatedDto>(
+        "/vendor/products",
+        {
+          params: {
+            page,
+            product: keyword || undefined,
+          },
+        },
+      );
+      return data;
+    },
+    options,
+  );
