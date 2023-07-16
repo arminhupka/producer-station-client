@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Box,
   Button,
   Chip,
@@ -10,7 +11,6 @@ import {
   TableHead,
   TableRow,
   type Theme,
-  Typography,
 } from "@mui/material";
 import { type ReactElement } from "react";
 import { Link } from "react-router-dom";
@@ -70,26 +70,13 @@ const LabelsTable = ({ data, isLoading }: IProps): ReactElement => (
           {!isLoading &&
             data.map((label) => (
               <TableRow key={label._id}>
-                <TableCell width={64}>
-                  <Box
-                    width={64}
-                    height={64}
-                    overflow='hidden'
-                    sx={{
-                      borderRadius: 0.5,
-                      overflow: "hidden",
-                    }}>
-                    <img
-                      src={label.avatar ?? NoImagePlaceholder}
-                      alt=''
-                      width='100%'
-                      height='auto'
-                    />
-                  </Box>
+                <TableCell width={48}>
+                  <Avatar
+                    sx={{ width: 48, height: 48, borderRadius: 1 }}
+                    src={label.avatar ?? NoImagePlaceholder}
+                  />
                 </TableCell>
-                <TableCell>
-                  <Typography fontWeight={600}>{label.name}</Typography>
-                </TableCell>
+                <TableCell>{label.name}</TableCell>
                 <TableCell>
                   <Chip label={label.productsCount} sx={ChipStyle} />
                 </TableCell>

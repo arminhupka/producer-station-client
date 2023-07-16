@@ -6,11 +6,10 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  type SelectChangeEvent,
   TextField,
 } from "@mui/material";
 import { type AxiosError, type AxiosResponse } from "axios";
-import { type ReactElement } from "react";
+import { type ReactElement, useEffect } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
@@ -21,6 +20,8 @@ import { useAppSelector } from "../../../store";
 import { api } from "../../../utils/api";
 import BaseModal, { type IBaseModalProps } from "../BaseModal";
 import Loader from "../../atoms/Loader/Loader";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -28,7 +29,22 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
   const navigate = useNavigate();
   const labels = useAppSelector((state) => state.labelsReducer.labels);
 
-  const { register, setValue, handleSubmit } = useForm<NewProductDto>();
+  const FormSchema = yup.object().shape({
+    label: yup.string().required(),
+    name: yup
+      .string()
+      .min(5, "Name must have at least 5 characters")
+      .required(),
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    reset,
+  } = useForm<NewProductDto>({
+    resolver: yupResolver(FormSchema),
+  });
 
   const { mutate, isLoading, error } = useMutation<
     AxiosResponse<ProductDto>,
@@ -40,13 +56,15 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
     },
   });
 
-  const handleChange = (event: SelectChangeEvent): void => {
-    setValue("label", event.target.value);
-  };
-
   const handleCreateNewProduct: SubmitHandler<NewProductDto> = (form) => {
     mutate(form);
   };
+
+  useEffect(() => {
+    return () => {
+      reset();
+    };
+  }, [onClose]);
 
   return (
     <BaseModal title='New Product' onClose={onClose} open={open}>
@@ -62,8 +80,8 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
                     labelId='label'
                     label='Select label'
                     fullWidth
-                    {...register("label", { required: true })}
-                    onChange={handleChange}>
+                    {...register("label")}
+                    error={!!errors.label}>
                     {labels.map((l) => (
                       <MenuItem key={l._id} value={l._id}>
                         {l.name}
@@ -76,7 +94,9 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
                 <TextField
                   label='Product Name'
                   fullWidth
-                  {...register("name", { required: true, minLength: 3 })}
+                  {...register("name")}
+                  error={!!errors?.name}
+                  helperText={errors.name?.message}
                 />
               </Grid>
               {error?.response && (
@@ -85,7 +105,11 @@ const NewProductModal = ({ open, onClose }: TProps): ReactElement => {
                 </Grid>
               )}
               <Grid item xs={12}>
-                <Button type='submit' variant='contained' fullWidth>
+                <Button
+                  type='submit'
+                  variant='contained'
+                  fullWidth
+                  disabled={!isValid}>
                   Add New Product
                 </Button>
               </Grid>

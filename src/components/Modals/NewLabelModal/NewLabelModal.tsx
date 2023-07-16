@@ -21,7 +21,7 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     reset: formReset,
   } = useForm<NewLabelDto>({
     resolver: yupResolver(NewLabelFormValidator),
@@ -76,7 +76,7 @@ const NewLabelModal = ({ onClose, open }: TProps): ReactElement => {
               type='submit'
               variant='contained'
               fullWidth
-              disabled={isLoading}>
+              disabled={isLoading || !isValid}>
               Add New Label
             </Button>
           </Grid>

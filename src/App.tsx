@@ -13,6 +13,9 @@ import ResetPasswordView from "./views/ResetPasswordView";
 import ProductDetailsView from "./views/ProductDetailsView";
 import OrdersView from "./views/OrdersView";
 import AdminCategoriesView from "./views/AdminCategoriesView/AdminCategoriesView";
+import AdminGenresView from "./views/AdminGenresView/AdminGenresView";
+import AdminFilesView from "./views/AdminFilesView/AdminFilesView";
+import AdminFormatsView from "./views/AdminFormatsView/AdminFormatsView";
 
 const App = (): ReactElement => (
   <BrowserRouter>
@@ -28,6 +31,9 @@ const App = (): ReactElement => (
           path='/panel/admin/categories'
           element={<AdminCategoriesView />}
         />
+        <Route path='/panel/admin/genres' element={<AdminGenresView />} />
+        <Route path='/panel/admin/files' element={<AdminFilesView />} />
+        <Route path='/panel/admin/formats' element={<AdminFormatsView />} />
       </Route>
       <Route path='/' element={<LoginView />} />
       <Route path='/register' element={<RegisterView />} />

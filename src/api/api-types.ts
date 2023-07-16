@@ -19,8 +19,8 @@ export interface RegisterUserDto {
   passwordConfirm: string;
 }
 
-export interface OkResponseDto {
-  ok: boolean;
+export interface RegisterUserResponseDto {
+  email: string;
 }
 
 export interface RegisterVendorDto {
@@ -37,6 +37,10 @@ export interface RegisterVendorDto {
   lastName: string;
   paypalEmail: string;
   paypalEmailConfirm: string;
+}
+
+export interface OkResponseDto {
+  ok: boolean;
 }
 
 export interface UpdateUserDto {
@@ -175,6 +179,18 @@ export interface GetFilesResponseDto {
   docs: FileDto[];
 }
 
+export interface CreateGenreDto {
+  name: string;
+}
+
+export interface GenreDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
+export type UpdateGenreDto = object;
+
 export interface UploadDto {
   fileName: string;
   fileType: string;
@@ -303,6 +319,12 @@ export interface ProductGenreDto {
   slug: string;
 }
 
+export interface ProductFormatDto {
+  _id: string;
+  name: string;
+  slug: string;
+}
+
 export interface ProductDto {
   _id: string;
   description: string;
@@ -315,6 +337,7 @@ export interface ProductDto {
   label: ProductLabelDto;
   category: ProductCategoryDto[];
   genre: ProductGenreDto[];
+  format: ProductFormatDto[];
   status: "Draft" | "Submitted" | "Active" | "Suspended";
   name: string;
   new: boolean;
@@ -466,11 +489,13 @@ export interface UpdateProductDto {
   salePrice?: number | null;
   category?: string[];
   genre?: string[];
+  format?: string[];
   status?: string;
   files?: string[];
   featured?: boolean;
   artwork?: string;
   audioPreview?: string;
+  fileId?: string;
 }
 
 export interface PublicProductLabel {
@@ -498,15 +523,17 @@ export interface AddFileToProductDto {
   fileId: string;
 }
 
-export type CreateGenreDto = object;
+export interface CreateFormatDto {
+  name: string;
+}
 
-export interface GenreDto {
+export interface FormatDto {
   _id: string;
   name: string;
   slug: string;
 }
 
-export type UpdateGenreDto = object;
+export type UpdateFormatDto = object;
 
 export interface CreateCategoryDto {
   name: string;
@@ -846,15 +873,23 @@ export class Api<
       params: RequestParams = {},
     ) =>
       this.request<
-        OkResponseDto,
-        {
-          /** @example 400 */
-          statusCode: number;
-          /** @example "Bad Request" */
-          message: string;
-          /** @example "Bad Request" */
-          error?: string;
-        }
+        RegisterUserResponseDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 409 */
+            statusCode: number;
+            /** @example "Conflict" */
+            message: string;
+            /** @example "Conflict" */
+            error?: string;
+          }
       >({
         path: `/users`,
         method: "POST",
@@ -1068,33 +1103,6 @@ export class Api<
      * No description
      *
      * @tags Auth
-     * @name AuthControllerGetAuth
-     * @summary Check user auth
-     * @request GET:/auth
-     * @secure
-     */
-    authControllerGetAuth: (params: RequestParams = {}) =>
-      this.request<
-        any,
-        {
-          /** @example 401 */
-          statusCode: number;
-          /** @example "Unauthorized" */
-          message: string;
-          /** @example "Unauthorized" */
-          error?: string;
-        }
-      >({
-        path: `/auth`,
-        method: "GET",
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags Auth
      * @name AuthControllerRefreshToken
      * @summary Get new refresh token
      * @request GET:/auth/refresh
@@ -1149,9 +1157,9 @@ export class Api<
      */
     labelsControllerGetLabels: (
       query?: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
       },
       params: RequestParams = {},
@@ -1373,6 +1381,154 @@ export class Api<
         ...params,
       }),
   };
+  genres = {
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerCreate
+     * @summary Create new genre
+     * @request POST:/genres
+     */
+    genresControllerCreate: (
+      data: CreateGenreDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 400 */
+            statusCode: number;
+            /** @example "Bad Request" */
+            message: string;
+            /** @example "Bad Request" */
+            error?: string;
+          }
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 409 */
+            statusCode: number;
+            /** @example "Conflict" */
+            message: string;
+            /** @example "Conflict" */
+            error?: string;
+          }
+      >({
+        path: `/genres`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerGetAll
+     * @summary Get all genres
+     * @request GET:/genres
+     */
+    genresControllerGetAll: (params: RequestParams = {}) =>
+      this.request<
+        GenreDto[],
+        {
+          /** @example 401 */
+          statusCode: number;
+          /** @example "Unauthorized" */
+          message: string;
+          /** @example "Unauthorized" */
+          error?: string;
+        }
+      >({
+        path: `/genres`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerDelete
+     * @summary Delete genre
+     * @request DELETE:/genres/{id}
+     */
+    genresControllerDelete: (id: string, params: RequestParams = {}) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/genres/${id}`,
+        method: "DELETE",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags Genre
+     * @name GenresControllerUpdate
+     * @summary Update genre
+     * @request PATCH:/genres/{id}
+     */
+    genresControllerUpdate: (
+      id: string,
+      data: UpdateGenreDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<
+        GenreDto,
+        | {
+            /** @example 401 */
+            statusCode: number;
+            /** @example "Unauthorized" */
+            message: string;
+            /** @example "Unauthorized" */
+            error?: string;
+          }
+        | {
+            /** @example 404 */
+            statusCode: number;
+            /** @example "Not Found" */
+            message: string;
+            /** @example "Not Found" */
+            error?: string;
+          }
+      >({
+        path: `/genres/${id}`,
+        method: "PATCH",
+        body: data,
+        type: ContentType.Json,
+        format: "json",
+        ...params,
+      }),
+  };
   upload = {
     /**
      * No description
@@ -1558,9 +1714,9 @@ export class Api<
     vendorControllerGetLabelProductsPaginated: (
       id: string,
       query?: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
       },
       params: RequestParams = {},
@@ -1603,12 +1759,12 @@ export class Api<
      */
     vendorControllerGetVendorProducts: (
       query?: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
         product?: string;
-        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        status?: "Draft" | "Submitted" | "Active" | "Suspended";
         sortBy?:
           | "createdAt"
           | "updatedAt"
@@ -1868,12 +2024,12 @@ export class Api<
      */
     productsControllerGetAll: (
       query?: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
         product?: string;
-        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        status?: "Draft" | "Submitted" | "Active" | "Suspended";
         sortBy?:
           | "createdAt"
           | "updatedAt"
@@ -2059,21 +2215,21 @@ export class Api<
         ...params,
       }),
   };
-  genres = {
+  formats = {
     /**
      * No description
      *
-     * @tags Genre
-     * @name GenresControllerCreate
-     * @summary Create new genre
-     * @request POST:/genres
+     * @tags Formats
+     * @name FormatsControllerCreate
+     * @summary Create new format
+     * @request POST:/formats
      */
-    genresControllerCreate: (
-      data: CreateGenreDto,
+    formatsControllerCreate: (
+      data: CreateFormatDto,
       params: RequestParams = {},
     ) =>
       this.request<
-        GenreDto,
+        FormatDto,
         | {
             /** @example 400 */
             statusCode: number;
@@ -2099,7 +2255,7 @@ export class Api<
             error?: string;
           }
       >({
-        path: `/genres`,
+        path: `/formats`,
         method: "POST",
         body: data,
         type: ContentType.Json,
@@ -2110,14 +2266,14 @@ export class Api<
     /**
      * No description
      *
-     * @tags Genre
-     * @name GenresControllerGetAll
-     * @summary Get all genres
-     * @request GET:/genres
+     * @tags Formats
+     * @name FormatsControllerGetAll
+     * @summary Get all formats
+     * @request GET:/formats
      */
-    genresControllerGetAll: (params: RequestParams = {}) =>
+    formatsControllerGetAll: (params: RequestParams = {}) =>
       this.request<
-        GenreDto[],
+        FormatDto[],
         {
           /** @example 401 */
           statusCode: number;
@@ -2127,7 +2283,7 @@ export class Api<
           error?: string;
         }
       >({
-        path: `/genres`,
+        path: `/formats`,
         method: "GET",
         format: "json",
         ...params,
@@ -2136,14 +2292,14 @@ export class Api<
     /**
      * No description
      *
-     * @tags Genre
-     * @name GenresControllerDelete
-     * @summary Delete genre
-     * @request DELETE:/genres/{id}
+     * @tags Formats
+     * @name FormatsControllerDelete
+     * @summary Delete format
+     * @request DELETE:/formats/{id}
      */
-    genresControllerDelete: (id: string, params: RequestParams = {}) =>
+    formatsControllerDelete: (id: string, params: RequestParams = {}) =>
       this.request<
-        GenreDto,
+        FormatDto,
         | {
             /** @example 401 */
             statusCode: number;
@@ -2161,7 +2317,7 @@ export class Api<
             error?: string;
           }
       >({
-        path: `/genres/${id}`,
+        path: `/formats/${id}`,
         method: "DELETE",
         format: "json",
         ...params,
@@ -2170,18 +2326,18 @@ export class Api<
     /**
      * No description
      *
-     * @tags Genre
-     * @name GenresControllerUpdate
-     * @summary Update genre
-     * @request PATCH:/genres/{id}
+     * @tags Formats
+     * @name FormatsControllerUpdate
+     * @summary Update format
+     * @request PATCH:/formats/{id}
      */
-    genresControllerUpdate: (
+    formatsControllerUpdate: (
       id: string,
-      data: UpdateGenreDto,
+      data: UpdateFormatDto,
       params: RequestParams = {},
     ) =>
       this.request<
-        GenreDto,
+        FormatDto,
         | {
             /** @example 401 */
             statusCode: number;
@@ -2199,7 +2355,7 @@ export class Api<
             error?: string;
           }
       >({
-        path: `/genres/${id}`,
+        path: `/formats/${id}`,
         method: "PATCH",
         body: data,
         type: ContentType.Json,
@@ -2455,12 +2611,12 @@ export class Api<
      */
     adminControllerGetProducts: (
       query?: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
         product?: string;
-        status?: "DRAFT" | "SUBMITTED" | "ACTIVE" | "SUSPENDED";
+        status?: "Draft" | "Submitted" | "Active" | "Suspended";
         sortBy?:
           | "createdAt"
           | "updatedAt"
@@ -2508,11 +2664,12 @@ export class Api<
      */
     adminControllerGetUsers: (
       query: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
-        user: string;
+        username: string;
+        email: string;
       },
       params: RequestParams = {},
     ) =>
@@ -2547,9 +2704,9 @@ export class Api<
     adminControllerGetUser: (
       id: string,
       query: {
-        /** @minLength 1 */
+        /** @min 1 */
         page?: number;
-        /** @minLength 1 */
+        /** @min 1 */
         limit?: number;
         user: string;
       },

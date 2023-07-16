@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { type ChangeEvent, useEffect, useState } from "react";
+import { type ChangeEvent, useEffect, useRef, useState } from "react";
 import { api } from "../utils/api";
 import { OkResponseDto } from "../api/api-types";
 
@@ -49,6 +49,8 @@ const useChunkedUploader = () => {
   const [key, setKey] = useState<string | null>(null);
 
   const [uploadedBytes, setUploadedBytes] = useState(0);
+
+  const abortController = useRef<AbortController | null>(null);
 
   const calculateParts = (fileSize: number, chunkSizes: number): number => {
     return Math.ceil(fileSize / chunkSizes);
@@ -148,6 +150,7 @@ const useChunkedUploader = () => {
         onUploadProgress: (e) => {
           setUploadedBytes((prev) => prev + e.loaded);
         },
+        signal: abortController.current?.signal,
       });
       tags.push(data.data.etag);
       setUploadedParts((parts) => parts + 1);
@@ -175,6 +178,12 @@ const useChunkedUploader = () => {
 
     setIsUploaded(true);
     return data;
+  };
+
+  const setFile = (file: File): void => {
+    const parts = calculateParts(file.size, chunkSize);
+    setPartsToUpload(parts);
+    setSelectedFile(file);
   };
 
   const select = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -213,6 +222,8 @@ const useChunkedUploader = () => {
       console.error(err);
     } finally {
       setUploading(false);
+      setUploadedBytes(0);
+      setUploadedParts(0);
     }
   };
 
@@ -265,6 +276,14 @@ const useChunkedUploader = () => {
     setPartsToUpload(0);
     setIsUploaded(false);
     setUploadedFileDetails(null);
+    setUploadedBytes(0);
+    abortController.current = new AbortController();
+  };
+
+  const abort = () => {
+    abortController.current?.abort();
+    abortController.current = new AbortController();
+    reset();
   };
 
   useEffect(() => {
@@ -272,6 +291,14 @@ const useChunkedUploader = () => {
 
     setUploadedPercents(value || 0);
   }, [partsToUpload, uploadedParts]);
+
+  useEffect(() => {
+    abortController.current = new AbortController();
+
+    return () => {
+      abortController.current = null;
+    };
+  }, []);
 
   return {
     upload,
@@ -285,6 +312,8 @@ const useChunkedUploader = () => {
     startUpload,
     reset,
     uploadedBytes: +uploadedBytes.toFixed(2),
+    abort,
+    setFile,
   };
 };
 

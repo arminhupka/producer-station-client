@@ -7,6 +7,7 @@ import {
   type UseQueryResult,
 } from "react-query";
 import {
+  type AddFileToProductDto,
   type ProductDto,
   type UpdateProductDto,
   type VendorProductsListPaginatedDto,
@@ -62,3 +63,19 @@ export const getProductsListAsVendor = (
     },
     options,
   );
+
+export const addFileToProduct = (
+  productId: string,
+  options: UseMutationOptions<
+    ProductDto,
+    AxiosError<ApiError>,
+    AddFileToProductDto
+  >,
+): UseMutationResult<ProductDto, AxiosError<ApiError>, AddFileToProductDto> =>
+  useMutation(async (form) => {
+    const { data } = await api.post<ProductDto>(
+      `/products/${productId}/file`,
+      form,
+    );
+    return data;
+  }, options);

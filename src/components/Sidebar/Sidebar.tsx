@@ -109,6 +109,12 @@ const AdminMenus: IMenuItem[] = [
     icon: <Dashboard />,
   },
   {
+    id: 14,
+    title: "Formats",
+    href: "/panel/admin/formats",
+    icon: <Dashboard />,
+  },
+  {
     id: 7,
     title: "Instruments",
     href: "/panel/admin/instruments",

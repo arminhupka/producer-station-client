@@ -15,6 +15,7 @@ import { getProductAsVendor, updateProduct } from "../api/products";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { UpdateProductValidator } from "../validators/UpdateProductValidator";
 import { type UpdateProductDto } from "../api/api-types";
+import { getFormats } from "../api/formats";
 
 const ProductDetailsView = (): ReactElement => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const ProductDetailsView = (): ReactElement => {
 
   const getGenresQuery = getGenres();
   const getCategoriesQuery = getCategories();
+  const getFormatsQuery = getFormats();
   const getProductAsVendorQuery = getProductAsVendor(id);
 
   const isLoading = [
@@ -48,6 +50,7 @@ const ProductDetailsView = (): ReactElement => {
   const product = getProductAsVendorQuery.data;
   const categories = getCategoriesQuery.data;
   const genres = getGenresQuery.data;
+  const formats = getFormatsQuery.data;
 
   const mutateError = updateProductMutation.error?.response?.data;
 
@@ -95,7 +98,7 @@ const ProductDetailsView = (): ReactElement => {
           import.meta.env.VITE_TITLE as string
         }`}</title>
       </Helmet>
-      {product && categories && genres && (
+      {product && categories && genres && formats && (
         <MainLayout>
           <FormProvider {...formMethods}>
             {mutateError && (
@@ -115,6 +118,7 @@ const ProductDetailsView = (): ReactElement => {
             <ProductForm
               product={product}
               categories={categories}
+              formats={formats}
               genres={getGenresQuery.data}
               isUpdating={false}
               onUpdate={() => {}}

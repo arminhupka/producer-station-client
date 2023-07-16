@@ -39,6 +39,7 @@ const StyledBody = styled(Box)(({ theme }) => ({
 export interface IBaseModalProps extends ModalProps {
   title: string;
   onClose: () => void;
+  hideCloseBtn?: boolean;
 }
 
 const BaseModal = ({
@@ -46,6 +47,7 @@ const BaseModal = ({
   title,
   children,
   onClose,
+  hideCloseBtn,
 }: IBaseModalProps): ReactElement => (
   <Modal open={open} onClose={onClose}>
     <Box p={3} position='relative' height='100%'>
@@ -54,9 +56,11 @@ const BaseModal = ({
           <Typography component='h2' fontSize='larger' fontWeight={600}>
             {title}
           </Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon />
-          </IconButton>
+          {!hideCloseBtn && (
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          )}
         </StyledHeading>
         <StyledBody>{children}</StyledBody>
       </StyledModalWrapper>

@@ -19,6 +19,7 @@ import { useFormContext } from "react-hook-form";
 
 import {
   type CategoryDto,
+  type FormatsDto,
   type GenreDto,
   type ProductDto,
   type UpdateProductDto,
@@ -46,6 +47,7 @@ interface IProps {
   product: ProductDto;
   categories: CategoryDto[];
   genres: GenreDto[];
+  formats: FormatsDto[];
   onUpdate?: (update: UpdateProductDto) => void;
   isUpdating: boolean;
   onRefetch: () => void;
@@ -64,6 +66,7 @@ const ProductForm = ({
   onUpdate,
   onRefetch,
   disabled,
+  formats,
 }: IProps): ReactElement => {
   const [currentTab, setCurrentTab] = useState<string>("0");
   const { isOpen, onOpen, onClose } = useModalState();
@@ -105,7 +108,6 @@ const ProductForm = ({
   }, []);
 
   useEffect(() => {
-    console.log(genres);
     if (isUploaded && uploadedFileDetails) {
       void productMutation
         .mutateAsync({
@@ -236,16 +238,16 @@ const ProductForm = ({
                             productCategories={product.genre}
                             disabled={disabled}
                             title='Genres'
-                            registerAs='genres'
+                            registerAs='genre'
                           />
                         </Grid>
                         <Grid item xs={12}>
                           <AutoCompleteChips
-                            data={categories}
-                            productCategories={product.category}
+                            data={formats}
+                            productCategories={product.format}
                             disabled={disabled}
-                            title='Format'
-                            registerAs='genres'
+                            title='Formats'
+                            registerAs='format'
                           />
                         </Grid>
                         <Grid item xs={12}>

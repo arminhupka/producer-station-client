@@ -1,30 +1,14 @@
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputLabel,
-  LinearProgress,
-  MenuItem,
-  Select,
-  type SelectChangeEvent,
-  TextField,
-} from "@mui/material";
+import { Button, Grid, LinearProgress, TextField } from "@mui/material";
+import * as yup from "yup";
 
 import BaseModal, { type IBaseModalProps } from "../BaseModal";
-import { type ReactElement, useEffect, useState } from "react";
-import { UploadTypeEnum } from "../../../enum/UploadTypeEnum";
+import { type ReactElement, useEffect } from "react";
 import useChunkedUploader from "../../../hooks/useChunkedUploader";
-import { useMutation } from "react-query";
-import { type AxiosError, type AxiosResponse } from "axios";
-import {
-  type AddFileToProductDto,
-  type ProductDto,
-} from "../../../api/api-types";
-import { type ApiError } from "../../../api/apiError";
-import { api } from "../../../utils/api";
-import { useForm } from "react-hook-form";
+import { type SubmitHandler, useForm } from "react-hook-form";
 import Typography from "@mui/material/Typography";
 import formatBytes from "../../../utils/formatBytes";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { addFileToProduct } from "../../../api/products";
 
 type TProps = Pick<IBaseModalProps, "open" | "onClose">;
 
@@ -35,6 +19,7 @@ interface IProps extends TProps {
 
 interface IForm {
   customName: string;
+  file: FileList;
 }
 
 const NewFileUpload = ({
@@ -48,97 +33,117 @@ const NewFileUpload = ({
     isUploaded,
     uploadedFileDetails,
     uploading,
-    select,
     startUpload,
     uploadedBytes,
     selectedFile,
+    abort,
+    setFile,
   } = useChunkedUploader();
 
-  const addFileToProductMutation = useMutation<
-    AxiosResponse<ProductDto>,
-    AxiosError<ApiError>,
-    AddFileToProductDto
-  >(
-    async (form) =>
-      await api.post<ProductDto>(`/products/${productId}/file`, form),
-    {
-      onSuccess: () => {
-        if (onUploaded) onUploaded();
-        onClose();
-      },
+  const { mutate } = addFileToProduct(productId, {
+    onSuccess: () => {
+      if (onUploaded) onUploaded();
+      onClose();
     },
-  );
+  });
 
-  const [uploadType, setUploadType] = useState<null | UploadTypeEnum>(null);
+  const schema = yup.object().shape({
+    customName: yup.string().min(5).required(),
+    file: yup
+      .mixed()
+      .test("file-added", (value) => {
+        const array = value as FileList;
+        if (array.length) return true;
+      })
+      .required("file is required"),
+  });
 
-  const { register } = useForm<IForm>();
+  const {
+    register,
+    formState: { isValid, errors },
+    handleSubmit,
+  } = useForm<IForm>({
+    resolver: yupResolver(schema),
+  });
 
-  const handleChange = (event: SelectChangeEvent): void => {
-    setUploadType(event.target.value as UploadTypeEnum);
+  const handleUploadAbort = (): void => {
+    abort();
+  };
+
+  const handleUpload: SubmitHandler<IForm> = async (form) => {
+    console.log(form);
+    if (!form.file.length) return;
+    setFile(form.file[0]);
+    await startUpload();
   };
 
   useEffect(() => {
     if (isUploaded && uploadedFileDetails) {
-      // const customName = getValues("customName");
-
-      addFileToProductMutation.mutate({
+      mutate({
         fileId: uploadedFileDetails._id,
       });
     }
   }, [isUploaded, uploadedFileDetails]);
 
   return (
-    <BaseModal title='Select file to upload' onClose={onClose} open={open}>
+    <BaseModal
+      title='Select file to upload'
+      onClose={onClose}
+      open={open}
+      hideCloseBtn={uploading}>
       <Grid container spacing={2}>
         {!uploading && (
           <>
             <Grid item xs={12}>
-              <FormControl fullWidth>
-                <InputLabel id='upload-type-select-label'>File Type</InputLabel>
-                <Select
-                  labelId='upload-type-select-label'
-                  value={uploadType}
-                  label='Type'
-                  onChange={handleChange}>
-                  <MenuItem value={UploadTypeEnum.AUDIO_PREVIEW}>
-                    Audio Preview
-                  </MenuItem>
-                  <MenuItem value={UploadTypeEnum.PRODUCT_FILE}>
-                    Product File
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12}>
               <TextField
                 label='File name'
                 fullWidth
-                {...register("customName", { required: true, minLength: 3 })}
+                error={!!errors.customName?.message}
+                helperText={errors.customName?.message}
+                {...register("customName")}
               />
             </Grid>
             <Grid item xs={12}>
-              <TextField type='file' onChange={select} fullWidth />
+              <TextField
+                fullWidth
+                type='file'
+                helperText={errors.file?.message}
+                error={!!errors.file}
+                {...register("file")}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                variant='contained'
+                type='submit'
+                fullWidth
+                disabled={!isValid}
+                onClick={handleSubmit(handleUpload)}>
+                Upload
+              </Button>
             </Grid>
           </>
         )}
         {uploading && (
-          <Grid item xs={12}>
-            <Typography mb={2} textAlign='center' fontWeight={600}>
-              Uploaded {formatBytes(uploadedBytes)} from{" "}
-              {formatBytes(selectedFile?.size ?? 0)}
-            </Typography>
-            <LinearProgress variant='determinate' value={uploadedPercents} />
-          </Grid>
+          <>
+            <Grid item xs={12}>
+              <Typography mb={2} textAlign='center' fontWeight={600}>
+                Uploaded {formatBytes(uploadedBytes)} from{" "}
+                {formatBytes(selectedFile?.size ?? 0)}
+              </Typography>
+              <LinearProgress variant='determinate' value={uploadedPercents} />
+            </Grid>
+            <Grid item xs={12}>
+              <Button
+                onClick={handleUploadAbort}
+                variant='contained'
+                fullWidth
+                color='error'>
+                Cancel
+              </Button>
+            </Grid>
+          </>
         )}
-        <Grid item xs={12}>
-          <Button
-            variant='contained'
-            type='submit'
-            fullWidth
-            onClick={startUpload}>
-            Upload
-          </Button>
-        </Grid>
       </Grid>
     </BaseModal>
   );

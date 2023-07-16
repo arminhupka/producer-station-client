@@ -53,12 +53,14 @@ const onRefreshed = (token: string): void => {
   });
 };
 
-export const api = axios.create({
+const axiosOptions = {
   baseURL: import.meta.env.VITE_API,
   headers: {
     Authorization: `Bearer ${token as string}`,
   },
-});
+};
+
+export const api = axios.create(axiosOptions);
 
 api.interceptors.response.use(undefined, async (err: AxiosError) => {
   if (err?.response?.status === 401) {

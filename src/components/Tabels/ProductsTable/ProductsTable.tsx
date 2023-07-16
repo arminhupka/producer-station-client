@@ -22,10 +22,10 @@ import { formatPrice } from "../../../utils/formatPrice";
 import Skeletons from "../../molecules/Skeletons/Skeletons";
 
 enum ProductStatusEnum {
-  Draft = "DRAFT",
-  Submitted = "SUBMITTED",
-  Active = "ACTIVE",
-  Suspended = "SUSPENDED",
+  Draft = "Draft",
+  Submitted = "Submitted",
+  Active = "Active",
+  Suspended = "Suspended",
 }
 
 const ChipStyle: SxProps<Theme> = {
@@ -37,6 +37,7 @@ const ChipStyle: SxProps<Theme> = {
 const generateStatus = (status: string): ReactElement => {
   const transformed = status[0].toLowerCase() + status.slice(1).toLowerCase();
 
+  console.log(status);
   switch (status) {
     case ProductStatusEnum.Draft: {
       return <Chip sx={ChipStyle} label={transformed} color='info' />;
